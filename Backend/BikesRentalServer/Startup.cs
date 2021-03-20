@@ -1,3 +1,5 @@
+using BikesRentalServer.Services;
+using BikesRentalServer.Services.Abstract;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -24,6 +26,8 @@ namespace BikesRentalServer
                 });
 
             services.AddSwaggerGen();
+
+            services.AddTransient<IHelloWorldService, HelloWorldService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
