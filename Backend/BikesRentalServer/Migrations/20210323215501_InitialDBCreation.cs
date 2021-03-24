@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace EFDataAccessLibrary.Migrations
+namespace BikesRentalServer.Migrations
 {
     public partial class InitialDBCreation : Migration
     {

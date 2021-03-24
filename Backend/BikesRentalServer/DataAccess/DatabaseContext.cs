@@ -1,14 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using EFDataAccessLibrary.Models;
 
-namespace EFDataAccessLibrary.DataAccess
+namespace BikesRentalServer.DataAccess
 {
-    public class BikesContext : DbContext
+    public class DatabaseContext : DbContext
     {
-        public BikesContext(DbContextOptions options) : base(options) { }
+        public DatabaseContext(DbContextOptions options) : base(options) { }
         public DbSet<User> Users { get; set; }
         public DbSet<Bike> Bikes { get; set; }
         public DbSet<BikeStation> BikeStations { get; set; }
