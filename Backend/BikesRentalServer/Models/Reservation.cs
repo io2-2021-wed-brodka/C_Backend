@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace EFDataAccessLibrary.Models
+namespace BikesRentalServer
 {
     public class Reservation
     {
