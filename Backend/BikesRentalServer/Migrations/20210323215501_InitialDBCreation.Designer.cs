@@ -4,14 +4,16 @@ using EFDataAccessLibrary.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace EFDataAccessLibrary.Migrations
+namespace BikesRentalServer.Migrations
 {
     [DbContext(typeof(BikesContext))]
-    partial class BikesContextModelSnapshot : ModelSnapshot
+    [Migration("20210323215501_InitialDBCreation")]
+    partial class InitialDBCreation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
