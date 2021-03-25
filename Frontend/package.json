@@ -41,6 +41,6 @@
     ]
   },
   "devDependencies": {
-    "env-cmd": "^10.1.0"
+    "cross-env": "^7.0.3"
   }
 }
