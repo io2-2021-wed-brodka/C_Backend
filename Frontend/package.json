@@ -17,8 +17,10 @@
     "web-vitals": "^1.1.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "user": "cross-env REACT_APP_FOR=user PORT=3001 react-scripts start",
+    "admin": "cross-env REACT_APP_FOR=admin PORT=3002 react-scripts start",
+    "build-user": "cross-env REACT_APP_FOR=user react-scripts build",
+    "build-admin": "cross-env REACT_APP_FOR=admin react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
