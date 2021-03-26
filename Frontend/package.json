@@ -28,7 +28,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "npx eslint --init '*/**/*.{js,ts,tsx}'",
-    "postinstall": "cd .. && husky install && cd Frontend && husky init"
+    "postinstall": "cd .. && husky install"
   },
   "browserslist": {
     "production": [
