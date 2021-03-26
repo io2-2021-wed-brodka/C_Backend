@@ -27,7 +27,7 @@
     "build-admin": "cross-env REACT_APP_FOR=admin react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "npx eslint '*/**/*.{js,ts,tsx}'",
+    "lint": "npx eslint --init '*/**/*.{js,ts,tsx}'",
     "postinstall": "cd .. && husky install && husky init"
   },
   "browserslist": {
