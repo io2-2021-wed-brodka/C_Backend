@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 type BikeTileProps = {
-  id: number;
+  id: string;
 };
 
 const BikeTile = ({ id }: BikeTileProps): JSX.Element => {
