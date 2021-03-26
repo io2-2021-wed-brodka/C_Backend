@@ -12,7 +12,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import ApplicationBar from './ApplicationBar';
 import Navigation from './Navigation';
 import './UserApp.css';
-import StationsTab from './StationsTab';
+import StationsTab from './stations-tab/StationsTab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
