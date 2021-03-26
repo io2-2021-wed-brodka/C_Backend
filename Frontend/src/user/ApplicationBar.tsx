@@ -41,7 +41,12 @@ const ApplicationBar = (): JSX.Element => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+        <IconButton
+          edge="start"
+          className={classes.menuButton}
+          color="inherit"
+          aria-label="menu"
+        >
           <DirectionsBikeIcon />
         </IconButton>
         <Typography variant="h6" className={classes.title}>
@@ -51,7 +56,12 @@ const ApplicationBar = (): JSX.Element => {
           <IconButton onClick={handleMenu} color="inherit">
             <AccountCircle />
           </IconButton>
-          <Menu id="menu-appbar" anchorEl={anchorEl} open={open} onClose={handleClose}>
+          <Menu
+            id="menu-appbar"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+          >
             <MenuItem onClick={handleClose}>Profile</MenuItem>
             <MenuItem onClick={handleClose}>My account</MenuItem>
           </Menu>
