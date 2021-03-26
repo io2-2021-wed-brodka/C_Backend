@@ -18,12 +18,16 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
+      background: theme.palette.grey[100],
     },
     menuButton: {
       marginRight: theme.spacing(2),
     },
     title: {
       flexGrow: 1,
+    },
+    container: {
+      marginTop: theme.spacing(2),
     },
   }),
 );
@@ -44,7 +48,7 @@ const UserApp = (): JSX.Element => {
         <div className={classes.root}>
           <ApplicationBar />
           <Navigation />
-          <Container maxWidth="md">
+          <Container maxWidth="md" className={classes.container}>
             <Switch>
               <Route path="/stations">
                 <StationsTab />
