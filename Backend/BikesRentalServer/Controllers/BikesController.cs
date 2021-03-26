@@ -15,29 +15,46 @@ namespace BikesRentalServer.Controllers
     {
         private readonly IBikesService bikesService;
 
-        public BikesController(IBikesService stationsService)
+        public BikesController(IBikesService bikesService)
         {
-            this.bikesService = stationsService;
+            this.bikesService = bikesService;
         }
 
-        // GET: api/<BikesController>
+        // GET:/<BikesController>
         [HttpGet]
-        public ActionResult<IEnumerable<GetBikeResponse>> GetAllStations()
+        public ActionResult<IEnumerable<BikeResponse>> GetAllBikes()
         {
-            return Ok(bikesService.GetAllBikes()
-                .Select(bike => new GetBikeResponse
+            
+            var response = bikesService.GetAllBikes()
+                .Select(bike => new BikeResponse
                 {
                     id = bike.Id.ToString(),
-                    station = null,
-                    user = null
-                }));
+                    station = bike.Station!=null? new BikeResponse.Station 
+                    {
+                        id=bike.Station.Id.ToString(),
+                        name=bike.Station.Location          //temporary Location instead of Name
+                    } : null,
+                    user = bike.User!=null? new BikeResponse.User
+                    {
+                        id = bike.User.Id.ToString(),
+                        name = bike.User.Name
+                    }: null,
+                    state = bike.State
+                });
+
+            return Ok(response); 
         }
 
-        // GET api/<BikesController>/5
+        // GET <BikesController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public ActionResult<IEnumerable<BikeResponse>> Get(int id)
         {
-            return "value";
+            var response = bikesService.GetBike(id.ToString());
+            if(response!=null)
+            {
+                return Ok(response);
+            }
+            return NotFound("Not found bike with id " + id.ToString());
         }
 
     }

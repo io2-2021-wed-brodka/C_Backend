@@ -10,7 +10,7 @@ using BikesRentalServer.Services;
 
 namespace BikesRentalServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class StationsController : ControllerBase
     {
@@ -24,33 +24,39 @@ namespace BikesRentalServer.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<GetStationResponse>> GetAllStations()
         {
-            return Ok(stationsService.GetAllStations()
+            var respose = stationsService.GetAllStations()
                 .Select(station => new GetStationResponse
                 {
                     Id = station.Id,
                     Name = station.Name,
                     Description = station.Description
-                }));
+                });
+            return Ok(respose);
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<GetStationResponse> GetStation(string id, [FromQuery] string query) // ..../api/stations/123
-        {
-            if (id.Length > 3)
-                return NotFound();
-            return new GetStationResponse
-            {
-                Id = id,
-                Name = "Test",
-                Description = "Another test"
-            };
-        }
+        
 
-        [HttpPost]
-        public IActionResult AddStation(AddStationRequest request)
+        [HttpGet("{id}/bikes")]
+        public ActionResult<IEnumerable<BikeResponse>> GetAllBikesAtStation(int id)
         {
-            Console.WriteLine(request.Status);
-            return Ok(request);
+            var response = stationsService.GetAllBikesAtStation(id)
+                 .Select(bike => new BikeResponse
+                 {
+                     id = bike.Id.ToString(),
+
+                     station = bike.Station != null ? new BikeResponse.Station
+                     {
+                         id = bike.Station.Id.ToString(),
+                         name = bike.Station.Location      //temporary Location instead of Name
+                     } : null,
+                     user = bike.User != null ? new BikeResponse.User
+                     {
+                         id = bike.User.Id.ToString(),
+                         name = bike.User.Name
+                     } : null,
+                     state = bike.State
+                 });
+            return Ok(response);
         }
     }
 }
