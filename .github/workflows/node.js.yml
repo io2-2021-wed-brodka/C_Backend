@@ -27,6 +27,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: cd Frontend && npm ci
     - name: Build user app
-      run: npm run build-user --if-present
+      run: cd Frontend && npm run build-user --if-present
     - name: Build admin app
-      run: npm run build-admin --if-present
+      run: cd Frontend && npm run build-admin --if-present
