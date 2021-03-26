@@ -27,7 +27,7 @@
     "build-admin": "cross-env REACT_APP_FOR=admin react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "node node_modules/eslint/bin/eslint.js '*/**/*.{js,ts,tsx}'",
+    "lint": "node node_modules/eslint/bin/eslint.js '../../../../*/**/*.{js,ts,tsx}'",
     "postinstall": "cd .. && husky install && husky init"
   },
   "browserslist": {
