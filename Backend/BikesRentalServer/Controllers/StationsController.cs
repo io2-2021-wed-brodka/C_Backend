@@ -23,9 +23,8 @@ namespace BikesRentalServer.Controllers
             var response = _stationsService.GetAllStations()
                 .Select(station => new GetStationResponse
                 {
-                    Id = station.Id,
-                    Name = station.Name,
-                    Description = station.Description
+                    Id = station.Id.ToString(),
+                    Name = station.Name
                 });
             return Ok(response);
         }
@@ -40,7 +39,7 @@ namespace BikesRentalServer.Controllers
                      Station = bike.Station is null ? null : new GetBikeResponse.StationDto
                      {
                          Id = bike.Station.Id.ToString(),
-                         Name = bike.Station.Location      //temporary Location instead of Name
+                         Name = bike.Station.Name
                      },
                      User = bike.User is null ? null : new GetBikeResponse.UserDto
                      {

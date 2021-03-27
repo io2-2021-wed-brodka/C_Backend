@@ -29,7 +29,7 @@ namespace BikesRentalServer.Controllers
                         Station = bike.Station is null ? null : new GetBikeResponse.StationDto 
                         {
                             Id = bike.Station.Id.ToString(),
-                            Name = bike.Station.Location          // temporary Location instead of Name
+                            Name = bike.Station.Name
                         },
                         User = bike.User is null ? null : new GetBikeResponse.UserDto
                         {
