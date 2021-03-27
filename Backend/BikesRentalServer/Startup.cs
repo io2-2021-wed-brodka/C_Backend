@@ -6,6 +6,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using BikesRentalServer.DataAccess;
+using System.Text.Json.Serialization;
+using BikesRentalServer.Services;
+using BikesRentalServer.Services.Abstract;
 
 namespace BikesRentalServer
 {
@@ -22,6 +25,16 @@ namespace BikesRentalServer
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+           
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                });
+
+            services.AddTransient<IStationsService, StationsService>();
+            services.AddTransient<IBikesService, BikesService>();
+
             services.AddDbContext<DatabaseContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("Default"));
@@ -40,10 +53,7 @@ namespace BikesRentalServer
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapControllers();
             });
         }
     }
