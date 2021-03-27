@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BikesRentalServer
+namespace BikesRentalServer.Models
 {
     public class User
     {
@@ -15,6 +15,6 @@ namespace BikesRentalServer
     public enum UserState
     {
         Active,
-        Banned,
+        Banned
     }
 }

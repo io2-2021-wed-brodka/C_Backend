@@ -1,4 +1,4 @@
-﻿namespace BikesRentalServer
+﻿namespace BikesRentalServer.Models
 {
     public class Bike
     {
@@ -13,6 +13,6 @@
     {
         Working,
         InService,
-        Blocked,
+        Blocked
     }
 }

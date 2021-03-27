@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using BikesRentalServer.Services.Abstract;
+using BikesRentalServer.Dtos.Responses;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using BikesRentalServer.Services.Abstract;
-using BikesRentalServer.Dtos.Responses;
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace BikesRentalServer.Controllers
 {
@@ -13,33 +10,32 @@ namespace BikesRentalServer.Controllers
     [ApiController]
     public class BikesController : ControllerBase
     {
-        private readonly IBikesService bikesService;
+        private readonly IBikesService _bikesService;
 
         public BikesController(IBikesService bikesService)
         {
-            this.bikesService = bikesService;
+            _bikesService = bikesService;
         }
 
-        // GET:/<BikesController>
         [HttpGet]
         public ActionResult<IEnumerable<BikeResponse>> GetAllBikes()
         {
             
-            var response = bikesService.GetAllBikes()
+            var response = _bikesService.GetAllBikes()
                 .Select(bike => new BikeResponse
                 {
-                    id = bike.Id.ToString(),
-                    station = bike.Station!=null? new BikeResponse.Station 
+                    Id = bike.Id.ToString(),
+                    Station = bike.Station is null ? null : new BikeResponse.StationDto 
                     {
-                        id=bike.Station.Id.ToString(),
-                        name=bike.Station.Location          //temporary Location instead of Name
-                    } : null,
-                    user = bike.User!=null? new BikeResponse.User
+                        Id = bike.Station.Id.ToString(),
+                        Name = bike.Station.Location          // temporary Location instead of Name
+                    },
+                    User = bike.User is null ? null : new BikeResponse.UserDto
                     {
-                        id = bike.User.Id.ToString(),
-                        name = bike.User.Name
-                    }: null,
-                    state = bike.State
+                        Id = bike.User.Id.ToString(),
+                        Name = bike.User.Name
+                    },
+                    State = bike.State
                 });
 
             return Ok(response); 
@@ -49,13 +45,8 @@ namespace BikesRentalServer.Controllers
         [HttpGet("{id}")]
         public ActionResult<IEnumerable<BikeResponse>> Get(int id)
         {
-            var response = bikesService.GetBike(id.ToString());
-            if(response!=null)
-            {
-                return Ok(response);
-            }
-            return NotFound("Not found bike with id " + id.ToString());
+            var response = _bikesService.GetBike(id.ToString());
+            return response is null ? NotFound($"Not found bike with id {id}") : Ok(response);
         }
-
     }
 }

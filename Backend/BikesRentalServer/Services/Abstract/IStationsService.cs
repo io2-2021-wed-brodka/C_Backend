@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using BikesRentalServer.Dtos.Requests;
-using BikesRentalServer.Dtos.Responses;
-using BikesRentalServer.Models;
+﻿using BikesRentalServer.Models;
+using System.Collections.Generic;
 
-namespace BikesRentalServer.Services
+namespace BikesRentalServer.Services.Abstract
 {
     public interface IStationsService
     {

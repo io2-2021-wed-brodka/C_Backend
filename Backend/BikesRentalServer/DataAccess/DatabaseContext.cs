@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BikesRentalServer.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BikesRentalServer.DataAccess
 {

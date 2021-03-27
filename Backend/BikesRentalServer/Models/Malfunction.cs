@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BikesRentalServer
+namespace BikesRentalServer.Models
 {
     public class Malfunction
     {

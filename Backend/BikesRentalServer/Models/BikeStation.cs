@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BikesRentalServer
+namespace BikesRentalServer.Models
 {
     public class BikeStation
     {
@@ -13,6 +13,6 @@ namespace BikesRentalServer
     public enum BikeStationState
     {
         Working,
-        Blocked,
+        Blocked
     }
 }

@@ -1,26 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BikesRentalServer.Models;
+
 namespace BikesRentalServer.Dtos.Responses
 {
     public class BikeResponse
     {
-        public string id { get; set; }
-        public Station station { get; set; }
-        public User user { get; set; }
-        public BikeState state { get; set; }
+        public string Id { get; set; }
+        public StationDto Station { get; set; }
+        public UserDto User { get; set; }
+        public BikeState State { get; set; }
 
-        public class User
+        public class UserDto
         {
-            public string id { get; set; }
-            public string name { get; set; }
+            public string Id { get; set; }
+            public string Name { get; set; }
 
         }
-        public class Station
+        public class StationDto
         {
-            public string id { get; set; }
-            public string name { get; set; }
+            public string Id { get; set; }
+            public string Name { get; set; }
         }
     }
 }
