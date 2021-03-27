@@ -29,9 +29,7 @@ namespace BikesRentalServer.Controllers
                 });
             return Ok(response);
         }
-
         
-
         [HttpGet("{id}/bikes")]
         public ActionResult<IEnumerable<GetBikeResponse>> GetAllBikesAtStation(int id)
         {
@@ -39,7 +37,6 @@ namespace BikesRentalServer.Controllers
                  .Select(bike => new GetBikeResponse
                  {
                      Id = bike.Id.ToString(),
-
                      Station = bike.Station is null ? null : new GetBikeResponse.StationDto
                      {
                          Id = bike.Station.Id.ToString(),
@@ -50,7 +47,7 @@ namespace BikesRentalServer.Controllers
                          Id = bike.User.Id.ToString(),
                          Name = bike.User.Name
                      },
-                     State = bike.State
+                     Status = bike.Status
                  });
             return Ok(response);
         }

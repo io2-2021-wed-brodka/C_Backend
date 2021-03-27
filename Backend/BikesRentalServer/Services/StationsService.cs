@@ -17,7 +17,6 @@ namespace BikesRentalServer.Services
             _context = context;
         }
 
-
         public IEnumerable<Station> GetAllStations()
         {
             throw new NotImplementedException();
@@ -30,9 +29,7 @@ namespace BikesRentalServer.Services
 
         public IEnumerable<Bike> GetAllBikesAtStation(int id)
         {
-            var bikes = from b in _context.Bikes.Include(s => s.Station) where b.Station.Id == id select b;
-            
-            return bikes;
+            return _context.Bikes.Include(bike => bike.Station).Include(bike => bike.User).Where(bike => bike.Station.Id == id);
         }
 
        

@@ -18,13 +18,12 @@ namespace BikesRentalServer.Services
 
         public IEnumerable<Bike> GetAllBikes()
         {
-            return _context.Bikes.Include(s => s.Station).Include(u => u.User).ToArray();
+            return _context.Bikes.Include(bike => bike.Station).Include(bike => bike.User).ToArray();
         }
 
         public Bike GetBike(string id)
         {
-            var bikes = from b in _context.Bikes.Include(s=> s.Station).Include(u=> u.User) where b.Id.ToString() == id select b;
-            return bikes.SingleOrDefault();
+            return _context.Bikes.Include(bike => bike.User).Include(bike => bike.Station).SingleOrDefault(b => b.Id.ToString() == id);
         }
     }
 }

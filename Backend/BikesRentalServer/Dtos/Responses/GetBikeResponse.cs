@@ -7,7 +7,7 @@ namespace BikesRentalServer.Dtos.Responses
         public string Id { get; set; }
         public StationDto Station { get; set; }
         public UserDto User { get; set; }
-        public BikeState State { get; set; }
+        public BikeStatus Status { get; set; }
 
         public class UserDto
         {
