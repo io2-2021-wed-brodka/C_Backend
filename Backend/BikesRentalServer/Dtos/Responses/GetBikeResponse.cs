@@ -2,7 +2,7 @@
 
 namespace BikesRentalServer.Dtos.Responses
 {
-    public class BikeResponse
+    public class GetBikeResponse
     {
         public string Id { get; set; }
         public StationDto Station { get; set; }

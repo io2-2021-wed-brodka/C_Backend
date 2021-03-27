@@ -33,19 +33,19 @@ namespace BikesRentalServer.Controllers
         
 
         [HttpGet("{id}/bikes")]
-        public ActionResult<IEnumerable<BikeResponse>> GetAllBikesAtStation(int id)
+        public ActionResult<IEnumerable<GetBikeResponse>> GetAllBikesAtStation(int id)
         {
             var response = _stationsService.GetAllBikesAtStation(id)
-                 .Select(bike => new BikeResponse
+                 .Select(bike => new GetBikeResponse
                  {
                      Id = bike.Id.ToString(),
 
-                     Station = bike.Station is null ? null : new BikeResponse.StationDto
+                     Station = bike.Station is null ? null : new GetBikeResponse.StationDto
                      {
                          Id = bike.Station.Id.ToString(),
                          Name = bike.Station.Location      //temporary Location instead of Name
                      },
-                     User = bike.User is null ? null : new BikeResponse.UserDto
+                     User = bike.User is null ? null : new GetBikeResponse.UserDto
                      {
                          Id = bike.User.Id.ToString(),
                          Name = bike.User.Name

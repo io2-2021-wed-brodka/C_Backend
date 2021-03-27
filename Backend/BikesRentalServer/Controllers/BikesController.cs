@@ -18,19 +18,19 @@ namespace BikesRentalServer.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<BikeResponse>> GetAllBikes()
+        public ActionResult<IEnumerable<GetBikeResponse>> GetAllBikes()
         {
             
             var response = _bikesService.GetAllBikes()
-                .Select(bike => new BikeResponse
+                .Select(bike => new GetBikeResponse
                 {
                     Id = bike.Id.ToString(),
-                    Station = bike.Station is null ? null : new BikeResponse.StationDto 
+                    Station = bike.Station is null ? null : new GetBikeResponse.StationDto 
                     {
                         Id = bike.Station.Id.ToString(),
                         Name = bike.Station.Location          // temporary Location instead of Name
                     },
-                    User = bike.User is null ? null : new BikeResponse.UserDto
+                    User = bike.User is null ? null : new GetBikeResponse.UserDto
                     {
                         Id = bike.User.Id.ToString(),
                         Name = bike.User.Name
@@ -43,7 +43,7 @@ namespace BikesRentalServer.Controllers
 
         // GET <BikesController>/5
         [HttpGet("{id}")]
-        public ActionResult<IEnumerable<BikeResponse>> Get(int id)
+        public ActionResult<IEnumerable<GetBikeResponse>> Get(int id)
         {
             var response = _bikesService.GetBike(id.ToString());
             return response is null ? NotFound($"Not found bike with id {id}") : Ok(response);
