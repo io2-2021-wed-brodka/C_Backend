@@ -49,7 +49,10 @@ namespace BikesRentalServer.Controllers
             var response = _bikesService.GetBike(id.ToString());
 
             if (response is null)
-                return NotFound("Bike not found");
+                return NotFound(new Error
+                {
+                    Message = "Bike not found"
+                });
             return Ok(response);
         }
     }

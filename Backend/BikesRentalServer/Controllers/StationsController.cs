@@ -26,6 +26,7 @@ namespace BikesRentalServer.Controllers
                     Id = station.Id.ToString(),
                     Name = station.Name
                 });
+            
             return Ok(response);
         }
         
@@ -48,6 +49,7 @@ namespace BikesRentalServer.Controllers
                      },
                      Status = bike.Status
                  });
+            
             return Ok(response);
         }
     }
