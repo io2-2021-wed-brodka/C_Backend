@@ -12,7 +12,7 @@ namespace BikesRentalServer.Filters
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            if (!(context.Result is ObjectResult result) || !IsClientErrorStatusCode(result.StatusCode))
+            if (context.Result is not ObjectResult result || IsClientErrorStatusCode(result.StatusCode))
                 return;
 
             result.Value = new Error
