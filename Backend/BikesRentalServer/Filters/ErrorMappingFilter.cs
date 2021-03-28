@@ -12,13 +12,18 @@ namespace BikesRentalServer.Filters
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            if (!(context.Result is ObjectResult result) || (result.StatusCode >= 400 && result.StatusCode < 500))
+            if (!(context.Result is ObjectResult result) || !IsClientErrorStatusCode(result.StatusCode))
                 return;
 
             result.Value = new Error
             {
                 Message = result.Value as string,
             };
+        }
+
+        private static bool IsClientErrorStatusCode(int? statusCode)
+        {
+            return statusCode is >= 400 and < 500;
         }
     }
 }
