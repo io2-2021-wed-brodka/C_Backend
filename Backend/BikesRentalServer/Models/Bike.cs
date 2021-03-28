@@ -13,6 +13,6 @@
     {
         Working,
         InService,
-        Blocked
+        Blocked,
     }
 }

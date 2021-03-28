@@ -16,6 +16,6 @@ namespace BikesRentalServer.Models
     public enum MalfunctionState
     {
         Fixed,
-        NotFixed
+        NotFixed,
     }
 }
