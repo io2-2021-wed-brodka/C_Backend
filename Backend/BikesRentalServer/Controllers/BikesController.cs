@@ -1,6 +1,5 @@
 ﻿using BikesRentalServer.Services.Abstract;
 using BikesRentalServer.Dtos.Responses;
-using BikesRentalServer.Filters;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
@@ -8,7 +7,6 @@ namespace BikesRentalServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [ServiceFilter(typeof(ErrorMappingFilter))]
     public class BikesController : ControllerBase
     {
         private readonly IBikesService _bikesService;
@@ -21,7 +19,6 @@ namespace BikesRentalServer.Controllers
         [HttpGet]
         public ActionResult<GetAllBikesResponse> GetAllBikes()
         {
-            
             var response = new GetAllBikesResponse
             {
                 Bikes = _bikesService.GetAllBikes()
@@ -52,7 +49,21 @@ namespace BikesRentalServer.Controllers
 
             if (response is null)
                 return NotFound("Bike not found");
-            return Ok(response);
+            return Ok(new GetBikeResponse
+            {
+                Id = response.Id.ToString(),
+                Status = response.Status,
+                Station = response.Station is null ? null : new GetBikeResponse.StationDto
+                {
+                    Id = response.Station.Id.ToString(),
+                    Name = response.Station.Name,
+                },
+                User = response.User is null ? null : new GetBikeResponse.UserDto
+                {
+                    Id = response.User.Id.ToString(),
+                    Name = response.User.Name,
+                },
+            });
         }
     }
 }
