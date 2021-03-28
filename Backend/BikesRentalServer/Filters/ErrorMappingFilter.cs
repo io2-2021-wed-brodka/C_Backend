@@ -12,7 +12,7 @@ namespace BikesRentalServer.Filters
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            if (!(context.Result is ObjectResult result) || result.StatusCode / 100 != 4)
+            if (!(context.Result is ObjectResult result) || (result.StatusCode >= 400 && result.StatusCode < 500))
                 return;
 
             result.Value = new Error
