@@ -1,12 +1,8 @@
-﻿using BikesRentalServer.Dtos.Requests;
-using BikesRentalServer.Dtos.Responses;
+﻿using BikesRentalServer.Dtos.Responses;
+using BikesRentalServer.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using BikesRentalServer.Services;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace BikesRentalServer.Controllers
 {
@@ -14,48 +10,46 @@ namespace BikesRentalServer.Controllers
     [ApiController]
     public class StationsController : ControllerBase
     {
-        private readonly IStationsService stationsService;
+        private readonly IStationsService _stationsService;
 
         public StationsController(IStationsService stationsService)
         {
-            this.stationsService = stationsService;
+            _stationsService = stationsService;
         }
         
         [HttpGet]
         public ActionResult<IEnumerable<GetStationResponse>> GetAllStations()
         {
-            var respose = stationsService.GetAllStations()
+            var response = _stationsService.GetAllStations()
                 .Select(station => new GetStationResponse
                 {
-                    Id = station.Id,
+                    Id = station.Id.ToString(),
                     Name = station.Name,
-                    Description = station.Description
                 });
-            return Ok(respose);
+            
+            return Ok(response);
         }
-
         
-
         [HttpGet("{id}/bikes")]
-        public ActionResult<IEnumerable<BikeResponse>> GetAllBikesAtStation(int id)
+        public ActionResult<IEnumerable<GetBikeResponse>> GetAllBikesAtStation(int id)
         {
-            var response = stationsService.GetAllBikesAtStation(id)
-                 .Select(bike => new BikeResponse
+            var response = _stationsService.GetAllBikesAtStation(id)
+                 .Select(bike => new GetBikeResponse
                  {
-                     id = bike.Id.ToString(),
-
-                     station = bike.Station != null ? new BikeResponse.Station
+                     Id = bike.Id.ToString(),
+                     Station = bike.Station is null ? null : new GetBikeResponse.StationDto
                      {
-                         id = bike.Station.Id.ToString(),
-                         name = bike.Station.Location      //temporary Location instead of Name
-                     } : null,
-                     user = bike.User != null ? new BikeResponse.User
+                         Id = bike.Station.Id.ToString(),
+                         Name = bike.Station.Name,
+                     },
+                     User = bike.User is null ? null : new GetBikeResponse.UserDto
                      {
-                         id = bike.User.Id.ToString(),
-                         name = bike.User.Name
-                     } : null,
-                     state = bike.State
+                         Id = bike.User.Id.ToString(),
+                         Name = bike.User.Name,
+                     },
+                     Status = bike.Status,
                  });
+            
             return Ok(response);
         }
     }

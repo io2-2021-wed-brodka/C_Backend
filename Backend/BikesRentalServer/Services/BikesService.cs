@@ -1,11 +1,9 @@
-﻿using System;
+﻿using BikesRentalServer.DataAccess;
+using BikesRentalServer.Models;
+using BikesRentalServer.Services.Abstract;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using BikesRentalServer.Services.Abstract;
-using BikesRentalServer.Controllers;
-using BikesRentalServer.DataAccess;
-using Microsoft.EntityFrameworkCore;
 
 namespace BikesRentalServer.Services
 {
@@ -20,17 +18,12 @@ namespace BikesRentalServer.Services
 
         public IEnumerable<Bike> GetAllBikes()
         {
-            return _context.Bikes.Include(s => s.Station).Include(u => u.User).ToArray();
+            return _context.Bikes.Include(bike => bike.Station).Include(bike => bike.User).ToArray();
         }
 
         public Bike GetBike(string id)
         {
-            var bikes = from b in _context.Bikes.Include(s=> s.Station).Include(u=> u.User) where b.Id.ToString() == id select b;
-            if(bikes.Count()==1)
-            {
-                return bikes.First();
-            }
-            return null;
+            return _context.Bikes.Include(bike => bike.User).Include(bike => bike.Station).SingleOrDefault(b => b.Id.ToString() == id);
         }
     }
 }

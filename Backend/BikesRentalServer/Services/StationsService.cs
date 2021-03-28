@@ -1,11 +1,10 @@
-﻿using System;
+﻿using BikesRentalServer.DataAccess;
+using BikesRentalServer.Models;
+using BikesRentalServer.Services.Abstract;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using BikesRentalServer.DataAccess;
-using BikesRentalServer.Dtos.Requests;
-using BikesRentalServer.Dtos.Responses;
-using BikesRentalServer.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace BikesRentalServer.Services
 {
@@ -17,7 +16,6 @@ namespace BikesRentalServer.Services
         {
             _context = context;
         }
-
 
         public IEnumerable<Station> GetAllStations()
         {
@@ -31,9 +29,7 @@ namespace BikesRentalServer.Services
 
         public IEnumerable<Bike> GetAllBikesAtStation(int id)
         {
-            var bikes = from b in _context.Bikes.Include(s => s.Station) where b.Station.Id == id select b;
-            
-            return bikes;
+            return _context.Bikes.Include(bike => bike.Station).Include(bike => bike.User).Where(bike => bike.Station.Id == id);
         }
 
        
