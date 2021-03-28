@@ -1,4 +1,5 @@
 using BikesRentalServer.DataAccess;
+using BikesRentalServer.Filters;
 using BikesRentalServer.Services;
 using BikesRentalServer.Services.Abstract;
 using Microsoft.AspNetCore.Builder;
@@ -36,6 +37,8 @@ namespace BikesRentalServer
             {
                 options.UseSqlServer(_configuration.GetConnectionString("Default"));
             });
+
+            services.AddScoped<ErrorMappingFilter>();
 
             services.AddTransient<IStationsService, StationsService>();
             services.AddTransient<IBikesService, BikesService>();

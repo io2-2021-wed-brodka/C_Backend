@@ -1,4 +1,5 @@
 ﻿using BikesRentalServer.Dtos.Responses;
+using BikesRentalServer.Filters;
 using BikesRentalServer.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ namespace BikesRentalServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [ServiceFilter(typeof(ErrorMappingFilter))]
     public class StationsController : ControllerBase
     {
         private readonly IStationsService _stationsService;
