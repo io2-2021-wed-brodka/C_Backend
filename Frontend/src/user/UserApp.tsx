@@ -57,7 +57,7 @@ const UserApp = () => {
                 <Route path="/stations">
                   <StationsTab />
                 </Route>
-                <Route path="/">
+                <Route exact path="/">
                   <StationsTab />
                 </Route>
               </Switch>
