@@ -1,19 +1,17 @@
 import React from 'react';
-import Alert from '../../common/components/Alert';
-import Spinner from '../../common/components/Spinner';
 import Station from './Station';
 import { useServices } from './../../common/services';
+import DataLoader from '../../common/components/DataLoader';
 
 const StationsTab = () => {
-  const { results: stations, error, loading } = useServices().useStations();
+  const data = useServices().useStations();
 
   return (
-    <>
-      {loading && <Spinner />}
-      {error && <Alert severity="error">Oops! You are offline...</Alert>}
-      {stations &&
-        stations.map(station => <Station key={station.id} {...station} />)}
-    </>
+    <DataLoader data={data}>
+      {stations =>
+        stations.map(station => <Station key={station.id} {...station} />)
+      }
+    </DataLoader>
   );
 };
 
