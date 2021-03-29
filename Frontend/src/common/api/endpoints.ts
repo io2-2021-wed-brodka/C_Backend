@@ -8,7 +8,7 @@ const mapResponse: <T, U>(
   res: DataSource<T>,
   map: (x: T) => U,
 ) => DataSource<U> = (res, map) => {
-  return { ...res, results: map(res.results) };
+  return { ...res, results: res.results ? map(res.results) : null };
 };
 
 export type StationsResponse = { stations: Station[] };

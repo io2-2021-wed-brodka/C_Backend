@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 export type DataSource<T> = {
   error: string;
   loading: boolean;
-  results: T;
+  results: T | null;
 };
 
 const useApi = <T>(dataSource: string): DataSource<T> => {
   const [loading, setLoading] = useState(true);
-  const [results, setResults] = useState<T>();
+  const [results, setResults] = useState<T | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const useApi = <T>(dataSource: string): DataSource<T> => {
   return {
     error,
     loading,
-    results: results as T,
+    results,
   } as const;
 };
 
