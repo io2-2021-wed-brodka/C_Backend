@@ -6,7 +6,7 @@ export type DataSource<T> = {
   results: T;
 };
 
-const useDataFetching = <T>(dataSource: string): DataSource<T> => {
+const useApi = <T>(dataSource: string): DataSource<T> => {
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<T>();
   const [error, setError] = useState('');
@@ -39,4 +39,4 @@ const useDataFetching = <T>(dataSource: string): DataSource<T> => {
   } as const;
 };
 
-export default useDataFetching;
+export default useApi;

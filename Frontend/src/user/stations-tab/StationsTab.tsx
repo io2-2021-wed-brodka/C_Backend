@@ -1,21 +1,20 @@
 import React from 'react';
-import useMockedDataFetching from './../../common/mocks/useMockedDataFetching';
-import { mockedStations } from './../../common/mocks/stations';
 import Alert from '../../common/components/Alert';
 import Spinner from '../../common/components/Spinner';
 import Station from './Station';
-
-const useDataFetching = useMockedDataFetching(mockedStations);
+import { useServices } from './../../common/services';
 
 const StationsTab = (): JSX.Element => {
-  const { results: stations, error, loading } = useDataFetching('/stations');
+  const { results, error, loading } = useServices().useStations();
+
+  const { stations } = results;
 
   return (
     <>
       {loading && <Spinner />}
       {error && <Alert severity="error">Oops! You are offline...</Alert>}
-      {stations &&
-        stations.map((station) => <Station key={station.id} {...station} />)}
+      {results &&
+        stations.map(station => <Station key={station.id} {...station} />)}
     </>
   );
 };

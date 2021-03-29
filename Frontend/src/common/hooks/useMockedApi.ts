@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { DataSource } from './useDataFetching';
+import { DataSource } from './useApi';
 
-const useMockedDataFetching = <T>(
+const useMockedApi = <T>(
   expectedResult?: T,
   expectedError?: string,
 ): ((_: string) => DataSource<T>) => () => {
@@ -27,4 +27,4 @@ const useMockedDataFetching = <T>(
   } as const;
 };
 
-export default useMockedDataFetching;
+export default useMockedApi;
