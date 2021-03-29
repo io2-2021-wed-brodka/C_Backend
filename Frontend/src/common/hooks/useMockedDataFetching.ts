@@ -1,15 +1,10 @@
 import { useEffect, useState } from 'react';
-
-type Data<T> = {
-  error: string;
-  loading: boolean;
-  results: T;
-};
+import { DataSource } from './useDataFetching';
 
 const useMockedDataFetching = <T>(
   expectedResult?: T,
   expectedError?: string,
-): ((_: string) => Data<T>) => () => {
+): ((_: string) => DataSource<T>) => () => {
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<T>();
   const [error, setError] = useState('');

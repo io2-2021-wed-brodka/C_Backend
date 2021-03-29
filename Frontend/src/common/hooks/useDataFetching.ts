@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 
-type Data<T> = {
+export type DataSource<T> = {
   error: string;
   loading: boolean;
   results: T;
 };
 
-const useDataFetching = <T>(dataSource: string): Data<T> => {
+const useDataFetching = <T>(dataSource: string): DataSource<T> => {
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<T>();
   const [error, setError] = useState('');
