@@ -13,6 +13,8 @@ import ApplicationBar from './ApplicationBar';
 import Navigation from './Navigation';
 import './UserApp.css';
 import StationsTab from './stations-tab/StationsTab';
+import { ServicesContext } from '../common/services';
+import { services } from './../common/services';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -46,17 +48,19 @@ const UserApp = (): JSX.Element => {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        <div className={classes.root}>
-          <ApplicationBar />
-          <Navigation />
-          <Container maxWidth="md" className={classes.container}>
-            <Switch>
-              <Route path="/stations">
-                <StationsTab />
-              </Route>
-            </Switch>
-          </Container>
-        </div>
+        <ServicesContext.Provider value={services}>
+          <div className={classes.root}>
+            <ApplicationBar />
+            <Navigation />
+            <Container maxWidth="md" className={classes.container}>
+              <Switch>
+                <Route path="/stations">
+                  <StationsTab />
+                </Route>
+              </Switch>
+            </Container>
+          </div>
+        </ServicesContext.Provider>
       </Router>
     </ThemeProvider>
   );
