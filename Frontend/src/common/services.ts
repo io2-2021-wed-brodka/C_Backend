@@ -1,15 +1,12 @@
 import { createContext, useContext } from 'react';
-import {
-  BikesList,
-  StationsList,
-  useBikesByStation,
-  useStations,
-} from './api/endpoints';
+import { useBikesByStation, useStations } from './api/endpoints';
+import { Bike } from './api/models/bike';
+import { Station } from './api/models/station';
 import { DataSource } from './hooks/useApi';
 
 type AllServices = {
-  useStations: () => DataSource<StationsList>;
-  useBikesOnStation: (stationId: string) => DataSource<BikesList>;
+  useStations: () => DataSource<Station[]>;
+  useBikesOnStation: (stationId: string) => DataSource<Bike[]>;
 };
 
 export const services: AllServices = {

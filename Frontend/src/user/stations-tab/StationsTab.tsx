@@ -5,15 +5,13 @@ import Station from './Station';
 import { useServices } from './../../common/services';
 
 const StationsTab = (): JSX.Element => {
-  const { results, error, loading } = useServices().useStations();
-
-  const { stations } = results;
+  const { results: stations, error, loading } = useServices().useStations();
 
   return (
     <>
       {loading && <Spinner />}
       {error && <Alert severity="error">Oops! You are offline...</Alert>}
-      {results &&
+      {stations &&
         stations.map(station => <Station key={station.id} {...station} />)}
     </>
   );

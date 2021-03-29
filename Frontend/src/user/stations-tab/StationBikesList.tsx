@@ -10,19 +10,19 @@ type Props = {
 };
 
 const StationBikesList = ({ stationId }: Props) => {
-  const { results, loading } = useServices().useBikesOnStation(stationId);
-
-  const { bikes } = results;
+  const { results: bikes, loading } = useServices().useBikesOnStation(
+    stationId,
+  );
 
   return (
     <Grid container justify="center" spacing={2}>
       {loading && <Spinner />}
-      {results && !bikes.length && (
+      {bikes && !bikes.length && (
         <Grid item>
           <Alert severity="info">No bikes here now!</Alert>
         </Grid>
       )}
-      {results &&
+      {bikes &&
         bikes.map(({ id }) => (
           <Grid item key={id}>
             <BikeTile id={id} />
