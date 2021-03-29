@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace BikesRentalServer.Controllers
 {
-    [Route("[controller]")]
+    [Route("/[controller]")]
     [ApiController]
     public class BikesController : ControllerBase
     {
@@ -33,7 +33,7 @@ namespace BikesRentalServer.Controllers
                         User = bike.User is null ? null : new GetBikeResponse.UserDto
                         {
                             Id = bike.User.Id.ToString(),
-                            Name = bike.User.Name,
+                            Name = bike.User.FirstName,
                         },
                         Status = bike.Status,
                     }),
@@ -61,7 +61,7 @@ namespace BikesRentalServer.Controllers
                 User = response.User is null ? null : new GetBikeResponse.UserDto
                 {
                     Id = response.User.Id.ToString(),
-                    Name = response.User.Name,
+                    Name = response.User.FirstName,
                 },
             });
         }
