@@ -42,7 +42,7 @@ const theme = createMuiTheme({
   },
 });
 
-const UserApp = (): JSX.Element => {
+const UserApp = () => {
   const classes = useStyles();
 
   return (

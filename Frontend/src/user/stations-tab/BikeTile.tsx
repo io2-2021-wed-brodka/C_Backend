@@ -24,7 +24,7 @@ type BikeTileProps = {
   id: string;
 };
 
-const BikeTile = ({ id }: BikeTileProps): JSX.Element => {
+const BikeTile = ({ id }: BikeTileProps) => {
   const classes = useStyles();
   return (
     <Paper className={classes.paper}>

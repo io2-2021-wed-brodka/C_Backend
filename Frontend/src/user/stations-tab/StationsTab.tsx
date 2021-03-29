@@ -4,7 +4,7 @@ import Spinner from '../../common/components/Spinner';
 import Station from './Station';
 import { useServices } from './../../common/services';
 
-const StationsTab = (): JSX.Element => {
+const StationsTab = () => {
   const { results: stations, error, loading } = useServices().useStations();
 
   return (

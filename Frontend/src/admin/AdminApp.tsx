@@ -1,7 +1,7 @@
 import React from 'react';
 import './AdminApp.css';
 
-const AdminApp = (): JSX.Element => {
+const AdminApp = () => {
   return <div>Admin app</div>;
 };
 

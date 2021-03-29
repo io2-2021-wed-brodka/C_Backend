@@ -25,7 +25,7 @@ type Props = {
   id: string;
 };
 
-const Station = ({ name, id }: Props): JSX.Element => {
+const Station = ({ name, id }: Props) => {
   const classes = useStyles();
   const [hasBeenOpened, setHasBeenOpened] = useState(false);
 

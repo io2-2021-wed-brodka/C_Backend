@@ -38,7 +38,7 @@ const useNavigation = () => {
   return [value, handleChange];
 };
 
-const Navigation = (): JSX.Element => {
+const Navigation = () => {
   const classes = useStyles();
   const [tab, handleTabChange] = useNavigation();
 
