@@ -57,6 +57,9 @@ const UserApp = () => {
                 <Route path="/stations">
                   <StationsTab />
                 </Route>
+                <Route path="/">
+                  <StationsTab />
+                </Route>
               </Switch>
             </Container>
           </div>
