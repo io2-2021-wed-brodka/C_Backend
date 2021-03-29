@@ -4,14 +4,16 @@ using BikesRentalServer.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BikesRentalServer.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class BikesContextModelSnapshot : ModelSnapshot
+    [Migration("20210328000012_rename_BikeStations_to_Stations")]
+    partial class rename_BikeStations_to_Stations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

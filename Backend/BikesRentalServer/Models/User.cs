@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BikesRentalServer
+namespace BikesRentalServer.Models
 {
     public class User
     {
