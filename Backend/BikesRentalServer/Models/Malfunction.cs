@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BikesRentalServer
+namespace BikesRentalServer.Models
 {
     public class Malfunction
     {
@@ -16,6 +16,6 @@ namespace BikesRentalServer
     public enum MalfunctionState
     {
         Fixed,
-        NotFixed
+        NotFixed,
     }
 }
