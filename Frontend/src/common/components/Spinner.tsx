@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const Spinner = (): JSX.Element => {
+const Spinner = () => {
   const classes = useStyles();
   return (
     <Container className={classes.root}>
