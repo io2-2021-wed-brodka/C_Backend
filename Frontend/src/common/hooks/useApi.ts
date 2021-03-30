@@ -6,7 +6,7 @@ export type DataSource<T> = {
   results: T | null;
 };
 
-const useApi = <T>(dataSource: string): DataSource<T> => {
+const useApi = <T>(url: string, params?: Request): DataSource<T> => {
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<T | null>(null);
   const [error, setError] = useState('');
@@ -14,7 +14,7 @@ const useApi = <T>(dataSource: string): DataSource<T> => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await fetch(dataSource);
+        const data = await fetch(params ? { ...params, url } : url);
         const json = await data.json();
 
         if (json) {
@@ -30,7 +30,7 @@ const useApi = <T>(dataSource: string): DataSource<T> => {
     }
 
     fetchData();
-  }, [dataSource]);
+  }, [url]);
 
   return {
     error,
