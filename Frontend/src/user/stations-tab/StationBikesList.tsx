@@ -34,7 +34,7 @@ const StationBikesList = ({ stationId }: Props) => {
       <DataLoader data={data}>
         {bikes => (
           <>
-            {bikes.length && <NoBikes />}
+            {!bikes.length && <NoBikes />}
             <Bikes bikes={bikes} />
           </>
         )}
