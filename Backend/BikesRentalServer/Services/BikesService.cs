@@ -1,4 +1,5 @@
 ﻿using BikesRentalServer.DataAccess;
+using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
 using Microsoft.EntityFrameworkCore;
@@ -26,9 +27,33 @@ namespace BikesRentalServer.Services
             return _context.Bikes.Include(bike => bike.User).Include(bike => bike.Station).SingleOrDefault(b => b.Id.ToString() == id);
         }
 
-        public void AddBike(Bike bike)
+        public Response<Bike> AddBike(AddBikeRequest request)
         {
-            _context.Bikes.Add(bike);
+            Response<Bike> response = new Response<Bike>();
+
+            // Check if station exists and is active.
+            var requestedStation = _context.Stations.Where(x => request.StationId == x.Id.ToString()).FirstOrDefault();
+            if (requestedStation is null)
+            {
+                response.Message = "Station does not exist";
+                return response;
+            }
+            if (requestedStation.Status == Models.BikeStationStatus.Blocked)
+            {
+                response.Message = "Requested station is blocked";
+                return response;
+            }
+
+            Bike newBike = new Bike();
+            newBike.Description = request.BikeDescription;
+            newBike.Station = requestedStation;
+
+            requestedStation.Bikes.Add(newBike);
+            _context.Bikes.Add(newBike);
+            _context.SaveChanges();
+
+            response.Object = newBike;
+            return response;
         }
     }
 }

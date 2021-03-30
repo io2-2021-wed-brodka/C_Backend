@@ -73,19 +73,10 @@ namespace BikesRentalServer.Controllers
         [HttpPost]
         public ActionResult AddBike(AddBikeRequest request)
         {
-            // Check if station exists and is active.
-            var requestedStation = _stationsService.GetStation(request.StationId);
-            if (requestedStation is null)
-                return BadRequest("Station does not exist");
+            var req = _bikesService.AddBike(request);
+            if (req.Object is null)
+                return BadRequest(req.Message);
 
-            if (requestedStation.Status == Models.BikeStationStatus.Blocked)
-                return BadRequest("Requested station is blocked");
-
-            Bike newBike = new Bike();
-            newBike.Description = request.BikeDescription;
-            newBike.Station = requestedStation;
-
-            _bikesService.AddBike(newBike);
             return Ok();
         }
     }
