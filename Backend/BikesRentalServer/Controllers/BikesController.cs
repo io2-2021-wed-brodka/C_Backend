@@ -67,10 +67,27 @@ namespace BikesRentalServer.Controllers
             });
         }
 
-        [HttpPost]
-        public ActionResult AddBike(AddBikeRequest request)
+        [HttpPost("{stationId}")]
+        public ActionResult AddBike(int stationId)
         {
-            var req = _bikesService.AddBike(request);
+            var req = _bikesService.AddBike(new AddBikeRequest()
+            {
+                StationId = stationId.ToString()
+            });
+
+            if (req.Object is null)
+                return BadRequest(req.Message);
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult RemoveBike(int id)
+        {
+            var req = _bikesService.RemoveBike(new RemoveBikeRequest() { 
+                BikeId = id.ToString() 
+            });
+
             if (req.Object is null)
                 return BadRequest(req.Message);
 
