@@ -13,8 +13,7 @@ import ApplicationBar from './ApplicationBar';
 import Navigation from './Navigation';
 import './UserApp.css';
 import StationsTab from './stations-tab/StationsTab';
-import { ServicesContext } from '../common/services';
-import { services } from './../common/services';
+import { mockedServices, ServicesContext } from '../common/services';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,7 +47,7 @@ const UserApp = () => {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        <ServicesContext.Provider value={services}>
+        <ServicesContext.Provider value={mockedServices}>
           <div className={classes.root}>
             <ApplicationBar />
             <Navigation />
