@@ -4,9 +4,9 @@ import { DataSource } from './useApi';
 const useMockedApi = <T>(
   expectedResult?: T,
   expectedError?: string,
-): ((_: string) => DataSource<T>) => () => {
+): DataSource<T> => {
   const [loading, setLoading] = useState(true);
-  const [results, setResults] = useState<T>();
+  const [results, setResults] = useState<T | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -14,7 +14,7 @@ const useMockedApi = <T>(
       setLoading(false);
       if (expectedError) {
         setError(expectedError);
-      } else {
+      } else if (expectedResult) {
         setResults(expectedResult);
       }
     }, Math.random() * 500 + 500);
@@ -23,7 +23,7 @@ const useMockedApi = <T>(
   return {
     error,
     loading,
-    results: results as T,
+    results,
   } as const;
 };
 
