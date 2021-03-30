@@ -3,7 +3,6 @@ using BikesRentalServer.Dtos.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using BikesRentalServer.Dtos.Requests;
-using BikesRentalServer.Models;
 
 namespace BikesRentalServer.Controllers
 {
@@ -12,12 +11,10 @@ namespace BikesRentalServer.Controllers
     public class BikesController : ControllerBase
     {
         private readonly IBikesService _bikesService;
-        private readonly IStationsService _stationsService;
 
-        public BikesController(IBikesService bikesService, IStationsService stationsService)
+        public BikesController(IBikesService bikesService)
         {
             _bikesService = bikesService;
-            _stationsService = stationsService;
         }
 
         [HttpGet]

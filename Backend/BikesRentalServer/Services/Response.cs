@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BikesRentalServer.Services
+﻿namespace BikesRentalServer.Services
 {
     public class Response<T>
     {
