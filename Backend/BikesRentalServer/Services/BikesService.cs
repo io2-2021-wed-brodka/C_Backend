@@ -25,5 +25,10 @@ namespace BikesRentalServer.Services
         {
             return _context.Bikes.Include(bike => bike.User).Include(bike => bike.Station).SingleOrDefault(b => b.Id.ToString() == id);
         }
+
+        public void AddBike(Bike bike)
+        {
+            _context.Bikes.Add(bike);
+        }
     }
 }

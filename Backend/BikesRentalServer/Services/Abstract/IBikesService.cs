@@ -7,5 +7,6 @@ namespace BikesRentalServer.Services.Abstract
     {
         IEnumerable<Bike> GetAllBikes();
         Bike GetBike(string id);
+        void AddBike(Bike bike);
     }
 }

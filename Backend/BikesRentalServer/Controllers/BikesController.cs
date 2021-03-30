@@ -2,6 +2,8 @@
 using BikesRentalServer.Dtos.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using BikesRentalServer.Dtos.Requests;
+using BikesRentalServer.Models;
 
 namespace BikesRentalServer.Controllers
 {
@@ -10,10 +12,12 @@ namespace BikesRentalServer.Controllers
     public class BikesController : ControllerBase
     {
         private readonly IBikesService _bikesService;
+        private readonly IStationsService _stationsService;
 
-        public BikesController(IBikesService bikesService)
+        public BikesController(IBikesService bikesService, IStationsService stationsService)
         {
             _bikesService = bikesService;
+            _stationsService = stationsService;
         }
 
         [HttpGet]
@@ -64,6 +68,25 @@ namespace BikesRentalServer.Controllers
                     Name = response.User.Name,
                 },
             });
+        }
+
+        [HttpPost]
+        public ActionResult AddBike(AddBikeRequest request)
+        {
+            // Check if station exists and is active.
+            var requestedStation = _stationsService.GetStation(request.StationId);
+            if (requestedStation is null)
+                return BadRequest("Station does not exist");
+
+            if (requestedStation.Status == Models.BikeStationStatus.Blocked)
+                return BadRequest("Requested station is blocked");
+
+            Bike newBike = new Bike();
+            newBike.Description = request.BikeDescription;
+            newBike.Station = requestedStation;
+
+            _bikesService.AddBike(newBike);
+            return Ok();
         }
     }
 }
