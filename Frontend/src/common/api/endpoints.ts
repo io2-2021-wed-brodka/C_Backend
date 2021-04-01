@@ -22,3 +22,6 @@ export const useBikesByStation = (stationId: string) =>
     useApi<BikesResponse>(`${API}/stations/${stationId}`),
     res => res.bikes,
   );
+
+export const useRentedBikes = () =>
+  mapResponse(useApi<BikesResponse>(`${API}/bikes/rented`), res => res.bikes);
