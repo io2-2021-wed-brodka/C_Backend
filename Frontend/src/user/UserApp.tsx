@@ -8,12 +8,13 @@ import {
   ThemeProvider,
 } from '@material-ui/core';
 import { green, pink } from '@material-ui/core/colors';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import ApplicationBar from './ApplicationBar';
 import Navigation from './Navigation';
 import './UserApp.css';
 import StationsTab from './stations-tab/StationsTab';
 import { mockedServices, ServicesContext } from '../common/services';
+import RentalsTab from './rentals-tab/RentalsTab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -46,24 +47,34 @@ const UserApp = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Router>
-        <ServicesContext.Provider value={mockedServices}>
+      <ServicesContext.Provider value={mockedServices}>
+        <BrowserRouter>
           <div className={classes.root}>
-            <ApplicationBar />
-            <Navigation />
-            <Container maxWidth="md" className={classes.container}>
-              <Switch>
-                <Route path="/stations">
-                  <StationsTab />
-                </Route>
-                <Route exact path="/">
-                  <StationsTab />
-                </Route>
-              </Switch>
-            </Container>
+            <Route
+              path="/"
+              render={({ location }) => (
+                <>
+                  <ApplicationBar />
+                  <Navigation pathname={location.pathname} />
+                  <Container maxWidth="md" className={classes.container}>
+                    <Switch>
+                      <Route path="/stations">
+                        <StationsTab />
+                      </Route>
+                      <Route path="/rentals">
+                        <RentalsTab />
+                      </Route>
+                      <Route exact path="/">
+                        <Redirect to={'/stations'} />
+                      </Route>
+                    </Switch>
+                  </Container>
+                </>
+              )}
+            />
           </div>
-        </ServicesContext.Provider>
-      </Router>
+        </BrowserRouter>
+      </ServicesContext.Provider>
     </ThemeProvider>
   );
 };
