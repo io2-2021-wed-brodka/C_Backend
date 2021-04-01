@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import axios, { AxiosRequestConfig } from 'axios';
 
 export type DataSource<T> = {
   error: string;
@@ -6,28 +7,25 @@ export type DataSource<T> = {
   results: T | null;
 };
 
-const useApi = <T>(url: string, params?: Request): DataSource<T> => {
+const useApi = <T>(url: string, params?: AxiosRequestConfig): DataSource<T> => {
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<T | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       try {
-        const data = await fetch(params ? { ...params, url } : url);
-        const json = await data.json();
+        const { data } = await axios({ ...params, url });
 
-        if (json) {
-          setLoading(false);
-          setResults(json);
+        if (data) {
+          setResults(data);
         }
       } catch (error) {
-        setLoading(false);
-        setError(error.message);
+        setError(error.data.message);
       }
 
       setLoading(false);
-    }
+    };
 
     fetchData();
   }, [url]);
