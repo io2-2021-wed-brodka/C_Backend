@@ -22,12 +22,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 type BikeTileProps = {
   id: string;
+  onClick?: () => void;
 };
 
-const BikeTile = ({ id }: BikeTileProps) => {
+const BikeTile = ({ id, onClick }: BikeTileProps) => {
   const classes = useStyles();
   return (
-    <Paper className={classes.paper}>
+    <Paper className={classes.paper} onClick={onClick}>
       <DirectionsBikeIcon style={{ fontSize: 30 }}></DirectionsBikeIcon>
       {`#${id}`}
     </Paper>

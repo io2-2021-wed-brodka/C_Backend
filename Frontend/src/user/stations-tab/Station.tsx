@@ -30,22 +30,20 @@ const Station = ({ name, id }: Props) => {
   const [hasBeenOpened, setHasBeenOpened] = useState(false);
 
   const handleChange = (_: unknown, isExpanded: boolean) => {
-    if (isExpanded) setHasBeenOpened(true);
+    if (isExpanded) {
+      setHasBeenOpened(true);
+    }
   };
 
   return (
-    <>
-      <Accordion onChange={handleChange}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.heading}>{name}</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          {hasBeenOpened && (
-            <StationBikesList stationId={id}></StationBikesList>
-          )}
-        </AccordionDetails>
-      </Accordion>
-    </>
+    <Accordion onChange={handleChange}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography className={classes.heading}>{name}</Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        {hasBeenOpened && <StationBikesList stationId={id}></StationBikesList>}
+      </AccordionDetails>
+    </Accordion>
   );
 };
 
