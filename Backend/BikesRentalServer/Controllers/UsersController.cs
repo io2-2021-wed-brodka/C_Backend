@@ -2,7 +2,6 @@
 using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Dtos.Responses;
 using BikesRentalServer.Services.Abstract;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BikesRentalServer.Controllers
@@ -20,7 +19,6 @@ namespace BikesRentalServer.Controllers
         }
         
         [HttpPost("login")]
-        [AllowAnonymous]
         public ActionResult<LogInResponse> LogIn(LogInRequest request)
         {
             var user = _usersService.GetUser(request.Login, request.Password);
@@ -35,7 +33,6 @@ namespace BikesRentalServer.Controllers
         }
 
         [HttpPost("register")]
-        [AllowAnonymous]
         public ActionResult<RegisterResponse> Register(RegisterRequest request)
         {
             var user = _usersService.AddUser(request.Login, request.Password);
