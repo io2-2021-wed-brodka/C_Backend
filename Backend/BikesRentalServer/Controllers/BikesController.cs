@@ -33,7 +33,7 @@ namespace BikesRentalServer.Controllers
                         User = bike.User is null ? null : new GetBikeResponse.UserDto
                         {
                             Id = bike.User.Id.ToString(),
-                            Name = bike.User.FirstName,
+                            Name = bike.User.Username,
                         },
                         Status = bike.Status,
                     }),
@@ -61,7 +61,7 @@ namespace BikesRentalServer.Controllers
                 User = response.User is null ? null : new GetBikeResponse.UserDto
                 {
                     Id = response.User.Id.ToString(),
-                    Name = response.User.FirstName,
+                    Name = response.User.Username,
                 },
             });
         }
