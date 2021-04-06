@@ -1,44 +1,81 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import BikeTile from './BikeTile';
-import Alert from './../../common/components/Alert';
-import { Bike } from '../../common/api/models/bike';
+import {
+  createStyles,
+  Button,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+  makeStyles,
+  Theme,
+  Typography,
+} from '@material-ui/core';
+import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
+import { Bike } from '../api/models/bike';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    button: {
+      marginLeft: theme.spacing(1),
+    },
+    alert: {
+      marginLeft: theme.spacing(2),
+    },
+    icon: {
+      minWidth: 36,
+    },
+  }),
+);
+
+export type BikeAction = {
+  onClick: () => void;
+  type: 'primary' | 'secondary' | 'default';
+  label: string;
+};
+
+export type BikeActionsForBike = (bikeId: string) => BikeAction[];
 
 type Props = {
   bikes: Bike[];
-  onBikeClick?: (bikeId: string) => void;
+  bikeActions: BikeActionsForBike;
 };
 
-const BikesList = ({ bikes, onBikeClick }: Props) => {
-  const onClick = (bikeId: string) => () => {
-    if (onBikeClick) {
-      onBikeClick(bikeId);
-    }
-  };
-
-  const NoBikes = () => (
-    <Grid item>
-      <Alert severity="info">No bikes here now!</Alert>
-    </Grid>
-  );
-
-  const Bikes = ({ bikes }: { bikes: Bike[] }) => (
-    <>
-      {bikes.map(({ id }) => (
-        <Grid item key={id}>
-          <BikeTile id={id} onClick={onClick(id)} />
-        </Grid>
-      ))}
-    </>
-  );
-
+const BikesList = ({ bikes, bikeActions }: Props) => {
+  const classes = useStyles();
   return (
-    <Grid container justify="center" spacing={2}>
-      <>
-        {!bikes.length && <NoBikes />}
-        <Bikes bikes={bikes} />
-      </>
-    </Grid>
+    <>
+      {!bikes.length && (
+        <Typography variant="h5" className={classes.alert}>
+          No bikes here!
+        </Typography>
+      )}
+      <List dense={true}>
+        {bikes.map(({ id }) => (
+          <ListItem key={id}>
+            <ListItemIcon className={classes.icon}>
+              <DirectionsBikeIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={<Typography variant="h6">{`#${id}`}</Typography>}
+            />
+            <ListItemSecondaryAction>
+              {bikeActions(id).map(({ onClick, label, type }) => (
+                <Button
+                  variant="contained"
+                  color={type}
+                  onClick={onClick}
+                  key={label}
+                  className={classes.button}
+                >
+                  {label}
+                </Button>
+              ))}
+            </ListItemSecondaryAction>
+          </ListItem>
+        ))}
+      </List>
+    </>
   );
 };
 

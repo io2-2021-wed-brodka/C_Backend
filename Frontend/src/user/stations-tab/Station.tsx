@@ -17,6 +17,12 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: theme.typography.pxToRem(15),
       fontWeight: theme.typography.fontWeightRegular,
     },
+    accordionDetails: {
+      padding: 0,
+    },
+    div: {
+      width: '100%',
+    },
   }),
 );
 
@@ -40,8 +46,12 @@ const Station = ({ name, id }: Props) => {
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography className={classes.heading}>{name}</Typography>
       </AccordionSummary>
-      <AccordionDetails>
-        {hasBeenOpened && <StationBikesList stationId={id}></StationBikesList>}
+      <AccordionDetails className={classes.accordionDetails}>
+        {hasBeenOpened && (
+          <div className={classes.div}>
+            <StationBikesList stationId={id}></StationBikesList>
+          </div>
+        )}
       </AccordionDetails>
     </Accordion>
   );
