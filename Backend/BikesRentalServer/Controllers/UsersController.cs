@@ -2,7 +2,6 @@
 using BikesRentalServer.Dtos.Responses;
 using BikesRentalServer.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace BikesRentalServer.Controllers
 {
@@ -32,9 +31,16 @@ namespace BikesRentalServer.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register()
+        public ActionResult<RegisterResponse> Register(RegisterRequest request)
         {
-            throw new NotImplementedException();
+            var user = _usersService.AddUser(request.Login, request.Password);
+            if (user is null)
+                return Conflict("Conflicting registration data");
+
+            return new RegisterResponse
+            {
+                Token = _usersService.GenerateBearerToken(user),
+            };
         }
     }
 }

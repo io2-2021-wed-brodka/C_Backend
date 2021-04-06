@@ -15,6 +15,25 @@ namespace BikesRentalServer.Services
         {
             _dbContext = dbContext;
         }
+
+        public User AddUser(string username, string password)
+        {
+            if (_dbContext.Users.Any(u => u.Username == username))
+                return null;
+
+            var user = _dbContext.Users
+                .Add(new User
+                {
+                    Username = username,
+                    PasswordHash = Toolbox.ComputeHash(password),
+                    Role = UserRole.User,
+                    State = UserState.Active,
+                })
+                .Entity;
+            _dbContext.SaveChanges();
+
+            return user;
+        }
         
         public User GetUser(string username, string password)
         {
