@@ -1,5 +1,5 @@
 import React from 'react';
-import { Snackbar as MatSnackbar, Button, IconButton } from '@material-ui/core';
+import { Snackbar as MatSnackbar, IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
   message: string;
 };
 
-export const Snackbar = ({ isOpen, setOpen, message }: Props) => {
+export const SnackBar = ({ isOpen, setOpen, message }: Props) => {
   const handleClose = (
     event: React.SyntheticEvent | React.MouseEvent,
     reason?: string,
@@ -32,23 +32,18 @@ export const Snackbar = ({ isOpen, setOpen, message }: Props) => {
         onClose={handleClose}
         message={message}
         action={
-          <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
-              CLOSE
-            </Button>
-            <IconButton
-              size="small"
-              aria-label="close"
-              color="inherit"
-              onClick={handleClose}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </React.Fragment>
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleClose}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
         }
       />
     </div>
   );
 };
 
-export default Snackbar;
+export default SnackBar;

@@ -7,11 +7,21 @@ import BikesList, {
 } from '../../common/components/BikesList';
 import usePromise from '../../common/hooks/usePromise';
 import useRefresh from './../../common/hooks/useRefresh';
+import { useSnackbar } from './../../common/hooks/useSnackbar';
+import SnackBar from '../../common/components/SnackBarComponent';
 
 const RentalsTab = () => {
   const [refreshBikesState, refreshBikes] = useRefresh();
   const data = usePromise(useServices().getRentedBikes, [refreshBikesState]);
   const returnBike = useServices().returnBike;
+  const snackbar = useSnackbar();
+
+  const onReturnBike = (bikeId: string) => () => {
+    returnBike(bikeId).then(() => {
+      refreshBikes();
+      snackbar.open(`Returned bike #${bikeId}`);
+    });
+  };
 
   const bikeActions: BikeActionsForBike = bikeId => [
     {
@@ -24,9 +34,7 @@ const RentalsTab = () => {
     {
       label: 'Return',
       type: 'secondary',
-      onClick: () => {
-        returnBike(bikeId).then(() => refreshBikes());
-      },
+      onClick: onReturnBike(bikeId),
     },
   ];
 
@@ -35,6 +43,7 @@ const RentalsTab = () => {
       <DataLoader data={data}>
         {bikes => <BikesList bikes={bikes} bikeActions={bikeActions} />}
       </DataLoader>
+      <SnackBar {...snackbar.props} />
     </Paper>
   );
 };

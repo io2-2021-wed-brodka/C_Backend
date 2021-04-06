@@ -9,5 +9,5 @@ export const useSnackbar = () => {
     setOpen(true);
   }, []);
 
-  return { open, snackbarProps: { isOpen, setOpen, message } };
+  return { open, props: { isOpen, setOpen, message } };
 };
