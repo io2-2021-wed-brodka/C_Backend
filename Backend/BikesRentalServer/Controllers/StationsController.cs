@@ -37,14 +37,16 @@ namespace BikesRentalServer.Controllers
             };
             return Ok(response);
         }
-        
+
         [HttpGet("{id}/bikes")]
         [UserAuthorization]
         [TechAuthorization]
         [AdminAuthorization]
-        public ActionResult<IEnumerable<GetBikeResponse>> GetAllBikesAtStation(string id)
+        public ActionResult<GetAllBikesResponse> GetAllBikesAtStation(string id)
         {
-            var response = _stationsService.GetAllBikesAtStation(id)
+            var response = new GetAllBikesResponse
+            {
+                Bikes = _stationsService.GetAllBikesAtStation(id)
                  .Select(bike => new GetBikeResponse
                  {
                      Id = bike.Id.ToString(),
@@ -59,8 +61,8 @@ namespace BikesRentalServer.Controllers
                          Name = bike.User.Username,
                      },
                      Status = bike.Status,
-                 });
-            
+                 }),
+            };
             return Ok(response);
         }
 
