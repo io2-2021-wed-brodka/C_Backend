@@ -19,7 +19,7 @@ namespace BikesRentalServer.Services
 
         public IEnumerable<Station> GetAllStations()
         {
-            return _context.Stations.ToArray();
+            return _context.Stations.Include(Station => Station.Bikes).ToArray();
         }
 
         public Station GetStation(string id)
