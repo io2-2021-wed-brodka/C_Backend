@@ -10,6 +10,10 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { useServices } from '../../common/services';
+import { useHistory } from 'react-router-dom';
+import { useSnackbar } from '../../common/hooks/useSnackbar';
+import { SnackBar } from './../../common/components/SnackBar';
 
 const Copyright = () => {
   return (
@@ -45,9 +49,20 @@ const LoginPage = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
 
+  const signIn = useServices().signIn;
+  const history = useHistory();
+  const snackbar = useSnackbar();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(login, password);
+
+    signIn(login, password)
+      .then(() => {
+        history.push('/');
+      })
+      .catch(() => {
+        snackbar.open('Login or password is incorrect');
+      });
   };
 
   return (
@@ -106,6 +121,7 @@ const LoginPage = () => {
       <Box mt={8}>
         <Copyright />
       </Box>
+      <SnackBar {...snackbar.props} />
     </Container>
   );
 };

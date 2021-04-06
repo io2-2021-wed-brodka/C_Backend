@@ -54,12 +54,15 @@ const UserApp = () => {
       <ServicesContext.Provider value={mockedServices}>
         <BrowserRouter>
           <div className={classes.root}>
-            <Route
-              path="/"
-              render={({ location }) => (
-                <Switch>
-                  <Route path="/login" component={LoginPage} />
-                  <Route path="/">
+            <Switch>
+              <Route path="/login" component={LoginPage} />
+              <Route exact path="/">
+                <Redirect to={'/stations'} />
+              </Route>
+              <Route
+                path="/"
+                render={({ location }) => (
+                  <>
                     <AppBar position="sticky">
                       <ApplicationBar />
                       <Navigation pathname={location.pathname} />
@@ -67,14 +70,11 @@ const UserApp = () => {
                     <Container maxWidth="md" className={classes.container}>
                       <Route path="/stations" component={StationsTab} />
                       <Route path="/rentals" component={RentalsTab} />
-                      <Route exact path="/">
-                        <Redirect to={'/stations'} />
-                      </Route>
                     </Container>
-                  </Route>
-                </Switch>
-              )}
-            />
+                  </>
+                )}
+              />
+            </Switch>
           </div>
         </BrowserRouter>
       </ServicesContext.Provider>
