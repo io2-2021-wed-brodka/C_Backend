@@ -55,7 +55,7 @@ namespace BikesRentalServer.Controllers
                 Bikes = bikes
                  .Select(bike => new GetBikeResponse
                  {
-                     Id = bike.Id.ToString()
+                     Id = bike.Id.ToString(),
                  }),
             };
             return Ok(response);
