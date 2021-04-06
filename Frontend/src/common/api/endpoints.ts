@@ -11,7 +11,7 @@ export const getStations = () =>
   apiConnection<StationsResponse>(`${API}/stations`).then(res => res.stations);
 
 export const getBikesByStation = (stationId: string) =>
-  apiConnection<BikesResponse>(`${API}/stations/${stationId}`).then(
+  apiConnection<BikesResponse>(`${API}/stations/${stationId}/bikes`).then(
     res => res.bikes,
   );
 
