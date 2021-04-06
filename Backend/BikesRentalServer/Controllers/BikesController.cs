@@ -20,7 +20,6 @@ namespace BikesRentalServer.Controllers
         }
 
         [HttpGet]
-        [UserAuthorization]
         [TechAuthorization]
         [AdminAuthorization]
         public ActionResult<GetAllBikesResponse> GetAllBikes()
