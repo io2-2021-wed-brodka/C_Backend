@@ -1,7 +1,6 @@
 import React from 'react';
 import './UserApp.css';
 import {
-  AppBar,
   createStyles,
   IconButton,
   makeStyles,
@@ -39,35 +38,33 @@ const ApplicationBar = () => {
   };
 
   return (
-    <AppBar position="static">
-      <Toolbar>
-        <IconButton
-          edge="start"
-          className={classes.menuButton}
-          color="inherit"
-          aria-label="menu"
-        >
-          <DirectionsBikeIcon />
+    <Toolbar>
+      <IconButton
+        edge="start"
+        className={classes.menuButton}
+        color="inherit"
+        aria-label="menu"
+      >
+        <DirectionsBikeIcon />
+      </IconButton>
+      <Typography variant="h6" className={classes.title}>
+        CityBikes
+      </Typography>
+      <div>
+        <IconButton onClick={handleMenu} color="inherit">
+          <AccountCircle />
         </IconButton>
-        <Typography variant="h6" className={classes.title}>
-          CityBikes
-        </Typography>
-        <div>
-          <IconButton onClick={handleMenu} color="inherit">
-            <AccountCircle />
-          </IconButton>
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-          >
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>My account</MenuItem>
-          </Menu>
-        </div>
-      </Toolbar>
-    </AppBar>
+        <Menu
+          id="menu-appbar"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={handleClose}>Profile</MenuItem>
+          <MenuItem onClick={handleClose}>My account</MenuItem>
+        </Menu>
+      </div>
+    </Toolbar>
   );
 };
 

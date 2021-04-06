@@ -1,9 +1,9 @@
 import { useReducer } from 'react';
 
 const useRefresh = () => {
-  const [, refresh] = useReducer(x => x + 1, 0);
+  const [refreshState, refresh] = useReducer(x => x + 1, 0);
 
-  return refresh;
+  return [refreshState, refresh];
 };
 
 export default useRefresh;

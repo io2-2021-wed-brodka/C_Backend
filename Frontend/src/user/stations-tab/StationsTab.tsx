@@ -2,9 +2,10 @@ import React from 'react';
 import Station from './Station';
 import { useServices } from './../../common/services';
 import DataLoader from '../../common/components/DataLoader';
+import usePromise from '../../common/hooks/usePromise';
 
 const StationsTab = () => {
-  const data = useServices().useStations();
+  const data = usePromise(useServices().getStations);
 
   return (
     <DataLoader data={data}>
