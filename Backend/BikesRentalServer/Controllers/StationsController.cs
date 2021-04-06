@@ -19,47 +19,63 @@ namespace BikesRentalServer.Controllers
         {
             _stationsService = stationsService;
         }
-        
+
         [HttpGet]
         [UserAuthorization]
         [TechAuthorization]
         [AdminAuthorization]
-        public ActionResult<IEnumerable<GetStationResponse>> GetAllStations()
+        public ActionResult<GetAllStationsResponse> GetAllStations()
         {
-            var response = _stationsService.GetAllStations()
+            var response = new GetAllStationsResponse
+            {
+                Stations = _stationsService.GetAllStations()
                 .Select(station => new GetStationResponse
                 {
                     Id = station.Id.ToString(),
                     Name = station.Name,
-                });
-            
+                }),
+            };
             return Ok(response);
         }
-        
+
         [HttpGet("{id}/bikes")]
         [UserAuthorization]
         [TechAuthorization]
         [AdminAuthorization]
-        public ActionResult<IEnumerable<GetBikeResponse>> GetAllBikesAtStation(int id)
+        public ActionResult<GetAllBikesResponse> GetAllBikesAtStation(string id)
         {
-            var response = _stationsService.GetAllBikesAtStation(id)
+            var bikes = _stationsService.GetAllBikesAtStation(id);
+            if (bikes is null)
+            {
+                return NotFound("Station not found");
+            }
+
+            var response = new GetAllBikesResponse
+            {
+                Bikes = bikes
                  .Select(bike => new GetBikeResponse
                  {
                      Id = bike.Id.ToString(),
-                     Station = bike.Station is null ? null : new GetBikeResponse.StationDto
-                     {
-                         Id = bike.Station.Id.ToString(),
-                         Name = bike.Station.Name,
-                     },
-                     User = bike.User is null ? null : new GetBikeResponse.UserDto
-                     {
-                         Id = bike.User.Id.ToString(),
-                         Name = bike.User.Username,
-                     },
-                     Status = bike.Status,
-                 });
-            
+                 }),
+            };
             return Ok(response);
+        }
+
+        [HttpGet("{id}")]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetStationResponse> GetStation(string id)
+        {
+            var response = _stationsService.GetStation(id);
+
+            if (response is null)
+                return NotFound("Station not found");
+            return Ok(new GetStationResponse
+            {
+                Id = response.Id.ToString(),           
+                Name = response.Name,
+            });
         }
     }
 }
