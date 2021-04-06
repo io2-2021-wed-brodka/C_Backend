@@ -4,6 +4,7 @@ import DataLoader from '../../common/components/DataLoader';
 import BikesList, {
   BikeActionsForBike,
 } from '../../common/components/BikesList';
+import usePromise from '../../common/hooks/usePromise';
 
 const bikeActions: BikeActionsForBike = bikeId => [
   {
@@ -27,7 +28,8 @@ type Props = {
 };
 
 const StationBikesList = ({ stationId }: Props) => {
-  const data = useServices().useBikesOnStation(stationId);
+  const getBikesOnStation = useServices().getBikesOnStation;
+  const data = usePromise(() => getBikesOnStation(stationId), [stationId]);
 
   return (
     <DataLoader data={data}>

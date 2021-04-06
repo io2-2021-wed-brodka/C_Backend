@@ -1,5 +1,5 @@
 import React from 'react';
-import { DataSource } from '../hooks/useApi';
+import { DataSource } from '../hooks/usePromise';
 import Alert from './Alert';
 import Spinner from './Spinner';
 

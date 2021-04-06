@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { DataSource } from './useApi';
+import { DataSource } from './usePromise';
 
 const useMockedApi = <T>(
   expectedResult?: T,

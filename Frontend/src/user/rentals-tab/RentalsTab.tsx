@@ -5,26 +5,30 @@ import { Paper } from '@material-ui/core';
 import BikesList, {
   BikeActionsForBike,
 } from '../../common/components/BikesList';
-
-const bikeActions: BikeActionsForBike = bikeId => [
-  {
-    label: 'Report',
-    type: 'default',
-    onClick: () => {
-      alert(bikeId);
-    },
-  },
-  {
-    label: 'Return',
-    type: 'secondary',
-    onClick: () => {
-      alert(bikeId);
-    },
-  },
-];
+import usePromise from '../../common/hooks/usePromise';
+import useRefresh from './../../common/hooks/useRefresh';
 
 const RentalsTab = () => {
-  const data = useServices().useRentedBikes();
+  const [refreshBikesState, refreshBikes] = useRefresh();
+  const data = usePromise(useServices().getRentedBikes, [refreshBikesState]);
+  const returnBike = useServices().returnBike;
+
+  const bikeActions: BikeActionsForBike = bikeId => [
+    {
+      label: 'Report',
+      type: 'default',
+      onClick: () => {
+        alert(bikeId);
+      },
+    },
+    {
+      label: 'Return',
+      type: 'secondary',
+      onClick: () => {
+        returnBike(bikeId).then(() => refreshBikes());
+      },
+    },
+  ];
 
   return (
     <Paper>
