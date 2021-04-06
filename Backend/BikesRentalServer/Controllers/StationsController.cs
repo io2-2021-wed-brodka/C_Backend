@@ -44,23 +44,18 @@ namespace BikesRentalServer.Controllers
         [AdminAuthorization]
         public ActionResult<GetAllBikesResponse> GetAllBikesAtStation(string id)
         {
+            var bikes = _stationsService.GetAllBikesAtStation(id);
+            if(bikes is null)
+            {
+                return NotFound("Station not found");
+            }
+
             var response = new GetAllBikesResponse
             {
-                Bikes = _stationsService.GetAllBikesAtStation(id)
+                Bikes = bikes
                  .Select(bike => new GetBikeResponse
                  {
-                     Id = bike.Id.ToString(),
-                     Station = bike.Station is null ? null : new GetBikeResponse.StationDto
-                     {
-                         Id = bike.Station.Id.ToString(),
-                         Name = bike.Station.Name,
-                     },
-                     User = bike.User is null ? null : new GetBikeResponse.UserDto
-                     {
-                         Id = bike.User.Id.ToString(),
-                         Name = bike.User.Username,
-                     },
-                     Status = bike.Status,
+                     Id = bike.Id.ToString()
                  }),
             };
             return Ok(response);
