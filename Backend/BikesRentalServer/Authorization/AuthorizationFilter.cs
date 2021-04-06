@@ -37,8 +37,8 @@ namespace BikesRentalServer.Authorization
                 context.Result = new UnauthorizedObjectResult("Unauthorized");
                 return;
             }
-            
-            var username = Encoding.UTF8.GetString(Convert.FromBase64String(token.ToString()));
+
+            var username = Encoding.UTF8.GetString(Convert.FromBase64String(token.ToString().Replace("Bearer ", "")));
             var user = _dbContext.Users.SingleOrDefault(u => u.Username == username);
             
             if (user is null || !roles.Contains(user.Role))
