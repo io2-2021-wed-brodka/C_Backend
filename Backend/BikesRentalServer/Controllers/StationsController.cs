@@ -20,7 +20,7 @@ namespace BikesRentalServer.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<GetStationResponse>> GetAllStations()
         {
-            var response = _stationsService.GetAllStations()
+            var response = _stationsService.GetAllStations().Object
                 .Select(station => new GetStationResponse
                 {
                     Id = station.Id.ToString(),
@@ -33,7 +33,7 @@ namespace BikesRentalServer.Controllers
         [HttpGet("{id}/bikes")]
         public ActionResult<IEnumerable<GetBikeResponse>> GetAllBikesAtStation(int id)
         {
-            var response = _stationsService.GetAllBikesAtStation(id)
+            var response = _stationsService.GetAllBikesAtStation(id).Object
                  .Select(bike => new GetBikeResponse
                  {
                      Id = bike.Id.ToString(),

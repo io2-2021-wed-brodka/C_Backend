@@ -1,8 +1,8 @@
-﻿using BikesRentalServer.Services.Abstract;
+﻿using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Dtos.Responses;
+using BikesRentalServer.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using BikesRentalServer.Dtos.Requests;
 
 namespace BikesRentalServer.Controllers
 {
@@ -22,7 +22,7 @@ namespace BikesRentalServer.Controllers
         {
             var response = new GetAllBikesResponse
             {
-                Bikes = _bikesService.GetAllBikes()
+                Bikes = _bikesService.GetAllBikes().Object
                     .Select(bike => new GetBikeResponse
                     {
                         Id = bike.Id.ToString(),
@@ -44,12 +44,12 @@ namespace BikesRentalServer.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<GetBikeResponse> GetBike(int id)
+        public ActionResult<GetBikeResponse> GetBike(string id)
         {
-            var response = _bikesService.GetBike(id.ToString());
-
+            var response = _bikesService.GetBike(id).Object;
             if (response is null)
                 return NotFound("Bike not found");
+            
             return Ok(new GetBikeResponse
             {
                 Id = response.Id.ToString(),
@@ -67,31 +67,24 @@ namespace BikesRentalServer.Controllers
             });
         }
 
-        [HttpPost("{stationId}")]
-        public ActionResult AddBike(int stationId)
+        [HttpPost]
+        public ActionResult<GetBikeResponse> AddBike(AddBikeRequest request)
         {
-            var req = _bikesService.AddBike(new AddBikeRequest()
-            {
-                StationId = stationId.ToString()
-            });
+            var response = _bikesService.AddBike(request);
+            if (response.Object is null)
+                return BadRequest(response.Message);
 
-            if (req.Object is null)
-                return BadRequest(req.Message);
-
-            return Ok();
+            return Ok(response.Object);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult RemoveBike(int id)
+        public ActionResult RemoveBike(RemoveBikeRequest request)
         {
-            var req = _bikesService.RemoveBike(new RemoveBikeRequest() { 
-                BikeId = id.ToString() 
-            });
+            var response = _bikesService.RemoveBike(request);
+            if (response.Object is null)
+                return BadRequest(response.Message);
 
-            if (req.Object is null)
-                return BadRequest(req.Message);
-
-            return Ok();
+            return Ok(response.Object);
         }
     }
 }

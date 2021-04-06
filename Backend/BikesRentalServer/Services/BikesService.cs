@@ -18,38 +18,48 @@ namespace BikesRentalServer.Services
             _context = context;
         }
 
-        public IEnumerable<Bike> GetAllBikes()
+        public ServiceActionResult<IEnumerable<Bike>> GetAllBikes()
         {
-            return _context.Bikes.Include(bike => bike.Station).Include(bike => bike.User).ToArray();
+            return new ServiceActionResult<IEnumerable<Bike>>
+            {
+                Object = _context.Bikes.Include(bike => bike.Station).Include(bike => bike.User),
+            };
         }
 
-        public Bike GetBike(string id)
+        public ServiceActionResult<Bike> GetBike(string id)
         {
-            return _context.Bikes.Include(bike => bike.User).Include(bike => bike.Station).SingleOrDefault(b => b.Id.ToString() == id);
+            return new ServiceActionResult<Bike>
+            {
+                Object = _context.Bikes
+                    .Include(bike => bike.User)
+                    .Include(bike => bike.Station)
+                    .SingleOrDefault(b => b.Id.ToString() == id),
+            };
         }
 
-        public Response<Bike> AddBike(AddBikeRequest request)
+        public ServiceActionResult<Bike> AddBike(AddBikeRequest request)
         {
-            Response<Bike> response = new Response<Bike>();
+            var response = new ServiceActionResult<Bike>();
 
-            // Check if station exists and is active.
-            var requestedStation = _context.Stations.Where(x => request.StationId == x.Id.ToString()).FirstOrDefault();
-            if (requestedStation is null)
+            var station = _context.Stations.FirstOrDefault(x => request.StationId == x.Id.ToString());
+            if (station is null)
             {
                 response.Message = "Station does not exist";
                 return response;
             }
-            if (requestedStation.Status == Models.BikeStationStatus.Blocked)
+            if (station.Status is BikeStationStatus.Blocked)
             {
                 response.Message = "Requested station is blocked";
                 return response;
             }
 
-            Bike newBike = new Bike();
-            newBike.Description = request.BikeDescription;
-            newBike.Station = requestedStation;
+            var newBike = new Bike
+            {
+                Description = string.Empty,
+                Station = station,
+            };
 
-            requestedStation.Bikes.Add(newBike);
+            station.Bikes.Add(newBike);
             _context.Bikes.Add(newBike);
             _context.SaveChanges();
 
@@ -57,50 +67,38 @@ namespace BikesRentalServer.Services
             return response;
         }
 
-        public Response<Bike> RemoveBike(RemoveBikeRequest request)
+        public ServiceActionResult<Bike> RemoveBike(RemoveBikeRequest request)
         {
-            Response<Bike> response = new Response<Bike>();
+            var response = new ServiceActionResult<Bike>();
 
-            var requestedBike = _context.Bikes.Where(b => b.Id.ToString() == request.BikeId).FirstOrDefault();
-
-            // Check if bike exists.
-            if (requestedBike is null)
+            var bike = _context.Bikes.FirstOrDefault(b => b.Id.ToString() == request.BikeId);
+            if (bike is null)
             {
                 response.Message = "Bike not found";
                 return response;
             }
-            // Check if bike is blocked
-            if(requestedBike.Status != BikeStatus.Blocked)
+            if (bike.Status != BikeStatus.Blocked)
             {
                 response.Message = "Bike not blocked";
                 return response;
             }
 
-            // If bike is rented, remove it from rentals.
-            if(requestedBike.User != null)
+            if (bike.User is not null)
             {
-                var rental = _context.Rentals.Where(r => r.Bike == requestedBike).FirstOrDefault();
-                if(rental is null)
-                {
-                    Console.WriteLine("Should never happen.");
-                }
-                else
-                {
-                    _context.Rentals.Remove(rental); // This should auto remove it from Users rental list.
-                }
+                var rental = _context.Rentals.FirstOrDefault(r => r.Bike == bike);
+                if (rental is null)
+                    throw new InvalidOperationException("Missing rental entry");
+                
+                _context.Rentals.Remove(rental);
             }
-            // Remove bike from all reservations.
-            var reservations = _context.Reservations.Where(r => r.Bike == requestedBike);
-            foreach(var reservation in reservations)
-            {
+            
+            foreach (var reservation in _context.Reservations.Where(r => r.Bike == bike))
                 _context.Reservations.Remove(reservation);
-            }
 
-            _context.Bikes.Remove(requestedBike);// This should auto remove it from Stations bikes list.
-
+            _context.Bikes.Remove(bike);
             _context.SaveChanges();
-
-            response.Object = requestedBike;
+            
+            response.Object = bike;
             return response;
         }
     }

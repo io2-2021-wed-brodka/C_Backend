@@ -6,9 +6,9 @@ namespace BikesRentalServer.Services.Abstract
 {
     public interface IBikesService
     {
-        IEnumerable<Bike> GetAllBikes();
-        Bike GetBike(string id);
-        Response<Bike> AddBike(AddBikeRequest request);
-        Response<Bike> RemoveBike(RemoveBikeRequest request);
+        ServiceActionResult<IEnumerable<Bike>> GetAllBikes();
+        ServiceActionResult<Bike> GetBike(string id);
+        ServiceActionResult<Bike> AddBike(AddBikeRequest request);
+        ServiceActionResult<Bike> RemoveBike(RemoveBikeRequest request);
     }
 }
