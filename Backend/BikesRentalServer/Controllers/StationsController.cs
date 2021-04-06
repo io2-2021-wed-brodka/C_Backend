@@ -45,7 +45,7 @@ namespace BikesRentalServer.Controllers
         public ActionResult<GetAllBikesResponse> GetAllBikesAtStation(string id)
         {
             var bikes = _stationsService.GetAllBikesAtStation(id);
-            if(bikes is null)
+            if (bikes is null)
             {
                 return NotFound("Station not found");
             }
