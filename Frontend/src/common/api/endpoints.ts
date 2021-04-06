@@ -1,6 +1,7 @@
 import useApi, { DataSource } from '../hooks/useApi';
 import { Station } from './models/station';
 import { Bike } from './models/bike';
+import apiConnection from './api-connection';
 
 const API = 'http://localhost:5000';
 
@@ -25,3 +26,6 @@ export const useBikesByStation = (stationId: string) =>
 
 export const useRentedBikes = () =>
   mapResponse(useApi<BikesResponse>(`${API}/bikes/rented`), res => res.bikes);
+
+export const returnBike = (bikeId: string) =>
+  apiConnection(`${API}/bikes/rented`, { method: 'POST', data: { bikeId } });

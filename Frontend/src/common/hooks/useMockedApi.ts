@@ -7,13 +7,13 @@ const useMockedApi = <T>(
 ): DataSource<T> => {
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<T | null>(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
       if (expectedError) {
-        setError(expectedError);
+        setError(new Error(expectedError));
       } else if (expectedResult) {
         setResults(expectedResult);
       }

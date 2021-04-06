@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import axios, { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig } from 'axios';
+import apiConnection from '../api/api-connection';
 
 export type DataSource<T> = {
-  error: string;
+  error: Error | null;
   loading: boolean;
   results: T | null;
 };
@@ -10,25 +11,14 @@ export type DataSource<T> = {
 const useApi = <T>(url: string, params?: AxiosRequestConfig): DataSource<T> => {
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<T | null>(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await axios({ ...params, url });
-
-        if (data) {
-          setResults(data);
-        }
-      } catch (error) {
-        setError(error.data.message);
-      }
-
-      setLoading(false);
-    };
-
-    fetchData();
-  }, [url]);
+    apiConnection<T>(url, params)
+      .then(results => setResults(results))
+      .catch(err => setError(err as Error))
+      .finally(() => setLoading(false));
+  }, [url, params]);
 
   return {
     error,
