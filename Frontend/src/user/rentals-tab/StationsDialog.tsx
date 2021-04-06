@@ -49,9 +49,7 @@ const StationsDialog = ({ close, selectStation }: Props) => {
           )}
         </DataLoader>
         <DialogActions>
-          <Button onClick={close} color="default">
-            Cancel
-          </Button>
+          <Button onClick={close}>Cancel</Button>
         </DialogActions>
       </Dialog>
     </div>
