@@ -52,9 +52,9 @@ namespace BikesRentalServer.Controllers
         [UserAuthorization]
         [TechAuthorization]
         [AdminAuthorization]
-        public ActionResult<GetBikeResponse> GetBike(int id)
+        public ActionResult<GetBikeResponse> GetBike(string id)
         {
-            var response = _bikesService.GetBike(id.ToString());
+            var response = _bikesService.GetBike(id);
 
             if (response is null)
                 return NotFound("Bike not found");

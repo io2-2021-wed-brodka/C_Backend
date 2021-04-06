@@ -19,17 +19,17 @@ namespace BikesRentalServer.Services
 
         public IEnumerable<Station> GetAllStations()
         {
-            throw new NotImplementedException();
+            return _context.Stations.ToArray();
         }
 
         public Station GetStation(string id)
         {
-            throw new NotImplementedException();
+            return _context.Stations.Include(Station => Station.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
         }
 
-        public IEnumerable<Bike> GetAllBikesAtStation(int id)
+        public IEnumerable<Bike> GetAllBikesAtStation(string id)
         {
-            return _context.Bikes.Include(bike => bike.Station).Include(bike => bike.User).Where(bike => bike.Station.Id == id);
+            return _context.Bikes.Include(bike => bike.Station).Include(bike => bike.User).Where(bike => bike.Station.Id.ToString() == id);
         }
 
        

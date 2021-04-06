@@ -19,20 +19,22 @@ namespace BikesRentalServer.Controllers
         {
             _stationsService = stationsService;
         }
-        
+
         [HttpGet]
         [UserAuthorization]
         [TechAuthorization]
         [AdminAuthorization]
-        public ActionResult<IEnumerable<GetStationResponse>> GetAllStations()
+        public ActionResult<GetAllStationsResponse> GetAllStations()
         {
-            var response = _stationsService.GetAllStations()
+            var response = new GetAllStationsResponse
+            {
+                Stations = _stationsService.GetAllStations()
                 .Select(station => new GetStationResponse
                 {
                     Id = station.Id.ToString(),
                     Name = station.Name,
-                });
-            
+                }),
+            };
             return Ok(response);
         }
         
@@ -40,7 +42,7 @@ namespace BikesRentalServer.Controllers
         [UserAuthorization]
         [TechAuthorization]
         [AdminAuthorization]
-        public ActionResult<IEnumerable<GetBikeResponse>> GetAllBikesAtStation(int id)
+        public ActionResult<IEnumerable<GetBikeResponse>> GetAllBikesAtStation(string id)
         {
             var response = _stationsService.GetAllBikesAtStation(id)
                  .Select(bike => new GetBikeResponse
@@ -60,6 +62,23 @@ namespace BikesRentalServer.Controllers
                  });
             
             return Ok(response);
+        }
+
+        [HttpGet("{id}")]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetStationResponse> GetStation(string id)
+        {
+            var response = _stationsService.GetStation(id);
+
+            if (response is null)
+                return NotFound("Station not found");
+            return Ok(new GetStationResponse
+            {
+                Id = response.Id.ToString(),           
+                Name = response.Name,
+            });
         }
     }
 }
