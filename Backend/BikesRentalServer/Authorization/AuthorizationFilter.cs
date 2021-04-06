@@ -1,5 +1,6 @@
 ﻿using BikesRentalServer.Authorization.Attributes;
 using BikesRentalServer.DataAccess;
+using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,12 @@ namespace BikesRentalServer.Authorization
         
         public void OnActionExecuting(ActionExecutingContext context)
         {
+            var roles = GetAuthorizedRoles(context.ActionDescriptor as ControllerActionDescriptor).ToArray();
+            
+            // no roles = allow anonymous
+            if (!roles.Any())
+                return;
+            
             if (!context.HttpContext.Request.Headers.TryGetValue("Authorization", out var token))
             {
                 context.Result = new UnauthorizedObjectResult("Unauthorized");
@@ -33,17 +40,8 @@ namespace BikesRentalServer.Authorization
             
             var username = Encoding.UTF8.GetString(Convert.FromBase64String(token.ToString()));
             var user = _dbContext.Users.SingleOrDefault(u => u.Username == username);
-            var roles = GetAuthorizedRoles(context.ActionDescriptor as ControllerActionDescriptor);
             
-            if (user is null)
-            {
-                if (roles.Any())
-                    context.Result = new UnauthorizedObjectResult("Unauthorized");
-                
-                return;
-            }
-
-            if (!roles.Contains(user.Role))
+            if (user is null || !roles.Contains(user.Role))
             {
                 context.Result = new UnauthorizedObjectResult("Unauthorized");
                 return;
