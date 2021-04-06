@@ -1,3 +1,4 @@
+using BikesRentalServer.Authorization;
 using BikesRentalServer.DataAccess;
 using BikesRentalServer.Filters;
 using BikesRentalServer.Services;
@@ -36,11 +37,13 @@ namespace BikesRentalServer
 
             services.AddSwaggerGen();
 
+            services.AddScoped<UserContext>();
             services.AddDbContext<DatabaseContext>(options =>
             {
                 options.UseSqlServer(_configuration.GetConnectionString("Default"));
             });
 
+            services.AddScoped<AuthorizationFilter>();
             services.AddScoped<ErrorMappingFilter>();
 
             services.AddTransient<IStationsService, StationsService>();
