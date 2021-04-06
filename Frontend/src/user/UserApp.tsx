@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  AppBar,
   Container,
   createMuiTheme,
   createStyles,
@@ -21,6 +22,8 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       flexGrow: 1,
       background: theme.palette.grey[100],
+      height: 'auto',
+      overflow: 'auto',
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -54,8 +57,10 @@ const UserApp = () => {
               path="/"
               render={({ location }) => (
                 <>
-                  <ApplicationBar />
-                  <Navigation pathname={location.pathname} />
+                  <AppBar position="sticky">
+                    <ApplicationBar />
+                    <Navigation pathname={location.pathname} />
+                  </AppBar>
                   <Container maxWidth="md" className={classes.container}>
                     <Switch>
                       <Route path="/stations">

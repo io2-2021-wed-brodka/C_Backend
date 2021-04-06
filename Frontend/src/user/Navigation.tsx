@@ -45,7 +45,7 @@ const Navigation = ({ pathname }: Props) => {
   const handleTabChange = useNavigation();
 
   return (
-    <Paper className={classes.root}>
+    <Paper className={classes.root} elevation={0} square>
       <Tabs
         value={pathname}
         onChange={handleTabChange}
