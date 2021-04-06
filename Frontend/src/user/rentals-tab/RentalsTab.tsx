@@ -8,7 +8,7 @@ import BikesList, {
 import usePromise from '../../common/hooks/usePromise';
 import useRefresh from './../../common/hooks/useRefresh';
 import { useSnackbar } from './../../common/hooks/useSnackbar';
-import SnackBar from '../../common/components/SnackBarComponent';
+import SnackBar from '../../common/components/SnackBar';
 
 const RentalsTab = () => {
   const [refreshBikesState, refreshBikes] = useRefresh();
