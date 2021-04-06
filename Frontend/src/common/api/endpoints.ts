@@ -18,8 +18,8 @@ export const getBikesByStation = (stationId: string) =>
 export const getRentedBikes = () =>
   apiConnection<BikesResponse>(`${API}/bikes/rented`).then(res => res.bikes);
 
-export const returnBike = (bikeId: string) =>
-  apiConnection<Bike>(`${API}/bikes/rented`, {
+export const returnBike = (stationId: string, bikeId: string) =>
+  apiConnection<Bike>(`${API}/stations/${stationId}/bikes`, {
     method: 'POST',
-    data: { bikeId },
+    data: { id: bikeId },
   });

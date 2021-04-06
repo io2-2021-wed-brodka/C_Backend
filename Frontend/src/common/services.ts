@@ -16,7 +16,7 @@ type AllServices = {
   getStations: () => Promise<Station[]>;
   getBikesOnStation: (stationId: string) => Promise<Bike[]>;
   getRentedBikes: () => Promise<Bike[]>;
-  returnBike: (bikeId: string) => Promise<Bike>;
+  returnBike: (stationId: string, bikeId: string) => Promise<Bike>;
 };
 
 export const services: AllServices = {

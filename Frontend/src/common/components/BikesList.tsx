@@ -4,7 +4,6 @@ import {
   Button,
   List,
   ListItem,
-  ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
   makeStyles,
@@ -13,6 +12,7 @@ import {
 } from '@material-ui/core';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import { Bike } from '../api/models/bike';
+import ListItemIconSansPadding from './ListItemIconSansPadding';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,9 +21,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     alert: {
       marginLeft: theme.spacing(2),
-    },
-    icon: {
-      minWidth: 36,
     },
   }),
 );
@@ -53,9 +50,9 @@ const BikesList = ({ bikes, bikeActions }: Props) => {
       <List dense={true}>
         {bikes.map(({ id }) => (
           <ListItem key={id}>
-            <ListItemIcon className={classes.icon}>
+            <ListItemIconSansPadding>
               <DirectionsBikeIcon />
-            </ListItemIcon>
+            </ListItemIconSansPadding>
             <ListItemText
               primary={<Typography variant="h6">{`#${id}`}</Typography>}
             />
