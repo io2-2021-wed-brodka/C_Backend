@@ -1,4 +1,6 @@
-﻿using BikesRentalServer.Dtos.Responses;
+﻿using BikesRentalServer.Authorization;
+using BikesRentalServer.Authorization.Attributes;
+using BikesRentalServer.Dtos.Responses;
 using BikesRentalServer.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -6,8 +8,9 @@ using System.Linq;
 
 namespace BikesRentalServer.Controllers
 {
-    [Route("[controller]")]
+    [Route("/[controller]")]
     [ApiController]
+    [ServiceFilter(typeof(AuthorizationFilter))]
     public class StationsController : ControllerBase
     {
         private readonly IStationsService _stationsService;
@@ -18,6 +21,9 @@ namespace BikesRentalServer.Controllers
         }
         
         [HttpGet]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
         public ActionResult<IEnumerable<GetStationResponse>> GetAllStations()
         {
             var response = _stationsService.GetAllStations()
@@ -31,6 +37,9 @@ namespace BikesRentalServer.Controllers
         }
         
         [HttpGet("{id}/bikes")]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
         public ActionResult<IEnumerable<GetBikeResponse>> GetAllBikesAtStation(int id)
         {
             var response = _stationsService.GetAllBikesAtStation(id)
@@ -45,7 +54,7 @@ namespace BikesRentalServer.Controllers
                      User = bike.User is null ? null : new GetBikeResponse.UserDto
                      {
                          Id = bike.User.Id.ToString(),
-                         Name = bike.User.Name,
+                         Name = bike.User.Username,
                      },
                      Status = bike.Status,
                  });
