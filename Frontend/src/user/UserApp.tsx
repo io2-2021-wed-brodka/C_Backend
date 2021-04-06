@@ -16,6 +16,7 @@ import './UserApp.css';
 import StationsTab from './stations-tab/StationsTab';
 import { mockedServices, ServicesContext } from '../common/services';
 import RentalsTab from './rentals-tab/RentalsTab';
+import LoginPage from './login-page/LoginPage';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -56,25 +57,22 @@ const UserApp = () => {
             <Route
               path="/"
               render={({ location }) => (
-                <>
-                  <AppBar position="sticky">
-                    <ApplicationBar />
-                    <Navigation pathname={location.pathname} />
-                  </AppBar>
-                  <Container maxWidth="md" className={classes.container}>
-                    <Switch>
-                      <Route path="/stations">
-                        <StationsTab />
-                      </Route>
-                      <Route path="/rentals">
-                        <RentalsTab />
-                      </Route>
+                <Switch>
+                  <Route path="/login" component={LoginPage} />
+                  <Route path="/">
+                    <AppBar position="sticky">
+                      <ApplicationBar />
+                      <Navigation pathname={location.pathname} />
+                    </AppBar>
+                    <Container maxWidth="md" className={classes.container}>
+                      <Route path="/stations" component={StationsTab} />
+                      <Route path="/rentals" component={RentalsTab} />
                       <Route exact path="/">
                         <Redirect to={'/stations'} />
                       </Route>
-                    </Switch>
-                  </Container>
-                </>
+                    </Container>
+                  </Route>
+                </Switch>
               )}
             />
           </div>
