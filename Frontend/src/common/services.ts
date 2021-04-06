@@ -4,7 +4,6 @@ import {
   getRentedBikes,
   getStations,
   returnBike,
-  signIn,
 } from './api/endpoints';
 import { Bike } from './api/models/bike';
 import { Station } from './api/models/station';
@@ -13,6 +12,7 @@ import { mockedBikesByStations } from './mocks/bikes';
 import { mockedRentedBikes } from './mocks/rentals';
 import { delay } from './mocks/mockedApiResponse';
 import { BearerToken } from './api/models/bearer-token';
+import { signInAndSaveToken } from './authentication/token-functions';
 
 type AllServices = {
   signIn: (login: string, password: string) => Promise<BearerToken>;
@@ -23,7 +23,7 @@ type AllServices = {
 };
 
 export const services: AllServices = {
-  signIn: signIn,
+  signIn: signInAndSaveToken,
   getStations: getStations,
   getBikesOnStation: getBikesByStation,
   getRentedBikes: getRentedBikes,
