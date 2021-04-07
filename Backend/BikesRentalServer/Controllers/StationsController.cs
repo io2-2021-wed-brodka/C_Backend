@@ -1,5 +1,6 @@
 ﻿using BikesRentalServer.Authorization;
 using BikesRentalServer.Authorization.Attributes;
+using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Dtos.Responses;
 using BikesRentalServer.Services;
 using BikesRentalServer.Services.Abstract;
@@ -15,10 +16,12 @@ namespace BikesRentalServer.Controllers
     public class StationsController : ControllerBase
     {
         private readonly IStationsService _stationsService;
+        private readonly IBikesService _bikesService;
 
-        public StationsController(IStationsService stationsService)
+        public StationsController(IStationsService stationsService, IBikesService bikesService)
         {
             _stationsService = stationsService;
+            _bikesService = bikesService;
         }
 
         [HttpGet]
@@ -36,6 +39,25 @@ namespace BikesRentalServer.Controllers
                     Name = station.Name,
                 }),
             });
+        }
+
+        [HttpGet("{id}")]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetStationResponse> GetStation(string id)
+        {
+            var response = _stationsService.GetStation(id);
+            return response.Status switch
+            {
+                Status.Success => Ok(new GetStationResponse
+                {
+                    Id = response.Object.Id.ToString(),
+                    Name = response.Object.Name,
+                }),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState or _ => throw new InvalidOperationException("Invalid status"),
+            };
         }
 
         [HttpGet("{id}/bikes")]
@@ -65,19 +87,24 @@ namespace BikesRentalServer.Controllers
             };
         }
 
-        [HttpGet("{id}")]
+        [HttpPost("{id}/bikes")]
         [UserAuthorization]
         [TechAuthorization]
         [AdminAuthorization]
-        public ActionResult<GetStationResponse> GetStation(string id)
+        public ActionResult<GetBikeResponse> GiveBikeBack(string id, GiveBikeBackRequest request)
         {
-            var response = _stationsService.GetStation(id);
+            var response = _bikesService.GiveBikeBack(request.Id, id);
             return response.Status switch
             {
-                Status.Success => Ok(new GetStationResponse
+                Status.Success => Ok(new GetBikeResponse
                 {
                     Id = response.Object.Id.ToString(),
-                    Name = response.Object.Name,
+                    Station = new GetBikeResponse.StationDto
+                    {
+                        Id = response.Object.Station.Id.ToString(),
+                        Name = response.Object.Station.Name,
+                    },
+                    Status = response.Object.Status,
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState or _ => throw new InvalidOperationException("Invalid status"),
