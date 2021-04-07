@@ -149,26 +149,19 @@ namespace BikesRentalServer.Services
             }
 
             var user = _dbContext.Users.Single(u => u.Username == _userContext.Username);
-            var reservations = _dbContext.Reservations.Where(r => r.Bike.Id == bike.Id).ToArray();
-            switch (reservations.Length)
+            var reservation = _dbContext.Reservations.SingleOrDefault(r => r.Bike.Id == bike.Id);
+            if (reservation is not null )
             {
-                case > 1:
-                    throw new InvalidOperationException("There are multiple reservations of the same bike");
-                case 1:
+                if (reservation.User.Id != user.Id)
                 {
-                    var reservation = reservations[0];
-                    if (reservation.User.Id != user.Id)
+                    return new ServiceActionResult<Bike>
                     {
-                        return new ServiceActionResult<Bike>
-                        {
-                            Message = "Bike is reserved by different user.",
-                            Status = Status.InvalidState,
-                        };
-                    }
-
-                    _dbContext.Reservations.Remove(reservation);
-                    break;
+                        Message = "Bike is reserved by different user.",
+                        Status = Status.InvalidState,
+                    };
                 }
+                
+                _dbContext.Reservations.Remove(reservation);
             }
 
             bike.Station = null;
