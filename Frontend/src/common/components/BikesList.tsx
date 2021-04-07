@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: theme.spacing(1),
     },
     alert: {
-      marginLeft: theme.spacing(2),
+      padding: theme.spacing(2),
     },
   }),
 );
@@ -47,31 +47,33 @@ const BikesList = ({ bikes, bikeActions }: Props) => {
           No bikes here!
         </Typography>
       )}
-      <List dense={true}>
-        {bikes.map(({ id }) => (
-          <ListItem key={id}>
-            <ListItemIconSansPadding>
-              <DirectionsBikeIcon />
-            </ListItemIconSansPadding>
-            <ListItemText
-              primary={<Typography variant="h6">{`#${id}`}</Typography>}
-            />
-            <ListItemSecondaryAction>
-              {bikeActions(id).map(({ onClick, label, type }) => (
-                <Button
-                  variant="contained"
-                  color={type}
-                  onClick={onClick}
-                  key={label}
-                  className={classes.button}
-                >
-                  {label}
-                </Button>
-              ))}
-            </ListItemSecondaryAction>
-          </ListItem>
-        ))}
-      </List>
+      {!!bikes.length && (
+        <List dense={true}>
+          {bikes.map(({ id }) => (
+            <ListItem key={id}>
+              <ListItemIconSansPadding>
+                <DirectionsBikeIcon />
+              </ListItemIconSansPadding>
+              <ListItemText
+                primary={<Typography variant="h6">{`#${id}`}</Typography>}
+              />
+              <ListItemSecondaryAction>
+                {bikeActions(id).map(({ onClick, label, type }) => (
+                  <Button
+                    variant="contained"
+                    color={type}
+                    onClick={onClick}
+                    key={label}
+                    className={classes.button}
+                  >
+                    {label}
+                  </Button>
+                ))}
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+        </List>
+      )}
     </>
   );
 };
