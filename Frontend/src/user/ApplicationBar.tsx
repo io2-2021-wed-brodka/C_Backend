@@ -12,6 +12,8 @@ import {
 } from '@material-ui/core';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import { clearTokenFromLocalStorage } from './../common/authentication/token-functions';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,6 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const ApplicationBar = () => {
   const classes = useStyles();
+  const history = useHistory();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -35,6 +38,11 @@ const ApplicationBar = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const logout = () => {
+    clearTokenFromLocalStorage();
+    history.push('/');
   };
 
   return (
@@ -60,8 +68,7 @@ const ApplicationBar = () => {
           open={open}
           onClose={handleClose}
         >
-          <MenuItem onClick={handleClose}>Profile</MenuItem>
-          <MenuItem onClick={handleClose}>My account</MenuItem>
+          <MenuItem onClick={logout}>Logout</MenuItem>
         </Menu>
       </div>
     </Toolbar>
