@@ -174,5 +174,17 @@ namespace BikesRentalServer.Services
                 Object = bike,
             };
         }
+
+        public ServiceActionResult<IEnumerable<Bike>> GetRentedBikes()
+        {
+            var user = _dbContext.Users.Single(u => u.Username == _userContext.Username);
+            var bikes = _dbContext.Bikes.Where(b => b.User.Id == user.Id);
+
+            return new ServiceActionResult<IEnumerable<Bike>>
+            {
+                Status = Status.Success,
+                Object = bikes,
+            };
+        }
     }
 }

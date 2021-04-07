@@ -153,5 +153,27 @@ namespace BikesRentalServer.Controllers
                 _ => throw new InvalidOperationException("Invalid state"),
             };
         }
+
+        [HttpGet("rented")]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetAllBikesResponse> GetRentedBikes()
+        {
+            var response = _bikesService.GetRentedBikes();
+            return new GetAllBikesResponse
+            {
+                Bikes = response.Object.Select(bike => new GetBikeResponse
+                {
+                    Id = bike.Id.ToString(),
+                    User = new GetBikeResponse.UserDto
+                    {
+                        Id = bike.User.Id.ToString(),
+                        Name = bike.User.Username,
+                    },
+                    Status = bike.Status,
+                }),
+            };
+        }
     }
 }
