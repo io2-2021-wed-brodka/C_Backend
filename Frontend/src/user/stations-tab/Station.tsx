@@ -17,6 +17,12 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: theme.typography.pxToRem(15),
       fontWeight: theme.typography.fontWeightRegular,
     },
+    accordionDetails: {
+      padding: 0,
+    },
+    div: {
+      width: '100%',
+    },
   }),
 );
 
@@ -30,22 +36,24 @@ const Station = ({ name, id }: Props) => {
   const [hasBeenOpened, setHasBeenOpened] = useState(false);
 
   const handleChange = (_: unknown, isExpanded: boolean) => {
-    if (isExpanded) setHasBeenOpened(true);
+    if (isExpanded) {
+      setHasBeenOpened(true);
+    }
   };
 
   return (
-    <>
-      <Accordion onChange={handleChange}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.heading}>{name}</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          {hasBeenOpened && (
+    <Accordion onChange={handleChange}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography className={classes.heading}>{name}</Typography>
+      </AccordionSummary>
+      <AccordionDetails className={classes.accordionDetails}>
+        {hasBeenOpened && (
+          <div className={classes.div}>
             <StationBikesList stationId={id}></StationBikesList>
-          )}
-        </AccordionDetails>
-      </Accordion>
-    </>
+          </div>
+        )}
+      </AccordionDetails>
+    </Accordion>
   );
 };
 

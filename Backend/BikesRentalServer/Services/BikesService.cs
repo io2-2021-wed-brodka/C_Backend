@@ -28,12 +28,24 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<Bike> GetBike(string id)
         {
+            var bike = _context.Bikes
+                .Include(bike => bike.User)
+                .Include(bike => bike.Station)
+                .SingleOrDefault(b => b.Id.ToString() == id);
+
+            if (bike is null)
+            {
+                return new ServiceActionResult<Bike>
+                {
+                    Message = "Bike not found.",
+                    Status = Status.EntityNotFound,
+                };
+            }
+            
             return new ServiceActionResult<Bike>
             {
-                Object = _context.Bikes
-                    .Include(bike => bike.User)
-                    .Include(bike => bike.Station)
-                    .SingleOrDefault(b => b.Id.ToString() == id),
+                Object = bike,
+                Status = Status.Success,
             };
         }
 
@@ -68,9 +80,9 @@ namespace BikesRentalServer.Services
             };
         }
 
-        public ServiceActionResult<Bike> RemoveBike(RemoveBikeRequest request)
+        public ServiceActionResult<Bike> RemoveBike(string id)
         {
-            var bike = _context.Bikes.FirstOrDefault(b => b.Id.ToString() == request.BikeId);
+            var bike = _context.Bikes.FirstOrDefault(b => b.Id.ToString() == id);
             if (bike is null)
             {
                 return new ServiceActionResult<Bike>
@@ -84,7 +96,7 @@ namespace BikesRentalServer.Services
                 return new ServiceActionResult<Bike>
                 {
                     Message = "Bike not blocked",
-                    Status = Status.InvalidStatus,
+                    Status = Status.InvalidState,
                 };
             }
 

@@ -11,6 +11,6 @@
     {
         Success,
         EntityNotFound,
-        InvalidStatus,
+        InvalidState,
     }
 }

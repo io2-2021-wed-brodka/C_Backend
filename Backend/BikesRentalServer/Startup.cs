@@ -1,3 +1,4 @@
+using BikesRentalServer.Authorization;
 using BikesRentalServer.DataAccess;
 using BikesRentalServer.Filters;
 using BikesRentalServer.Services;
@@ -37,15 +38,18 @@ namespace BikesRentalServer
             services.AddCors();
             services.AddSwaggerGen();
 
+            services.AddScoped<UserContext>();
             services.AddDbContext<DatabaseContext>(options =>
             {
                 options.UseSqlServer(_configuration.GetConnectionString("Default"));
             });
 
+            services.AddScoped<AuthorizationFilter>();
             services.AddScoped<ErrorMappingFilter>();
 
             services.AddTransient<IStationsService, StationsService>();
             services.AddTransient<IBikesService, BikesService>();
+            services.AddTransient<IUsersService, UsersService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

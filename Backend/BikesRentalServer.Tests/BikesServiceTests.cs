@@ -223,7 +223,7 @@ namespace BikesRentalServer.Tests
                 BikeId = bike.Id.ToString(),
             });
             
-            Assert.Equal(Status.InvalidStatus, result.Status);
+            Assert.Equal(Status.InvalidState, result.Status);
             Assert.Null(result.Object);
         }
         

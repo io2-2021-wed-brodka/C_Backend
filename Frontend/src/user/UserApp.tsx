@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  AppBar,
   Container,
   createMuiTheme,
   createStyles,
@@ -8,19 +9,22 @@ import {
   ThemeProvider,
 } from '@material-ui/core';
 import { green, pink } from '@material-ui/core/colors';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import ApplicationBar from './ApplicationBar';
 import Navigation from './Navigation';
 import './UserApp.css';
 import StationsTab from './stations-tab/StationsTab';
-import { ServicesContext } from '../common/services';
-import { services } from './../common/services';
+import { mockedServices, ServicesContext } from '../common/services';
+import RentalsTab from './rentals-tab/RentalsTab';
+import LoginPage from './login-page/LoginPage';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
       background: theme.palette.grey[100],
+      height: 'auto',
+      overflow: 'auto',
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -47,24 +51,33 @@ const UserApp = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Router>
-        <ServicesContext.Provider value={services}>
+      <ServicesContext.Provider value={mockedServices}>
+        <BrowserRouter>
           <div className={classes.root}>
-            <ApplicationBar />
-            <Navigation />
-            <Container maxWidth="md" className={classes.container}>
-              <Switch>
-                <Route path="/stations">
-                  <StationsTab />
-                </Route>
-                <Route exact path="/">
-                  <StationsTab />
-                </Route>
-              </Switch>
-            </Container>
+            <Switch>
+              <Route path="/login" component={LoginPage} />
+              <Route exact path="/">
+                <Redirect to={'/stations'} />
+              </Route>
+              <Route
+                path="/"
+                render={({ location }) => (
+                  <>
+                    <AppBar position="sticky">
+                      <ApplicationBar />
+                      <Navigation pathname={location.pathname} />
+                    </AppBar>
+                    <Container maxWidth="md" className={classes.container}>
+                      <Route path="/stations" component={StationsTab} />
+                      <Route path="/rentals" component={RentalsTab} />
+                    </Container>
+                  </>
+                )}
+              />
+            </Switch>
           </div>
-        </ServicesContext.Provider>
-      </Router>
+        </BrowserRouter>
+      </ServicesContext.Provider>
     </ThemeProvider>
   );
 };

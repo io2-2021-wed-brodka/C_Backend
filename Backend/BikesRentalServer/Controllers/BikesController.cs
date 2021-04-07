@@ -1,13 +1,18 @@
-﻿using BikesRentalServer.Dtos.Requests;
+using BikesRentalServer.Authorization;
+using BikesRentalServer.Authorization.Attributes;
+using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Dtos.Responses;
+using BikesRentalServer.Services;
 using BikesRentalServer.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 
 namespace BikesRentalServer.Controllers
 {
-    [Route("[controller]")]
+    [Route("/[controller]")]
     [ApiController]
+    [ServiceFilter(typeof(AuthorizationFilter))]
     public class BikesController : ControllerBase
     {
         private readonly IBikesService _bikesService;
@@ -18,6 +23,8 @@ namespace BikesRentalServer.Controllers
         }
 
         [HttpGet]
+        [TechAuthorization]
+        [AdminAuthorization]
         public ActionResult<GetAllBikesResponse> GetAllBikes()
         {
             var response = new GetAllBikesResponse
@@ -34,7 +41,7 @@ namespace BikesRentalServer.Controllers
                         User = bike.User is null ? null : new GetBikeResponse.UserDto
                         {
                             Id = bike.User.Id.ToString(),
-                            Name = bike.User.Name,
+                            Name = bike.User.Username,
                         },
                         Status = bike.Status,
                     }),
@@ -44,47 +51,84 @@ namespace BikesRentalServer.Controllers
         }
 
         [HttpGet("{id}")]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
         public ActionResult<GetBikeResponse> GetBike(string id)
         {
-            var response = _bikesService.GetBike(id).Object;
-            if (response is null)
-                return NotFound("Bike not found");
-            
-            return Ok(new GetBikeResponse
+            var response = _bikesService.GetBike(id);
+            return response.Status switch
             {
-                Id = response.Id.ToString(),
-                Status = response.Status,
-                Station = response.Station is null ? null : new GetBikeResponse.StationDto
+                Status.Success => Ok(new GetBikeResponse
                 {
-                    Id = response.Station.Id.ToString(),
-                    Name = response.Station.Name,
-                },
-                User = response.User is null ? null : new GetBikeResponse.UserDto
-                {
-                    Id = response.User.Id.ToString(),
-                    Name = response.User.Name,
-                },
-            });
+                    Id = response.Object.Id.ToString(),
+                    Status = response.Object.Status,
+                    Station = response.Object.Station is null ? null : new GetBikeResponse.StationDto
+                    {
+                        Id = response.Object.Station.Id.ToString(),
+                        Name = response.Object.Station.Name,
+                    },
+                    User = response.Object.User is null ? null : new GetBikeResponse.UserDto
+                    {
+                        Id = response.Object.User.Id.ToString(),
+                        Name = response.Object.User.Username,
+                    },
+                }),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState or _ => throw new InvalidOperationException("Invalid state"),
+            };
         }
 
         [HttpPost]
         public ActionResult<GetBikeResponse> AddBike(AddBikeRequest request)
         {
             var response = _bikesService.AddBike(request);
-            if (response.Object is null)
-                return BadRequest(response.Message);
-
-            return Ok(response.Object);
+            return response.Status switch
+            {
+                Status.Success => Ok(new GetBikeResponse
+                {
+                    Id = response.Object.Id.ToString(),
+                    Status = response.Object.Status,
+                    Station = response.Object.Station is null ? null : new GetBikeResponse.StationDto
+                    {
+                        Id = response.Object.Station.Id.ToString(),
+                        Name = response.Object.Station.Name,
+                    },
+                    User = response.Object.User is null ? null : new GetBikeResponse.UserDto
+                    {
+                        Id = response.Object.User.Id.ToString(),
+                        Name = response.Object.User.Username,
+                    },
+                }),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState or _ => throw new InvalidOperationException("Invalid state"),
+            };
         }
 
         [HttpDelete("{id}")]
-        public ActionResult RemoveBike(RemoveBikeRequest request)
+        public ActionResult RemoveBike(string id)
         {
-            var response = _bikesService.RemoveBike(request);
-            if (response.Object is null)
-                return BadRequest(response.Message);
-
-            return Ok(response.Object);
+            var response = _bikesService.RemoveBike(id);
+            return response.Status switch
+            {
+                Status.Success => Ok(new GetBikeResponse
+                {
+                    Id = response.Object.Id.ToString(),
+                    Status = response.Object.Status,
+                    Station = response.Object.Station is null ? null : new GetBikeResponse.StationDto
+                    {
+                        Id = response.Object.Station.Id.ToString(),
+                        Name = response.Object.Station.Name,
+                    },
+                    User = response.Object.User is null ? null : new GetBikeResponse.UserDto
+                    {
+                        Id = response.Object.User.Id.ToString(),
+                        Name = response.Object.User.Username,
+                    },
+                }),
+                Status.EntityNotFound or Status.InvalidState => NotFound(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
+            };
         }
     }
 }

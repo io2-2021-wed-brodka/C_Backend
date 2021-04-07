@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStyles, makeStyles, Paper, Tab, Tabs } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -26,33 +26,41 @@ const tabs = [
 ];
 
 const useNavigation = () => {
-  const [value, setValue] = React.useState(0);
   const history = useHistory();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleChange: any = (event: never, newValue: number) => {
-    setValue(newValue);
-    history.push(tabs[newValue].url);
+  const handleChange: any = (event: never, newValue: string) => {
+    history.push(newValue);
   };
 
-  return [value, handleChange];
+  return handleChange;
 };
 
-const Navigation = () => {
+type Props = {
+  pathname: string;
+};
+
+const Navigation = ({ pathname }: Props) => {
   const classes = useStyles();
-  const [tab, handleTabChange] = useNavigation();
+  const handleTabChange = useNavigation();
 
   return (
-    <Paper className={classes.root}>
+    <Paper className={classes.root} elevation={0} square>
       <Tabs
-        value={tab}
+        value={pathname}
         onChange={handleTabChange}
         indicatorColor="primary"
         textColor="primary"
         centered
       >
-        {tabs.map(({ name }) => (
-          <Tab label={name} key={name}></Tab>
+        {tabs.map(({ name, url }) => (
+          <Tab
+            label={name}
+            key={name}
+            component={Link}
+            to={url}
+            value={url}
+          ></Tab>
         ))}
       </Tabs>
     </Paper>

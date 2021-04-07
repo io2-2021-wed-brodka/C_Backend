@@ -2,7 +2,6 @@
 using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,22 +18,48 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<IEnumerable<Station>> GetAllStations()
         {
-            throw new NotImplementedException();
+            return new ServiceActionResult<IEnumerable<Station>>
+            {
+                Object = _context.Stations.ToArray(),
+                Status = Status.Success,
+            };
         }
 
         public ServiceActionResult<Station> GetStation(string id)
         {
-            throw new NotImplementedException();
+            var station = _context.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
+            if (station is null)
+            {
+                return new ServiceActionResult<Station>
+                {
+                    Message = "Station not found.",
+                    Status = Status.EntityNotFound,
+                };
+            }
+            
+            return new ServiceActionResult<Station>
+            {
+                Object = station,
+                Status = Status.Success,
+            };
         }
-
-        public ServiceActionResult<IEnumerable<Bike>> GetAllBikesAtStation(int id)
+        
+        public ServiceActionResult<IEnumerable<Bike>> GetAllBikesAtStation(string id)
         {
+            var station = _context.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
+            if (station is null)
+            {
+                return new ServiceActionResult<IEnumerable<Bike>>
+                {
+                    Message = "Station not found.",
+                    Status = Status.EntityNotFound,
+                };
+            }
+            
             return new ServiceActionResult<IEnumerable<Bike>>
             {
-                Object = _context.Bikes
-                    .Include(bike => bike.Station)
-                    .Include(bike => bike.User)
-                    .Where(bike => bike.Station.Id == id),
+                Object = station.Bikes,
+                Status = Status.Success,
             };
         }
 

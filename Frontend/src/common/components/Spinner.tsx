@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       display: 'flex',
       justifyContent: 'center',
+      padding: theme.spacing(1),
     },
     circle: {
       color: theme.palette.secondary.main,
