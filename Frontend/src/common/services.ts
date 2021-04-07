@@ -3,6 +3,7 @@ import {
   getBikesByStation,
   getRentedBikes,
   getStations,
+  rentBike,
   returnBike,
 } from './api/endpoints';
 import { Bike } from './api/models/bike';
@@ -23,6 +24,7 @@ type AllServices = {
   getBikesOnStation: (stationId: string) => Promise<Bike[]>;
   getRentedBikes: () => Promise<Bike[]>;
   returnBike: (stationId: string, bikeId: string) => Promise<Bike>;
+  rentBike: (bikeId: string) => Promise<Bike>;
 };
 
 export const services: AllServices = {
@@ -31,14 +33,12 @@ export const services: AllServices = {
   getBikesOnStation: getBikesByStation,
   getRentedBikes: getRentedBikes,
   returnBike: returnBike,
+  rentBike: rentBike,
 };
 
 export const mockedServices: AllServices = {
   signIn: login => {
-    return delay(
-      { token: login },
-      Math.random() < 0.02 ? new Error('Wrong credentials') : undefined,
-    ).then(bearerToken => {
+    return delay({ token: login }).then(bearerToken => {
       saveTokenInLocalStorage(bearerToken);
       return bearerToken;
     });
@@ -47,6 +47,7 @@ export const mockedServices: AllServices = {
   getBikesOnStation: stationId => delay(mockedBikesByStations[stationId]),
   getRentedBikes: () => delay(mockedRentedBikes),
   returnBike: bikeId => delay<Bike>({ id: bikeId }),
+  rentBike: bikeId => delay<Bike>({ id: bikeId }),
 };
 
 export const ServicesContext = createContext(services);
