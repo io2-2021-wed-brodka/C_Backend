@@ -149,10 +149,7 @@ namespace BikesRentalServer.Tests
             _dbContext.SaveChanges();
 
             var initialBikeCount = _dbContext.Bikes.Count();
-            var result = _bikesService.RemoveBike(new RemoveBikeRequest
-            {
-                BikeId = bike.Id.ToString(),
-            });
+            var result = _bikesService.RemoveBike(bike.Id.ToString());
             
             Assert.Equal(Status.Success, result.Status);
             Assert.Equal(initialBikeCount - 1, _dbContext.Bikes.Count());
@@ -176,10 +173,7 @@ namespace BikesRentalServer.Tests
                 .Entity;
             _dbContext.SaveChanges();
             
-            var result = _bikesService.RemoveBike(new RemoveBikeRequest
-            {
-                BikeId = bike.Id.ToString(),
-            });
+            var result = _bikesService.RemoveBike(bike.Id.ToString());
             
             Assert.Equal(Status.Success, result.Status);
             Assert.Equal(bike.Id, result.Object.Id);
@@ -191,10 +185,7 @@ namespace BikesRentalServer.Tests
         [Fact]
         public void RemoveNotExistingBikeShouldReturnEntityNotFound()
         {
-            var result = _bikesService.RemoveBike(new RemoveBikeRequest
-            {
-                BikeId = "1",
-            });
+            var result = _bikesService.RemoveBike("1");
             
             Assert.Equal(Status.EntityNotFound, result.Status);
             Assert.Null(result.Object);
@@ -218,10 +209,7 @@ namespace BikesRentalServer.Tests
                 .Entity;
             _dbContext.SaveChanges();
             
-            var result = _bikesService.RemoveBike(new RemoveBikeRequest
-            {
-                BikeId = bike.Id.ToString(),
-            });
+            var result = _bikesService.RemoveBike(bike.Id.ToString());
             
             Assert.Equal(Status.InvalidState, result.Status);
             Assert.Null(result.Object);
