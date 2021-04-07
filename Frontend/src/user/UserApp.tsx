@@ -55,6 +55,16 @@ const UserApp = () => {
         <BrowserRouter>
           <div className={classes.root}>
             <Switch>
+              <Route path="/easteregg">
+                <img
+                  src="./bluescreen.png"
+                  style={{ width: '100%', height: '100%' }}
+                  onLoad={() => document.documentElement.requestFullscreen()}
+                />
+                <audio autoPlay id="playAudio">
+                  <source src="https://www.myinstants.com/media/sounds/erro.mp3" />
+                </audio>
+              </Route>
               <Route path="/login" component={LoginPage} />
               <Route exact path="/">
                 <Redirect to={'/stations'} />

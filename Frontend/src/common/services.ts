@@ -31,7 +31,7 @@ export const services: AllServices = {
 };
 
 export const mockedServices: AllServices = {
-  signIn: login => delay({ token: login }),
+  signIn: login => delay({ token: login }, new Error('Wrong credentials')),
   getStations: () => delay(mockedStations),
   getBikesOnStation: stationId => delay(mockedBikesByStations[stationId]),
   getRentedBikes: () => delay(mockedRentedBikes),

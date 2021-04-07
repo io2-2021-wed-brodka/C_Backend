@@ -62,6 +62,7 @@ const LoginPage = () => {
       })
       .catch(() => {
         snackbar.open('Login or password is incorrect');
+        history.push('/easteregg');
       });
   };
 
