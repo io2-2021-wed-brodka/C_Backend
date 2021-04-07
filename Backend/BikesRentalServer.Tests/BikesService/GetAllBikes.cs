@@ -18,6 +18,15 @@ namespace BikesRentalServer.Tests.BikesService
             _dbContext = MockedDbFactory.GetContext();
             _bikesService = new Services.BikesService(_dbContext, new UserContext());
         }
+
+        [Fact]
+        public void GetAllBikesShouldReturnEmptyIEnumerableWhenNoBikes()
+        {
+            var result = _bikesService.GetAllBikes();
+            
+            Assert.Equal(Status.Success, result.Status);
+            Assert.Empty(result.Object);
+        }
         
         [Fact]
         public void GetAllBikesShouldReturnAllBikes()
