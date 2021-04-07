@@ -148,6 +148,16 @@ namespace BikesRentalServer.Services
             }
 
             var user = _dbContext.Users.Single(u => u.Username == _userContext.Username);
+            var rentalCount = _dbContext.Bikes.Count(b => b.User.Id == user.Id);
+            if (rentalCount >= 4)
+            {
+                return new ServiceActionResult<Bike>
+                {
+                    Message = "Rental limit exceeded.",
+                    Status = Status.InvalidState,
+                };
+            }
+            
             var reservation = _dbContext.Reservations.SingleOrDefault(r => r.Bike.Id == bike.Id);
             if (reservation is not null )
             {
