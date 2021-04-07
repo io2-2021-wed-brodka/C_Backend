@@ -17,6 +17,7 @@ import StationsTab from './stations-tab/StationsTab';
 import { mockedServices, ServicesContext } from '../common/services';
 import RentalsTab from './rentals-tab/RentalsTab';
 import LoginPage from './login-page/LoginPage';
+import { getTokenFromLocalStorage } from '../common/authentication/token-functions';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -73,6 +74,7 @@ const UserApp = () => {
                 path="/"
                 render={({ location }) => (
                   <>
+                    {!getTokenFromLocalStorage() && <Redirect to={'/login'} />}
                     <AppBar position="sticky">
                       <ApplicationBar />
                       <Navigation pathname={location.pathname} />

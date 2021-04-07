@@ -12,7 +12,10 @@ import { mockedBikesByStations } from './mocks/bikes';
 import { mockedRentedBikes } from './mocks/rentals';
 import { delay } from './mocks/mockedApiResponse';
 import { BearerToken } from './api/models/bearer-token';
-import { signInAndSaveToken } from './authentication/token-functions';
+import {
+  signInAndSaveToken,
+  saveTokenInLocalStorage,
+} from './authentication/token-functions';
 
 type AllServices = {
   signIn: (login: string, password: string) => Promise<BearerToken>;
@@ -31,7 +34,15 @@ export const services: AllServices = {
 };
 
 export const mockedServices: AllServices = {
-  signIn: login => delay({ token: login }, new Error('Wrong credentials')),
+  signIn: login => {
+    return delay(
+      { token: login },
+      Math.random() < 0.02 ? new Error('Wrong credentials') : undefined,
+    ).then(bearerToken => {
+      saveTokenInLocalStorage(bearerToken);
+      return bearerToken;
+    });
+  },
   getStations: () => delay(mockedStations),
   getBikesOnStation: stationId => delay(mockedBikesByStations[stationId]),
   getRentedBikes: () => delay(mockedRentedBikes),
