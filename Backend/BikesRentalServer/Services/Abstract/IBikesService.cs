@@ -1,11 +1,14 @@
-﻿using BikesRentalServer.Models;
+﻿using BikesRentalServer.Dtos.Requests;
+using BikesRentalServer.Models;
 using System.Collections.Generic;
 
 namespace BikesRentalServer.Services.Abstract
 {
     public interface IBikesService
     {
-        IEnumerable<Bike> GetAllBikes();
-        Bike GetBike(string id);
+        ServiceActionResult<IEnumerable<Bike>> GetAllBikes();
+        ServiceActionResult<Bike> GetBike(string id);
+        ServiceActionResult<Bike> AddBike(AddBikeRequest request);
+        ServiceActionResult<Bike> RemoveBike(string id);
     }
 }

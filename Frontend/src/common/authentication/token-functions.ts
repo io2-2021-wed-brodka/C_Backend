@@ -1,12 +1,18 @@
 import { BearerToken } from './../api/models/bearer-token';
 import { signIn } from './../api/endpoints';
 
+const localStorageKey = 'token';
+
 export const saveTokenInLocalStorage = (token: BearerToken) => {
-  localStorage.setItem('token', JSON.stringify(token));
+  localStorage.setItem(localStorageKey, JSON.stringify(token));
+};
+
+export const clearTokenFromLocalStorage = () => {
+  localStorage.removeItem(localStorageKey);
 };
 
 export const getTokenFromLocalStorage = () => {
-  const tokenInJSON = localStorage.getItem('token');
+  const tokenInJSON = localStorage.getItem(localStorageKey);
 
   if (tokenInJSON) {
     return JSON.parse(tokenInJSON) as BearerToken;
