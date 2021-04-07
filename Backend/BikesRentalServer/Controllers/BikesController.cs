@@ -80,6 +80,7 @@ namespace BikesRentalServer.Controllers
         }
 
         [HttpPost]
+        [AdminAuthorization]
         public ActionResult<GetBikeResponse> AddBike(AddBikeRequest request)
         {
             var response = _bikesService.AddBike(request);
@@ -106,6 +107,7 @@ namespace BikesRentalServer.Controllers
         }
 
         [HttpDelete("{id}")]
+        [AdminAuthorization]
         public ActionResult RemoveBike(string id)
         {
             var response = _bikesService.RemoveBike(id);
