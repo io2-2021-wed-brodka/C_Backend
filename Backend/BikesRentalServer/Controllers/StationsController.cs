@@ -57,11 +57,6 @@ namespace BikesRentalServer.Controllers
                             Id = bike.Station.Id.ToString(),
                             Name = bike.Station.Name,
                         },
-                        User = bike.User is null ? null : new GetBikeResponse.UserDto()
-                        {
-                            Id = bike.User.Id.ToString(),
-                            Name = bike.User.Username,
-                        },
                         Status = bike.Status,
                     }),
                 }),

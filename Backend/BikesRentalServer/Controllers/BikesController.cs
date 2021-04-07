@@ -90,15 +90,10 @@ namespace BikesRentalServer.Controllers
                 {
                     Id = response.Object.Id.ToString(),
                     Status = response.Object.Status,
-                    Station = response.Object.Station is null ? null : new GetBikeResponse.StationDto
+                    Station = new GetBikeResponse.StationDto
                     {
                         Id = response.Object.Station.Id.ToString(),
                         Name = response.Object.Station.Name,
-                    },
-                    User = response.Object.User is null ? null : new GetBikeResponse.UserDto
-                    {
-                        Id = response.Object.User.Id.ToString(),
-                        Name = response.Object.User.Username,
                     },
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
