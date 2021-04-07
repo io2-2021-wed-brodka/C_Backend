@@ -148,7 +148,7 @@ namespace BikesRentalServer.Services
                 };
             }
 
-            var user = _dbContext.Users.Include(u => u.Rentals).Single(u => u.Username == _userContext.Username);
+            var user = _dbContext.Users.Single(u => u.Username == _userContext.Username);
             var reservations = _dbContext.Reservations.Where(r => r.Bike.Id == bike.Id).ToArray();
             switch (reservations.Length)
             {
