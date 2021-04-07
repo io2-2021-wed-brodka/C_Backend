@@ -2,7 +2,6 @@
 using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,19 +16,51 @@ namespace BikesRentalServer.Services
             _context = context;
         }
 
-        public IEnumerable<Station> GetAllStations()
+        public ServiceActionResult<IEnumerable<Station>> GetAllStations()
         {
-            return _context.Stations.ToArray();
+            return new ServiceActionResult<IEnumerable<Station>>
+            {
+                Object = _context.Stations.ToArray(),
+                Status = Status.Success,
+            };
         }
 
-        public Station GetStation(string id)
+        public ServiceActionResult<Station> GetStation(string id)
         {
-            return _context.Stations.SingleOrDefault(s => s.Id.ToString() == id);
+            var station = _context.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
+            if (station is null)
+            {
+                return new ServiceActionResult<Station>
+                {
+                    Message = "Station not found.",
+                    Status = Status.EntityNotFound,
+                };
+            }
+            
+            return new ServiceActionResult<Station>
+            {
+                Object = station,
+                Status = Status.Success,
+            };
         }
-
-        public IEnumerable<Bike> GetAllBikesAtStation(string id)
+        
+        public ServiceActionResult<IEnumerable<Bike>> GetAllBikesAtStation(string id)
         {
-            return _context.Stations.Include(s => s.Bikes).FirstOrDefault(s => s.Id.ToString() == id)?.Bikes;
+            var station = _context.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
+            if (station is null)
+            {
+                return new ServiceActionResult<IEnumerable<Bike>>
+                {
+                    Message = "Station not found.",
+                    Status = Status.EntityNotFound,
+                };
+            }
+            
+            return new ServiceActionResult<IEnumerable<Bike>>
+            {
+                Object = station.Bikes,
+                Status = Status.Success,
+            };
         }
 
        
