@@ -34,6 +34,7 @@ namespace BikesRentalServer
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
+            services.AddCors();
             services.AddSwaggerGen();
 
             services.AddDbContext<DatabaseContext>(options =>
@@ -54,6 +55,13 @@ namespace BikesRentalServer
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyHeader();
+                builder.AllowAnyMethod();
+                builder.AllowAnyOrigin();
+            });
 
             app.UseSwagger();
             app.UseSwaggerUI(options =>
