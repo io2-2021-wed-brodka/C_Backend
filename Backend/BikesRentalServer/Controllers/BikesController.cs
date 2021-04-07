@@ -108,7 +108,7 @@ namespace BikesRentalServer.Controllers
 
         [HttpDelete("{id}")]
         [AdminAuthorization]
-        public ActionResult RemoveBike(string id)
+        public ActionResult<GetBikeResponse> RemoveBike(string id)
         {
             var response = _bikesService.RemoveBike(id);
             return response.Status switch
