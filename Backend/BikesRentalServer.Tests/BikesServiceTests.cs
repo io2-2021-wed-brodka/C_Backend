@@ -1,8 +1,8 @@
-﻿using BikesRentalServer.Dtos.Requests;
+﻿using BikesRentalServer.DataAccess;
+using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
-using Moq;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -11,185 +11,222 @@ namespace BikesRentalServer.Tests
 {
     public class BikesServiceTests
     {
-        [Fact]
-        public void AddBikeTest()
+        private readonly DatabaseContext _dbContext;
+        private readonly BikesService _bikesService;
+        
+        public BikesServiceTests()
         {
-            var context = MockedDbFactory.GetContext();
-            var bikesService = new Mock<BikesService>(context);
-
-            var initialBikeCount = bikesService.Object.GetAllBikes().Object.Count();
-            var response = bikesService.Object.AddBike(new AddBikeRequest 
-            { 
-                StationId = context.Stations.First().Id.ToString(),
-            });
-
-            Assert.Equal(initialBikeCount + 1, bikesService.Object.GetAllBikes().Object.Count());
-            Assert.NotNull(response.Object);
+            _dbContext = MockedDbFactory.GetContext();
+            _bikesService = new BikesService(_dbContext);
         }
 
+        #region GetAllBikes tests
+        
         [Fact]
-        public void AddBikeWrongStationTest()
+        public void GetAllBikesShouldReturnAllBikes()
         {
-            var context = MockedDbFactory.GetContext();
-            var bikesService = new Mock<BikesService>(context);
-
-            var initialBikeCount = bikesService.Object.GetAllBikes().Object.Count();
-            bikesService.Object.AddBike(new AddBikeRequest
-            {
-                StationId = "15",
-            });
-
-            Assert.Equal(initialBikeCount, bikesService.Object.GetAllBikes().Object.Count());
-        }
-
-        [Fact]
-        public void RemoveBlockedBikeTest()
-        {
-            var context = MockedDbFactory.GetContext();
-            var bikesService = new Mock<BikesService>(context);
-
-            context.Bikes.Add(new Bike
-            {
-                Status = BikeStatus.Blocked,
-                Station = context.Stations.FirstOrDefault(),
-            });
-            context.SaveChanges();
-            
-            var initialBikeCount = bikesService.Object.GetAllBikes().Object.Count();
-            bikesService.Object.RemoveBike(new RemoveBikeRequest
-            {
-                BikeId = "1",
-            });
-
-            Assert.Equal(initialBikeCount - 1, bikesService.Object.GetAllBikes().Object.Count());
-        }
-
-        [Fact]
-        public void RemoveWorkingBikeTest()
-        {
-            var context = MockedDbFactory.GetContext();
-            var bikesService = new Mock<BikesService>(context);
-
-            context.Bikes.Add(new Bike
-            {
-                Id = 1,
-                Status = BikeStatus.Working, 
-                Station = context.Stations.FirstOrDefault(),
-            });
-            context.SaveChanges();
-
-            var initialBikeCount = bikesService.Object.GetAllBikes().Object.Count();
-            bikesService.Object.RemoveBike(new RemoveBikeRequest
-            {
-                BikeId = "1",
-            });
-
-            Assert.Equal(initialBikeCount, bikesService.Object.GetAllBikes().Object.Count());
-        }
-
-        [Fact]
-        public void RemoveNotExistingBikeTest()
-        {
-            var context = MockedDbFactory.GetContext();
-            var bikesService = new Mock<BikesService>(context);
-
-            context.Bikes.Add(new Bike
-            {
-                Id = 1,
-                Status = BikeStatus.Working,
-                Station = context.Stations.FirstOrDefault(),
-            });
-            context.SaveChanges();
-            
-            var initialBikeCount = bikesService.Object.GetAllBikes().Object.Count();
-            bikesService.Object.RemoveBike(new RemoveBikeRequest
-            {
-                BikeId = "5",
-            });
-
-            Assert.Equal(initialBikeCount, bikesService.Object.GetAllBikes().Object.Count());
-        }
-
-        [Fact]
-        public void RemoveRentedBike()
-        {
-            var context = MockedDbFactory.GetContext();
-            var bikesService = new Mock<BikesService>(context);
-
-            var bike = new Bike
-            {
-                Id = 1, 
-                Status = BikeStatus.Blocked, 
-                Station = null,
-            };
-            var rental = new Rental
-            {
-                Bike = bike,
-            };
-            var user = new User
-            {
-                Rentals = new List<Rental>
+            var station = _dbContext.Stations.Add(new Station
                 {
-                    rental,
+                    Status = BikeStationStatus.Working,
+                    Name = "Al. Jerozolimskie",
+                })
+                .Entity;
+
+            var addedBikes = new []
+            {
+                new Bike
+                {
+                    Id = 1,
+                    Station = station,
+                    Description = "first one!",
+                },
+                new Bike
+                {
+                    Id = 2,
+                    Station = station,
+                    Description = "Another ONE",
+                },
+                new Bike
+                {
+                    Id = 4,
+                    Station = station,
+                    Description = "Skipped one",
+                },
+                new Bike
+                {
+                    Id = 7,
+                    Station = station,
+                    Description = string.Empty,
                 },
             };
-            rental.User = user;
-            bike.User = user;
+            _dbContext.Bikes.AddRange(addedBikes);
+            _dbContext.SaveChanges();
 
-            context.Bikes.Add(bike);
-            context.Users.Add(user);
-            context.Rentals.Add(rental);
-            context.SaveChanges();
+            var result = _bikesService.GetAllBikes();
+            
+            Assert.Equal(Status.Success, result.Status);
+            Assert.Equal(addedBikes.Length, result.Object.Count());
+            Assert.True(addedBikes.OrderBy(b => b.Id).SequenceEqual(result.Object.OrderBy(b => b.Id)));
+        }
+        
+        #endregion
+        
+        #region AddBike tests
 
-            var initialBikeCount = bikesService.Object.GetAllBikes().Object.Count();
-            var initialRentalCount = context.Rentals.Count();
+        [Fact]
+        public void AddBikeShouldIncrementBikeCount()
+        {
+            var station = _dbContext.Stations.Add(new Station
+                {
+                    Status = BikeStationStatus.Working,
+                    Name = "Al. Jerozolimskie",
+                })
+                .Entity;
+            _dbContext.SaveChanges();
 
-            bikesService.Object.RemoveBike(new RemoveBikeRequest
+            var initialBikeCount = _dbContext.Bikes.Count();
+            var result = _bikesService.AddBike(new AddBikeRequest
             {
-                BikeId = bike.Id.ToString(),
+                StationId = station.Id.ToString(),
             });
-
-            Assert.Equal(initialBikeCount - 1, bikesService.Object.GetAllBikes().Object.Count());
-            Assert.Equal(initialRentalCount - 1, context.Rentals.Count());
+            
+            Assert.Equal(Status.Success, result.Status);
+            Assert.Equal(initialBikeCount + 1, _dbContext.Bikes.Count());
         }
 
         [Fact]
-        public void RemoveReservedBike()
+        public void AddBikeShouldReturnCreatedBike()
         {
-            var context = MockedDbFactory.GetContext();
-            var bikesService = new Mock<BikesService>(context);
+            var station = _dbContext.Stations.Add(new Station
+                {
+                    Status = BikeStationStatus.Working,
+                    Name = "Al. Jerozolimskie",
+                })
+                .Entity;
+            _dbContext.SaveChanges();
 
-            var bike = new Bike
+            var result = _bikesService.AddBike(new AddBikeRequest
             {
-                Id = 1,
-                Status = BikeStatus.Blocked,
-                Station = context.Stations.FirstOrDefault(),
-            };
-            var user = new User();
-            var reservation = new Reservation
-            {
-                Bike = bike,
-                User = user,
-            };
-            user.Reservations = new List<Reservation>
-            {
-                reservation,
-            };
-            context.Bikes.Add(bike);
-            context.Users.Add(user);
-            context.Reservations.Add(reservation);
-            context.SaveChanges();
+                StationId = station.Id.ToString(),
+            });
+            
+            Assert.Equal(Status.Success, result.Status);
+            Assert.NotNull(result.Object);
+            Assert.Equal(station, result.Object.Station);
+        }
 
-            var initialBikeCount = bikesService.Object.GetAllBikes().Object.Count();
-            var initialReservationCount = context.Reservations.Count();
+        [Fact]
+        public void AddBikeToNotExistingStationShouldReturnEntityNotFound()
+        {
+            var result = _bikesService.AddBike(new AddBikeRequest
+            {
+                StationId = "3",
+            });
+            
+            Assert.Equal(Status.EntityNotFound, result.Status);
+            Assert.Null(result.Object);
+        }
+        
+        #endregion
+        
+        #region RemoveBike tests
 
-            bikesService.Object.RemoveBike(new RemoveBikeRequest
+        [Fact]
+        public void RemoveBikeShouldDecrementBikeCount()
+        {
+            var station = _dbContext.Stations.Add(new Station
+                {
+                    Status = BikeStationStatus.Working,
+                    Name = "Al. Jerozolimskie",
+                })
+                .Entity;
+            var bike = _dbContext.Bikes.Add(new Bike
+                {
+                    Station = station,
+                    Status = BikeStatus.Blocked,
+                })
+                .Entity;
+            _dbContext.SaveChanges();
+
+            var initialBikeCount = _dbContext.Bikes.Count();
+            var result = _bikesService.RemoveBike(new RemoveBikeRequest
             {
                 BikeId = bike.Id.ToString(),
             });
+            
+            Assert.Equal(Status.Success, result.Status);
+            Assert.Equal(initialBikeCount - 1, _dbContext.Bikes.Count());
+        }
 
-            Assert.Equal(initialBikeCount - 1, bikesService.Object.GetAllBikes().Object.Count());
-            Assert.Equal(initialReservationCount - 1, context.Reservations.Count());
-        }                                         
+        [Fact]
+        public void RemoveBikeShouldReturnRemovedBike()
+        {
+            var station = _dbContext.Stations.Add(new Station
+                {
+                    Status = BikeStationStatus.Working,
+                    Name = "Al. Jerozolimskie",
+                })
+                .Entity;
+            var bike = _dbContext.Bikes.Add(new Bike
+                {
+                    Station = station,
+                    Status = BikeStatus.Blocked,
+                    Description = "some things here",
+                })
+                .Entity;
+            _dbContext.SaveChanges();
+            
+            var result = _bikesService.RemoveBike(new RemoveBikeRequest
+            {
+                BikeId = bike.Id.ToString(),
+            });
+            
+            Assert.Equal(Status.Success, result.Status);
+            Assert.Equal(bike.Id, result.Object.Id);
+            Assert.Equal(bike.Description, result.Object.Description);
+            Assert.Equal(bike.Station, result.Object.Station);
+            Assert.Equal(bike.Status, result.Object.Status);
+        }
+
+        [Fact]
+        public void RemoveNotExistingBikeShouldReturnEntityNotFound()
+        {
+            var result = _bikesService.RemoveBike(new RemoveBikeRequest
+            {
+                BikeId = "1",
+            });
+            
+            Assert.Equal(Status.EntityNotFound, result.Status);
+            Assert.Null(result.Object);
+        }
+
+        [Fact]
+        public void RemoveNotBlockedBikeShouldReturnInvalidState()
+        {
+            var station = _dbContext.Stations.Add(new Station
+                {
+                    Status = BikeStationStatus.Working,
+                    Name = "Al. Jerozolimskie",
+                })
+                .Entity;
+            var bike = _dbContext.Bikes.Add(new Bike
+                {
+                    Station = station,
+                    Status = BikeStatus.Working,
+                    Description = "some things here",
+                })
+                .Entity;
+            _dbContext.SaveChanges();
+            
+            var result = _bikesService.RemoveBike(new RemoveBikeRequest
+            {
+                BikeId = bike.Id.ToString(),
+            });
+            
+            Assert.Equal(Status.InvalidStatus, result.Status);
+            Assert.Null(result.Object);
+        }
+        
+        #endregion
     }
 }

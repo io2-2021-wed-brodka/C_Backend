@@ -39,18 +39,24 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<Bike> AddBike(AddBikeRequest request)
         {
-            var response = new ServiceActionResult<Bike>();
-
-            var station = _context.Stations.FirstOrDefault(x => request.StationId == x.Id.ToString());
+            var station = _context.Stations
+                .Include(s => s.Bikes)
+                .FirstOrDefault(x => request.StationId == x.Id.ToString());
             if (station is null)
             {
-                response.Message = "Station does not exist";
-                return response;
+                return new ServiceActionResult<Bike>
+                {
+                    Message = "Station does not exist",
+                    Status = Status.EntityNotFound,
+                };
             }
             if (station.Status is BikeStationStatus.Blocked)
             {
-                response.Message = "Requested station is blocked";
-                return response;
+                return new ServiceActionResult<Bike>
+                {
+                    Message = "Requested station is blocked",
+                    Status = Status.InvalidStatus,
+                };
             }
 
             var newBike = new Bike
@@ -63,24 +69,31 @@ namespace BikesRentalServer.Services
             _context.Bikes.Add(newBike);
             _context.SaveChanges();
 
-            response.Object = newBike;
-            return response;
+            return new ServiceActionResult<Bike>
+            {
+                Object = newBike,
+                Status = Status.Success,
+            };
         }
 
         public ServiceActionResult<Bike> RemoveBike(RemoveBikeRequest request)
         {
-            var response = new ServiceActionResult<Bike>();
-
             var bike = _context.Bikes.FirstOrDefault(b => b.Id.ToString() == request.BikeId);
             if (bike is null)
             {
-                response.Message = "Bike not found";
-                return response;
+                return new ServiceActionResult<Bike>
+                {
+                    Message = "Bike not found",
+                    Status = Status.EntityNotFound,
+                };
             }
             if (bike.Status != BikeStatus.Blocked)
             {
-                response.Message = "Bike not blocked";
-                return response;
+                return new ServiceActionResult<Bike>
+                {
+                    Message = "Bike not blocked",
+                    Status = Status.InvalidStatus,
+                };
             }
 
             if (bike.User is not null)
@@ -97,9 +110,12 @@ namespace BikesRentalServer.Services
 
             _context.Bikes.Remove(bike);
             _context.SaveChanges();
-            
-            response.Object = bike;
-            return response;
+
+            return new ServiceActionResult<Bike>
+            {
+                Object = bike,
+                Status = Status.Success,
+            };
         }
     }
 }
