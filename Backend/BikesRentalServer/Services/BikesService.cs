@@ -50,14 +50,6 @@ namespace BikesRentalServer.Services
                     Status = Status.EntityNotFound,
                 };
             }
-            if (station.Status is BikeStationStatus.Blocked)
-            {
-                return new ServiceActionResult<Bike>
-                {
-                    Message = "Requested station is blocked",
-                    Status = Status.InvalidStatus,
-                };
-            }
 
             var newBike = new Bike
             {
@@ -97,16 +89,7 @@ namespace BikesRentalServer.Services
             }
 
             if (bike.User is not null)
-            {
-                var rental = _context.Rentals.FirstOrDefault(r => r.Bike == bike);
-                if (rental is null)
-                    throw new InvalidOperationException("Missing rental entry");
-                
-                _context.Rentals.Remove(rental);
-            }
-            
-            foreach (var reservation in _context.Reservations.Where(r => r.Bike == bike))
-                _context.Reservations.Remove(reservation);
+                throw new InvalidOperationException("Trying to remove rented bike");
 
             _context.Bikes.Remove(bike);
             _context.SaveChanges();
