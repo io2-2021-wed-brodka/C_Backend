@@ -5,8 +5,8 @@ namespace BikesRentalServer.Services.Abstract
 {
     public interface IStationsService
     {
-        IEnumerable<Station> GetAllStations();
-        Station GetStation(string id);
-        IEnumerable<Bike> GetAllBikesAtStation(string id);
+        ServiceActionResult<IEnumerable<Station>> GetAllStations();
+        ServiceActionResult<Station> GetStation(string id);
+        ServiceActionResult<IEnumerable<Bike>> GetAllBikesAtStation(string id);
     }
 }
