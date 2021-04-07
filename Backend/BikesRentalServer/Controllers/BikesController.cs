@@ -128,7 +128,38 @@ namespace BikesRentalServer.Controllers
                         Name = response.Object.User.Username,
                     },
                 }),
-                Status.EntityNotFound or Status.InvalidState => NotFound(response.Message),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
+            };
+        }
+
+        [HttpPost("rented")]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetBikeResponse> RentBike(RentBikeRequest request)
+        {
+            var response = _bikesService.RentBike(request);
+            return response.Status switch
+            {
+                Status.Success => Ok(new GetBikeResponse
+                {
+                    Id = response.Object.Id.ToString(),
+                    Status = response.Object.Status,
+                    Station = response.Object.Station is null ? null : new GetBikeResponse.StationDto
+                    {
+                        Id = response.Object.Station.Id.ToString(),
+                        Name = response.Object.Station.Name,
+                    },
+                    User = response.Object.User is null ? null : new GetBikeResponse.UserDto
+                    {
+                        Id = response.Object.User.Id.ToString(),
+                        Name = response.Object.User.Username,
+                    },
+                }),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState => UnprocessableEntity(response.Message),
                 _ => throw new InvalidOperationException("Invalid state"),
             };
         }

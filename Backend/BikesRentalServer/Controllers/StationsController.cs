@@ -5,7 +5,6 @@ using BikesRentalServer.Services;
 using BikesRentalServer.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace BikesRentalServer.Controllers
@@ -28,13 +27,15 @@ namespace BikesRentalServer.Controllers
         [AdminAuthorization]
         public ActionResult<GetAllStationsResponse> GetAllStations()
         {
-            var response = _stationsService.GetAllStations()
-                .Object.Select(station => new GetStationResponse
+            var response = _stationsService.GetAllStations();
+            return Ok(new GetAllStationsResponse
+            {
+                Stations = response.Object.Select(station => new GetStationResponse
                 {
                     Id = station.Id.ToString(),
                     Name = station.Name,
-                });
-            return Ok(response);
+                }),
+            });
         }
 
         [HttpGet("{id}/bikes")]

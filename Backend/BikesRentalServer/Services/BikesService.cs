@@ -1,5 +1,7 @@
-﻿using BikesRentalServer.DataAccess;
+﻿using BikesRentalServer.Authorization;
+using BikesRentalServer.DataAccess;
 using BikesRentalServer.Dtos.Requests;
+using BikesRentalServer.Migrations;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
 using Microsoft.EntityFrameworkCore;
@@ -11,26 +13,28 @@ namespace BikesRentalServer.Services
 {
     public class BikesService : IBikesService
     {
-        private readonly DatabaseContext _context;
+        private readonly DatabaseContext _dbContext;
+        private readonly UserContext _userContext;
 
-        public BikesService(DatabaseContext context)
+        public BikesService(DatabaseContext dbContext, UserContext userContext)
         {
-            _context = context;
+            _dbContext = dbContext;
+            _userContext = userContext;
         }
 
         public ServiceActionResult<IEnumerable<Bike>> GetAllBikes()
         {
             return new ServiceActionResult<IEnumerable<Bike>>
             {
-                Object = _context.Bikes.Include(bike => bike.Station).Include(bike => bike.User),
+                Object = _dbContext.Bikes.Include(b => b.Station).Include(b => b.User),
             };
         }
 
         public ServiceActionResult<Bike> GetBike(string id)
         {
-            var bike = _context.Bikes
-                .Include(bike => bike.User)
-                .Include(bike => bike.Station)
+            var bike = _dbContext.Bikes
+                .Include(b => b.User)
+                .Include(b => b.Station)
                 .SingleOrDefault(b => b.Id.ToString() == id);
 
             if (bike is null)
@@ -51,9 +55,9 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<Bike> AddBike(AddBikeRequest request)
         {
-            var station = _context.Stations
+            var station = _dbContext.Stations
                 .Include(s => s.Bikes)
-                .FirstOrDefault(x => request.StationId == x.Id.ToString());
+                .SingleOrDefault(s => request.StationId == s.Id.ToString());
             if (station is null)
             {
                 return new ServiceActionResult<Bike>
@@ -70,8 +74,8 @@ namespace BikesRentalServer.Services
             };
 
             station.Bikes.Add(newBike);
-            _context.Bikes.Add(newBike);
-            _context.SaveChanges();
+            _dbContext.Bikes.Add(newBike);
+            _dbContext.SaveChanges();
 
             return new ServiceActionResult<Bike>
             {
@@ -82,7 +86,7 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<Bike> RemoveBike(string id)
         {
-            var bike = _context.Bikes.FirstOrDefault(b => b.Id.ToString() == id);
+            var bike = _dbContext.Bikes.SingleOrDefault(b => b.Id.ToString() == id);
             if (bike is null)
             {
                 return new ServiceActionResult<Bike>
@@ -103,13 +107,78 @@ namespace BikesRentalServer.Services
             if (bike.User is not null)
                 throw new InvalidOperationException("Trying to remove rented bike");
 
-            _context.Bikes.Remove(bike);
-            _context.SaveChanges();
+            _dbContext.Bikes.Remove(bike);
+            _dbContext.SaveChanges();
 
             return new ServiceActionResult<Bike>
             {
                 Object = bike,
                 Status = Status.Success,
+            };
+        }
+
+        public ServiceActionResult<Bike> RentBike(RentBikeRequest request)
+        {
+            var bike = _dbContext.Bikes
+                .Include(b => b.User)
+                .Include(b => b.Station)
+                .SingleOrDefault(b => b.Id.ToString() == request.Id);
+            if (bike is null)
+            {
+                return new ServiceActionResult<Bike>
+                {
+                    Message = "Bike not found.",
+                    Status = Status.EntityNotFound,
+                };
+            }
+            if (bike.Status is BikeStatus.Blocked)
+            {
+                return new ServiceActionResult<Bike>
+                {
+                    Message = "Bike blocked.",
+                    Status = Status.InvalidState,
+                };
+            }
+            if (bike.User is not null)
+            {
+                return new ServiceActionResult<Bike>
+                {
+                    Message = "Bike is already rented.",
+                    Status = Status.InvalidState,
+                };
+            }
+
+            var user = _dbContext.Users.Include(u => u.Rentals).Single(u => u.Username == _userContext.Username);
+            var reservations = _dbContext.Reservations.Where(r => r.Bike.Id == bike.Id).ToArray();
+            switch (reservations.Length)
+            {
+                case > 1:
+                    throw new InvalidOperationException("There are multiple reservations of the same bike");
+                case 1:
+                {
+                    var reservation = reservations[0];
+                    if (reservation.User.Id != user.Id)
+                    {
+                        return new ServiceActionResult<Bike>
+                        {
+                            Message = "Bike is reserved by different user.",
+                            Status = Status.InvalidState,
+                        };
+                    }
+
+                    _dbContext.Reservations.Remove(reservation);
+                    break;
+                }
+            }
+
+            bike.Station = null;
+            bike.User = user;
+            _dbContext.SaveChanges();
+
+            return new ServiceActionResult<Bike>
+            {
+                Status = Status.Success,
+                Object = bike,
             };
         }
     }

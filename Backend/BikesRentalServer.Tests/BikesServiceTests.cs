@@ -1,9 +1,9 @@
-﻿using BikesRentalServer.DataAccess;
+﻿using BikesRentalServer.Authorization;
+using BikesRentalServer.DataAccess;
 using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
-using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -17,7 +17,7 @@ namespace BikesRentalServer.Tests
         public BikesServiceTests()
         {
             _dbContext = MockedDbFactory.GetContext();
-            _bikesService = new BikesService(_dbContext);
+            _bikesService = new BikesService(_dbContext, new UserContext());
         }
 
         #region GetAllBikes tests
