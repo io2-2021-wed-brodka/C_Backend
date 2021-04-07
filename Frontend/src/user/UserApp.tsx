@@ -14,7 +14,7 @@ import ApplicationBar from './ApplicationBar';
 import Navigation from './Navigation';
 import './UserApp.css';
 import StationsTab from './stations-tab/StationsTab';
-import { mockedServices, ServicesContext } from '../common/services';
+import { services, ServicesContext } from '../common/services';
 import RentalsTab from './rentals-tab/RentalsTab';
 import LoginPage from './login-page/LoginPage';
 import { getTokenFromLocalStorage } from '../common/authentication/token-functions';
@@ -52,7 +52,7 @@ const UserApp = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <ServicesContext.Provider value={mockedServices}>
+      <ServicesContext.Provider value={services}>
         <BrowserRouter>
           <div className={classes.root}>
             <Switch>
