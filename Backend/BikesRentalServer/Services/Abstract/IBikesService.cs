@@ -10,5 +10,8 @@ namespace BikesRentalServer.Services.Abstract
         ServiceActionResult<Bike> GetBike(string id);
         ServiceActionResult<Bike> AddBike(AddBikeRequest request);
         ServiceActionResult<Bike> RemoveBike(string id);
+        ServiceActionResult<Bike> RentBike(RentBikeRequest request);
+        ServiceActionResult<IEnumerable<Bike>> GetRentedBikes();
+        ServiceActionResult<Bike> GiveBikeBack(string bikeId, string stationId);
     }
 }

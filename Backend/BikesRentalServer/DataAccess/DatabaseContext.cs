@@ -10,7 +10,6 @@ namespace BikesRentalServer.DataAccess
         public DbSet<Bike> Bikes { get; set; }
         public DbSet<Station> Stations { get; set; }
         public DbSet<Malfunction> Malfunctions { get; set; }
-        public DbSet<Rental> Rentals { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
     }
 }

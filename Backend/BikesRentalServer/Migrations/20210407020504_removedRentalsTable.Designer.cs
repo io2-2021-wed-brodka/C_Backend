@@ -4,14 +4,16 @@ using BikesRentalServer.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BikesRentalServer.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class BikesContextModelSnapshot : ModelSnapshot
+    [Migration("20210407020504_removedRentalsTable")]
+    partial class removedRentalsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,6 +78,34 @@ namespace BikesRentalServer.Migrations
                     b.HasIndex("ReportingUserId");
 
                     b.ToTable("Malfunctions");
+                });
+
+            modelBuilder.Entity("BikesRentalServer.Models.Rental", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("BikeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BikeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Rental");
                 });
 
             modelBuilder.Entity("BikesRentalServer.Models.Reservation", b =>
@@ -178,6 +208,21 @@ namespace BikesRentalServer.Migrations
                     b.Navigation("ReportingUser");
                 });
 
+            modelBuilder.Entity("BikesRentalServer.Models.Rental", b =>
+                {
+                    b.HasOne("BikesRentalServer.Models.Bike", "Bike")
+                        .WithMany()
+                        .HasForeignKey("BikeId");
+
+                    b.HasOne("BikesRentalServer.Models.User", "User")
+                        .WithMany("Rentals")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Bike");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BikesRentalServer.Models.Reservation", b =>
                 {
                     b.HasOne("BikesRentalServer.Models.Bike", "Bike")
@@ -200,6 +245,8 @@ namespace BikesRentalServer.Migrations
 
             modelBuilder.Entity("BikesRentalServer.Models.User", b =>
                 {
+                    b.Navigation("Rentals");
+
                     b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
