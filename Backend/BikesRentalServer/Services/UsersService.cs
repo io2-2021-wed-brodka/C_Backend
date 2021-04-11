@@ -35,7 +35,7 @@ namespace BikesRentalServer.Services
             return user;
         }
         
-        public User GetUser(string username, string password)
+        public User GetUserByUsernameAndPassword(string username, string password)
         {
             return _dbContext.Users.SingleOrDefault(u => u.Username == username && u.PasswordHash == Toolbox.ComputeHash(password));
         }

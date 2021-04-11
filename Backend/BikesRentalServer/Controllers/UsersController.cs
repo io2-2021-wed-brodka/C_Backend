@@ -21,7 +21,7 @@ namespace BikesRentalServer.Controllers
         [HttpPost("login")]
         public ActionResult<LogInResponse> LogIn(LogInRequest request)
         {
-            var user = _usersService.GetUser(request.Login, request.Password);
+            var user = _usersService.GetUserByUsernameAndPassword(request.Login, request.Password);
             if (user is null)
                 return Unauthorized("Bad credentials");
             
