@@ -20,7 +20,7 @@ namespace BikesRentalServer.Tests.BikesService
         }
 
         [Fact]
-        public void GetAllBikesShouldReturnEmptyIEnumerableWhenNoBikes()
+        public void GetAllBikesShouldReturnEmptyIEnumerableIfNoBikes()
         {
             var result = _bikesService.GetAllBikes();
             
