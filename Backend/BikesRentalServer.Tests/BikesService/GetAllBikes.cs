@@ -3,6 +3,7 @@ using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
+using FluentAssertions;
 using System.Linq;
 using Xunit;
 
@@ -23,9 +24,9 @@ namespace BikesRentalServer.Tests.BikesService
         public void GetAllBikesShouldReturnEmptyIEnumerableIfNoBikes()
         {
             var result = _bikesService.GetAllBikes();
-            
-            Assert.Equal(Status.Success, result.Status);
-            Assert.Empty(result.Object);
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Should().BeEmpty();
         }
         
         [Fact]
@@ -70,9 +71,8 @@ namespace BikesRentalServer.Tests.BikesService
 
             var result = _bikesService.GetAllBikes();
             
-            Assert.Equal(Status.Success, result.Status);
-            Assert.Equal(addedBikes.Length, result.Object.Count());
-            Assert.True(addedBikes.OrderBy(b => b.Id).SequenceEqual(result.Object.OrderBy(b => b.Id)));
+            result.Status.Should().Be(Status.Success);
+            result.Object.Should().BeEquivalentTo(addedBikes);
         }
     }
 }

@@ -3,6 +3,7 @@ using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
+using FluentAssertions;
 using Xunit;
 
 namespace BikesRentalServer.Tests.BikesService
@@ -40,13 +41,9 @@ namespace BikesRentalServer.Tests.BikesService
             _dbContext.SaveChanges();
 
             var result = _bikesService.GetBike(bike.Id.ToString());
-            
-            Assert.Equal(Status.Success, result.Status);
-            Assert.Equal(bike.Id, result.Object.Id);
-            Assert.Equal(bike.Description, result.Object.Description);
-            Assert.Equal(bike.Station, result.Object.Station);
-            Assert.Equal(bike.Status, result.Object.Status);
-            Assert.Equal(bike.Station, result.Object.Station);
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Should().BeEquivalentTo(bike);
         }
 
         [Fact]
@@ -66,9 +63,9 @@ namespace BikesRentalServer.Tests.BikesService
             _dbContext.SaveChanges();
 
             var result = _bikesService.GetBike("4");
-            
-            Assert.Equal(Status.EntityNotFound, result.Status);
-            Assert.Null(result.Object);
+
+            result.Status.Should().Be(Status.EntityNotFound);
+            result.Object.Should().BeNull();
         }
     }
 }

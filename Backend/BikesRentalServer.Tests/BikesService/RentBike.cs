@@ -4,8 +4,10 @@ using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
+using FluentAssertions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace BikesRentalServer.Tests.BikesService
@@ -56,9 +58,9 @@ namespace BikesRentalServer.Tests.BikesService
             {
                 Id = bike.Id.ToString(),
             });
-            
-            Assert.Equal(Status.Success, result.Status);
-            Assert.Equal(bike, result.Object);
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Should().BeEquivalentTo(bike);
         }
 
         [Fact]
@@ -68,9 +70,9 @@ namespace BikesRentalServer.Tests.BikesService
             {
                 Id = "27",
             });
-            
-            Assert.Equal(Status.EntityNotFound, result.Status);
-            Assert.Null(result.Object);
+
+            result.Status.Should().Be(Status.EntityNotFound);
+            result.Object.Should().BeNull();
         }
 
         [Fact]
@@ -95,10 +97,10 @@ namespace BikesRentalServer.Tests.BikesService
             {
                 Id = bike.Id.ToString(),
             });
-            
-            Assert.Equal(Status.InvalidState, result.Status);
-            Assert.Null(result.Object);
-            Assert.Null(bike.User);
+
+            result.Status.Should().Be(Status.InvalidState);
+            result.Object.Should().BeNull();
+            bike.User.Should().BeNull();
         }
 
         [Fact]
@@ -124,10 +126,10 @@ namespace BikesRentalServer.Tests.BikesService
             {
                 Id = bike.Id.ToString(),
             });
-            
-            Assert.Equal(Status.InvalidState, result.Status);
-            Assert.Null(result.Object);
-            Assert.Equal(user, bike.User);
+
+            result.Status.Should().Be(Status.InvalidState);
+            result.Object.Should().BeNull();
+            bike.User.Should().BeEquivalentTo(user);
         }
 
         [Fact]
@@ -174,10 +176,10 @@ namespace BikesRentalServer.Tests.BikesService
             {
                 Id = bike.Id.ToString(),
             });
-            
-            Assert.Equal(Status.InvalidState, result.Status);
-            Assert.Null(result.Object);
-            Assert.Null(bike.User);
+
+            result.Status.Should().Be(Status.InvalidState);
+            result.Object.Should().BeNull();
+            bike.User.Should().BeNull();
         }
 
         [Fact]
@@ -209,10 +211,10 @@ namespace BikesRentalServer.Tests.BikesService
             {
                 Id = bike.Id.ToString(),
             });
-            
-            Assert.Equal(Status.Success, result.Status);
-            Assert.Equal(bike, result.Object);
-            Assert.Equal(initialReservationCount - 1, _user.Reservations.Count);
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Should().BeEquivalentTo(bike);
+            _user.Reservations.Count.Should().Be(initialReservationCount - 1);
         }
 
         [Fact]
@@ -251,10 +253,10 @@ namespace BikesRentalServer.Tests.BikesService
             {
                 Id = bike.Id.ToString(),
             });
-            
-            Assert.Equal(Status.InvalidState, result.Status);
-            Assert.Null(result.Object);
-            Assert.Equal(initialReservationCount, user.Reservations.Count);
+
+            result.Status.Should().Be(Status.InvalidState);
+            result.Object.Should().BeNull();
+            user.Reservations.Count.Should().Be(initialReservationCount);
         }
     }
 }

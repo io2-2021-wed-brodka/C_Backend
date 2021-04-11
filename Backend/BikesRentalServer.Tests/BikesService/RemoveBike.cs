@@ -3,6 +3,7 @@ using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
+using FluentAssertions;
 using System.Linq;
 using Xunit;
 
@@ -40,9 +41,9 @@ namespace BikesRentalServer.Tests.BikesService
 
             var initialBikeCount = _dbContext.Bikes.Count();
             var result = _bikesService.RemoveBike(bike.Id.ToString());
-            
-            Assert.Equal(Status.Success, result.Status);
-            Assert.Equal(initialBikeCount - 1, _dbContext.Bikes.Count());
+
+            result.Status.Should().Be(Status.Success);
+            _dbContext.Bikes.Count().Should().Be(initialBikeCount - 1);
         }
 
         [Fact]
@@ -64,21 +65,18 @@ namespace BikesRentalServer.Tests.BikesService
             _dbContext.SaveChanges();
             
             var result = _bikesService.RemoveBike(bike.Id.ToString());
-            
-            Assert.Equal(Status.Success, result.Status);
-            Assert.Equal(bike.Id, result.Object.Id);
-            Assert.Equal(bike.Description, result.Object.Description);
-            Assert.Equal(bike.Station, result.Object.Station);
-            Assert.Equal(bike.Status, result.Object.Status);
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Should().BeEquivalentTo(bike);
         }
 
         [Fact]
         public void RemoveNotExistingBikeShouldReturnEntityNotFound()
         {
             var result = _bikesService.RemoveBike("1");
-            
-            Assert.Equal(Status.EntityNotFound, result.Status);
-            Assert.Null(result.Object);
+
+            result.Status.Should().Be(Status.EntityNotFound);
+            result.Object.Should().BeNull();
         }
 
         [Fact]
@@ -100,9 +98,9 @@ namespace BikesRentalServer.Tests.BikesService
             _dbContext.SaveChanges();
             
             var result = _bikesService.RemoveBike(bike.Id.ToString());
-            
-            Assert.Equal(Status.InvalidState, result.Status);
-            Assert.Null(result.Object);
+
+            result.Status.Should().Be(Status.InvalidState);
+            result.Object.Should().BeNull();
         }
 
         #endregion

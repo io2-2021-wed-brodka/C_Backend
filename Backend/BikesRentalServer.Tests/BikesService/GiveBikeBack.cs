@@ -3,6 +3,7 @@ using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
+using FluentAssertions;
 using System.Collections.Generic;
 using Xunit;
 
@@ -50,11 +51,9 @@ namespace BikesRentalServer.Tests.BikesService
             _dbContext.SaveChanges();
 
             var result = _bikesService.GiveBikeBack(bike.Id.ToString(), station.Id.ToString());
-            
-            Assert.Equal(Status.Success, result.Status);
-            Assert.Equal(bike, result.Object);
-            Assert.Null(bike.User);
-            Assert.Equal(station, bike.Station);
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Should().BeEquivalentTo(bike);
         }
 
         [Fact]
@@ -69,11 +68,11 @@ namespace BikesRentalServer.Tests.BikesService
             _dbContext.SaveChanges();
 
             var result = _bikesService.GiveBikeBack(bike.Id.ToString(), "1");
-
-            Assert.Equal(Status.EntityNotFound, result.Status);
-            Assert.Null(result.Object);
-            Assert.Equal(_user, bike.User);
-            Assert.Null(bike.Station);
+            
+            result.Status.Should().Be(Status.EntityNotFound);
+            result.Object.Should().BeNull();
+            bike.User.Should().Be(_user);
+            bike.Station.Should().BeNull();
         }
 
         [Fact]
@@ -88,8 +87,8 @@ namespace BikesRentalServer.Tests.BikesService
 
             var result = _bikesService.GiveBikeBack("1", station.Id.ToString());
 
-            Assert.Equal(Status.EntityNotFound, result.Status);
-            Assert.Null(result.Object);
+            result.Status.Should().Be(Status.EntityNotFound);
+            result.Object.Should().BeNull();
         }
     }
 }

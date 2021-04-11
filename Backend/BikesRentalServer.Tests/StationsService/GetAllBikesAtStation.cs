@@ -2,6 +2,7 @@
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
+using FluentAssertions;
 using System.Linq;
 using Xunit;
 
@@ -30,9 +31,9 @@ namespace BikesRentalServer.Tests.StationsService
             _dbContext.SaveChanges();
 
             var result = _stationsService.GetAllBikesAtStation(station.Id.ToString());
-            
-            Assert.Equal(Status.Success, result.Status);
-            Assert.Empty(result.Object);
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Should().BeEmpty();
         }
 
         [Fact]
@@ -69,19 +70,19 @@ namespace BikesRentalServer.Tests.StationsService
             _dbContext.SaveChanges();
 
             var result = _stationsService.GetAllBikesAtStation(station.Id.ToString());
-            
-            Assert.Equal(Status.Success, result.Status);
-            Assert.Equal(addedBikes.Length, result.Object.Count());
-            Assert.True(addedBikes.OrderBy(b => b.Id).SequenceEqual(result.Object.OrderBy(b => b.Id)));
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Count().Should().Be(addedBikes.Length);
+            result.Object.Should().BeEquivalentTo(addedBikes);
         }
 
         [Fact]
         public void GetAllBikesAtNotExistingStationShouldReturnEntityNotFound()
         {
             var result = _stationsService.GetAllBikesAtStation("4");
-            
-            Assert.Equal(Status.EntityNotFound, result.Status);
-            Assert.Null(result.Object);
+
+            result.Status.Should().Be(Status.EntityNotFound);
+            result.Object.Should().BeNull();
         }
     }
 }

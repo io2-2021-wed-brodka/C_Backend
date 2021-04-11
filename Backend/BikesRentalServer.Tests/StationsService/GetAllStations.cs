@@ -2,6 +2,7 @@
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
+using FluentAssertions;
 using System.Linq;
 using Xunit;
 
@@ -22,9 +23,9 @@ namespace BikesRentalServer.Tests.StationsService
         public void GetAllStationsShouldReturnEmptyIEnumerateIfNoStations()
         {
             var result = _stationsService.GetAllStations();
-            
-            Assert.Equal(Status.Success, result.Status);
-            Assert.Empty(result.Object);
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Should().BeEmpty();
         }
 
         [Fact]
@@ -53,9 +54,9 @@ namespace BikesRentalServer.Tests.StationsService
 
             var result = _stationsService.GetAllStations();
             
-            Assert.Equal(Status.Success, result.Status);
-            Assert.Equal(addedStations.Length, result.Object.Count());
-            Assert.True(addedStations.OrderBy(s => s.Id).SequenceEqual(result.Object.OrderBy(s => s.Id)));
+            result.Status.Should().Be(Status.Success);
+            result.Object.Count().Should().Be(addedStations.Length);
+            result.Object.Should().BeEquivalentTo(addedStations);
         }
     }
 }

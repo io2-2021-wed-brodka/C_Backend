@@ -2,6 +2,7 @@
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
+using FluentAssertions;
 using Xunit;
 
 namespace BikesRentalServer.Tests.StationsService
@@ -30,18 +31,18 @@ namespace BikesRentalServer.Tests.StationsService
             _dbContext.SaveChanges();
 
             var result = _stationsService.GetStation(station.Id.ToString());
-            
-            Assert.Equal(Status.Success, result.Status);
-            Assert.Equal(station, result.Object);
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Should().BeEquivalentTo(station);
         }
 
         [Fact]
         public void GetNotExistingStationShouldReturnEntityNotFound()
         {
             var result = _stationsService.GetStation("4");
-            
-            Assert.Equal(Status.EntityNotFound, result.Status);
-            Assert.Null(result.Object);
+
+            result.Status.Should().Be(Status.EntityNotFound);
+            result.Object.Should().BeNull();
         }
     }
 }
