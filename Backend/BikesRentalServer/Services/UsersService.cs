@@ -16,10 +16,15 @@ namespace BikesRentalServer.Services
             _dbContext = dbContext;
         }
 
-        public User AddUser(string username, string password)
+        public ServiceActionResult<User> AddUser(string username, string password)
         {
             if (_dbContext.Users.Any(u => u.Username == username))
-                return null;
+            {
+                return new ServiceActionResult<User>
+                {
+                    Status = Status.InvalidState,
+                };
+            }
 
             var user = _dbContext.Users
                 .Add(new User
@@ -32,17 +37,39 @@ namespace BikesRentalServer.Services
                 .Entity;
             _dbContext.SaveChanges();
 
-            return user;
+            return new ServiceActionResult<User>
+            {
+                Status = Status.Success,
+                Object = user,
+            };
         }
         
-        public User GetUserByUsernameAndPassword(string username, string password)
+        public ServiceActionResult<User> GetUserByUsernameAndPassword(string username, string password)
         {
-            return _dbContext.Users.SingleOrDefault(u => u.Username == username && u.PasswordHash == Toolbox.ComputeHash(password));
+            var user = _dbContext.Users.SingleOrDefault(u => u.Username == username && u.PasswordHash == Toolbox.ComputeHash(password));
+
+            if (user is null)
+            {
+                return new ServiceActionResult<User>
+                {
+                    Status = Status.EntityNotFound,
+                };
+            }
+            
+            return new ServiceActionResult<User>
+            {
+                Status = Status.Success,
+                Object = user,
+            };
         }
 
-        public string GenerateBearerToken(User user)
+        public ServiceActionResult<string> GenerateBearerToken(User user)
         {
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(user.Username));
+            return new ServiceActionResult<string>
+            {
+                Status = Status.Success,
+                Object = Convert.ToBase64String(Encoding.UTF8.GetBytes(user.Username)),
+            };
         }
     }
 }
