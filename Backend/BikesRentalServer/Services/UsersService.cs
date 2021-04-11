@@ -47,7 +47,6 @@ namespace BikesRentalServer.Services
         public ServiceActionResult<User> GetUserByUsernameAndPassword(string username, string password)
         {
             var user = _dbContext.Users.SingleOrDefault(u => u.Username == username && u.PasswordHash == Toolbox.ComputeHash(password));
-
             if (user is null)
             {
                 return new ServiceActionResult<User>
