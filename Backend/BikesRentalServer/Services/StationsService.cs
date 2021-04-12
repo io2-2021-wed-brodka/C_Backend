@@ -20,7 +20,7 @@ namespace BikesRentalServer.Services
         {
             return new ServiceActionResult<IEnumerable<Station>>
             {
-                Object = _context.Stations.ToArray(),
+                Object = _dbContext.Stations.ToArray(),
                 Status = Status.Success,
             };
         }
