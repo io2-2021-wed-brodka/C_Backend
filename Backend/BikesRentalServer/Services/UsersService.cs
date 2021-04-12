@@ -20,10 +20,7 @@ namespace BikesRentalServer.Services
         {
             if (_dbContext.Users.Any(u => u.Username == username))
             {
-                return new ServiceActionResult<User>
-                {
-                    Status = Status.InvalidState,
-                };
+                return ServiceActionResult.InvalidState<User>("Username already taken");
             }
 
             var user = _dbContext.Users
@@ -37,11 +34,7 @@ namespace BikesRentalServer.Services
                 .Entity;
             _dbContext.SaveChanges();
 
-            return new ServiceActionResult<User>
-            {
-                Status = Status.Success,
-                Object = user,
-            };
+            return ServiceActionResult.Success(user);
         }
         
         public ServiceActionResult<User> GetUserByUsernameAndPassword(string username, string password)
@@ -49,26 +42,17 @@ namespace BikesRentalServer.Services
             var user = _dbContext.Users.SingleOrDefault(u => u.Username == username && u.PasswordHash == Toolbox.ComputeHash(password));
             if (user is null)
             {
-                return new ServiceActionResult<User>
-                {
-                    Status = Status.EntityNotFound,
-                };
+                return ServiceActionResult.EntityNotFound<User>("User not found");
             }
-            
-            return new ServiceActionResult<User>
-            {
-                Status = Status.Success,
-                Object = user,
-            };
+
+            return ServiceActionResult.Success(user);
         }
 
         public ServiceActionResult<string> GenerateBearerToken(User user)
         {
-            return new ServiceActionResult<string>
-            {
-                Status = Status.Success,
-                Object = Convert.ToBase64String(Encoding.UTF8.GetBytes(user.Username)),
-            };
+            var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(user.Username));
+
+            return ServiceActionResult.Success(token);
         }
     }
 }

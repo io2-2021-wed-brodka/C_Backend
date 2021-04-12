@@ -18,11 +18,8 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<IEnumerable<Station>> GetAllStations()
         {
-            return new ServiceActionResult<IEnumerable<Station>>
-            {
-                Object = _context.Stations.ToArray(),
-                Status = Status.Success,
-            };
+            var result = _context.Stations.AsEnumerable();
+            return ServiceActionResult.Success(result);
         }
 
         public ServiceActionResult<Station> GetStation(string id)
@@ -30,18 +27,10 @@ namespace BikesRentalServer.Services
             var station = _context.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
             if (station is null)
             {
-                return new ServiceActionResult<Station>
-                {
-                    Message = "Station not found.",
-                    Status = Status.EntityNotFound,
-                };
+                return ServiceActionResult.EntityNotFound<Station>("Station not found");
             }
-            
-            return new ServiceActionResult<Station>
-            {
-                Object = station,
-                Status = Status.Success,
-            };
+
+            return ServiceActionResult.Success(station);
         }
         
         public ServiceActionResult<IEnumerable<Bike>> GetAllBikesAtStation(string id)
@@ -49,20 +38,10 @@ namespace BikesRentalServer.Services
             var station = _context.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
             if (station is null)
             {
-                return new ServiceActionResult<IEnumerable<Bike>>
-                {
-                    Message = "Station not found.",
-                    Status = Status.EntityNotFound,
-                };
+                return ServiceActionResult.EntityNotFound<IEnumerable<Bike>>("Station not found");
             }
-            
-            return new ServiceActionResult<IEnumerable<Bike>>
-            {
-                Object = station.Bikes,
-                Status = Status.Success,
-            };
-        }
 
-       
+            return ServiceActionResult.Success(station.Bikes.AsEnumerable());
+        }
     }
 }
