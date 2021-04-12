@@ -19,8 +19,6 @@ namespace BikesRentalServer.Tests.BikesService
             _dbContext = MockedDbFactory.GetContext();
             _bikesService = new Services.BikesService(_dbContext, new UserContext());
         }
-        
-        #region RemoveBike tests
 
         [Fact]
         public void RemoveBikeShouldDecrementBikeCount()
@@ -102,7 +100,5 @@ namespace BikesRentalServer.Tests.BikesService
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
         }
-
-        #endregion
     }
 }
