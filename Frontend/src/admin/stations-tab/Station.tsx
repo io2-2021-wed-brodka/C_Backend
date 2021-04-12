@@ -3,7 +3,9 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Button,
   createStyles,
+  Divider,
   makeStyles,
   Theme,
   Typography,
@@ -19,6 +21,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     accordionDetails: {
       padding: 0,
+    },
+    stationButtonsDiv: {
+      paddingLeft: theme.spacing(2),
+      paddingBottom: theme.spacing(2),
     },
     div: {
       width: '100%',
@@ -49,6 +55,18 @@ const Station = ({ name, id }: Props) => {
       <AccordionDetails className={classes.accordionDetails}>
         {hasBeenOpened && (
           <div className={classes.div}>
+            <div className={classes.stationButtonsDiv}>
+              <Button variant="contained" color={'secondary'}>
+                Add bike
+              </Button>{' '}
+              <Button variant="contained" color={'default'}>
+                Block
+              </Button>{' '}
+              <Button variant="contained" color={'primary'}>
+                Remove
+              </Button>
+            </div>
+            <Divider />
             <StationBikesList stationId={id}></StationBikesList>
           </div>
         )}
