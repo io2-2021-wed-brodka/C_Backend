@@ -13,6 +13,7 @@ import pinkTheme from '../common/theme';
 import Layout from './Layout';
 
 import './AdminApp.css';
+import StationsTab from './stations-tab/StationsTab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -46,7 +47,7 @@ const AdminApp = () => {
                 <>
                   {!getTokenFromLocalStorage() && <Redirect to={'/login'} />}
                   <Layout>
-                    <h1>Admin will be here, stay tuned</h1>
+                    <Route path="/stations" component={StationsTab} />
                   </Layout>
                 </>
               )}
