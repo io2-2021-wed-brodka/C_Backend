@@ -158,7 +158,7 @@ namespace BikesRentalServer.Services
                 };
             }
             
-            var reservation = _dbContext.Reservations.SingleOrDefault(r => r.Bike.Id == bike.Id);
+            var reservation = _dbContext.Reservations.SingleOrDefault(r => r.Bike.Id == bike.Id && r.ExpiryDate > DateTime.Now);
             if (reservation is not null )
             {
                 if (reservation.User.Id != user.Id)
