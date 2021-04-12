@@ -9,11 +9,11 @@ namespace BikesRentalServer.Services
 {
     public class StationsService : IStationsService
     {
-        private readonly DatabaseContext _context;
+        private readonly DatabaseContext _dbContext;
 
         public StationsService(DatabaseContext context)
         {
-            _context = context;
+            _dbContext = context;
         }
 
         public ServiceActionResult<IEnumerable<Station>> GetAllStations()
@@ -27,7 +27,7 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<Station> GetStation(string id)
         {
-            var station = _context.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
+            var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
             if (station is null)
             {
                 return new ServiceActionResult<Station>
@@ -46,7 +46,7 @@ namespace BikesRentalServer.Services
         
         public ServiceActionResult<IEnumerable<Bike>> GetAllBikesAtStation(string id)
         {
-            var station = _context.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
+            var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
             if (station is null)
             {
                 return new ServiceActionResult<IEnumerable<Bike>>
@@ -62,6 +62,37 @@ namespace BikesRentalServer.Services
                 Status = Status.Success,
             };
         }
+
+        public ServiceActionResult<Station> RemoveStation(string id)
+        {
+            var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
+            if (station is null)
+            {
+                return new ServiceActionResult<Station>
+                {
+                    Message = "Station not found",
+                    Status = Status.EntityNotFound,
+                };
+            }           
+            if (station.Bikes.Count > 0)
+            {
+                return new ServiceActionResult<Station>
+                {
+                    Message = "Station has bikes",
+                    Status = Status.InvalidState,
+                };
+            }
+
+            _dbContext.Stations.Remove(station);
+            _dbContext.SaveChanges();
+
+            return new ServiceActionResult<Station>
+            {
+                Object = station,
+                Status = Status.Success,
+            };
+        }
+
 
        
     }

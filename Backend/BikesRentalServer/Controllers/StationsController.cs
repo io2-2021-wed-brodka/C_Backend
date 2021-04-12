@@ -110,5 +110,23 @@ namespace BikesRentalServer.Controllers
                 Status.InvalidState or _ => throw new InvalidOperationException("Invalid status"),
             };
         }
+
+        [HttpDelete("{id}")]
+        [AdminAuthorization]
+        public ActionResult<GetStationResponse> RemoveStation(string id)
+        {
+            var response = _stationsService.RemoveStation(id);
+            return response.Status switch
+            {
+                Status.Success => Ok(new GetStationResponse
+                {
+                    Id = response.Object.Id.ToString(),
+                    Name = response.Object.Name,
+                }),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
+            };
+        }
     }
 }
