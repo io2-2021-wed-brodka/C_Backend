@@ -2,36 +2,28 @@
 {
     public class ServiceActionResult<T>
     {
-        public string Message { get; private set; }
-        public T Object { get; private set; }
-        public Status Status { get; private set; }
+        public string Message { get; }
+        public T Object { get; }
+        public Status Status { get; }
 
-        public static ServiceActionResult<T> Success(T result)
+        public ServiceActionResult(string message, T @object, Status status)
         {
-            return new ServiceActionResult<T>
-            {
-                Object = result,
-                Status = Status.Success
-            };
+            Message = message;
+            Object = @object;
+            Status = status;
         }
+    }
 
-        public static ServiceActionResult<T> EntityNotFound(string message)
-        {
-            return new ServiceActionResult<T>
-            {
-                Status = Status.EntityNotFound,
-                Message = message
-            };
-        }
+    public static class ServiceActionResult
+    {
+        public static ServiceActionResult<T> Success<T>(T result) 
+            => new ServiceActionResult<T>(null, result, Status.Success);
 
-        public static ServiceActionResult<T> InvalidState(string message)
-        {
-            return new ServiceActionResult<T>
-            {
-                Status = Status.InvalidState,
-                Message = message
-            };
-        }
+        public static ServiceActionResult<T> EntityNotFound<T>(string message)
+            => new ServiceActionResult<T>(message, default, Status.EntityNotFound);
+
+        public static ServiceActionResult<T> InvalidState<T>(string message)
+            => new ServiceActionResult<T>(message, default, Status.InvalidState);
     }
 
     public enum Status
