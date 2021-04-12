@@ -158,7 +158,7 @@ namespace BikesRentalServer.Services
                 };
             }
             
-            var reservation = _dbContext.Reservations.SingleOrDefault(r => r.Bike.Id == bike.Id);
+            var reservation = _dbContext.Reservations.SingleOrDefault(r => r.Bike.Id == bike.Id && r.ExpiryDate > DateTime.Now);
             if (reservation is not null )
             {
                 if (reservation.User.Id != user.Id)
@@ -198,26 +198,25 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<Bike> GiveBikeBack(string bikeId, string stationId)
         {
-            var user = _dbContext.Users.Single(u => u.Username == _userContext.Username);
             var station = _dbContext.Stations.SingleOrDefault(s => s.Id.ToString() == stationId);
-            var bike = _dbContext.Bikes
-                .Include(b => b.User)
-                .Include(b => b.Station)
-                .SingleOrDefault(b => b.Id.ToString() == bikeId);
-
-            if (bike is null)
-            {
-                return new ServiceActionResult<Bike>
-                {
-                    Message = "Bike not found.",
-                    Status = Status.EntityNotFound,
-                };
-            }
             if (station is null)
             {
                 return new ServiceActionResult<Bike>
                 {
                     Message = "Station not found.",
+                    Status = Status.EntityNotFound,
+                };
+            }
+            
+            var bike = _dbContext.Bikes
+                .Include(b => b.User)
+                .Include(b => b.Station)
+                .SingleOrDefault(b => b.Id.ToString() == bikeId);
+            if (bike is null)
+            {
+                return new ServiceActionResult<Bike>
+                {
+                    Message = "Bike not found.",
                     Status = Status.EntityNotFound,
                 };
             }

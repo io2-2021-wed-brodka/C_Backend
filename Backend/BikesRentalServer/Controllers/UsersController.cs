@@ -1,6 +1,7 @@
 ﻿using BikesRentalServer.Authorization;
 using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Dtos.Responses;
+using BikesRentalServer.Services;
 using BikesRentalServer.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,27 +22,27 @@ namespace BikesRentalServer.Controllers
         [HttpPost("login")]
         public ActionResult<LogInResponse> LogIn(LogInRequest request)
         {
-            var user = _usersService.GetUser(request.Login, request.Password);
-            if (user is null)
+            var response = _usersService.GetUserByUsernameAndPassword(request.Login, request.Password);
+            if (response.Status is Status.EntityNotFound)
                 return Unauthorized("Bad credentials");
             
             return new LogInResponse
             {
-                Role = user.Role,
-                Token = _usersService.GenerateBearerToken(user),
+                Role = response.Object.Role,
+                Token = _usersService.GenerateBearerToken(response.Object).Object,
             };
         }
 
         [HttpPost("register")]
         public ActionResult<RegisterResponse> Register(RegisterRequest request)
         {
-            var user = _usersService.AddUser(request.Login, request.Password);
-            if (user is null)
+            var response = _usersService.AddUser(request.Login, request.Password);
+            if (response.Status is Status.InvalidState)
                 return Conflict("Conflicting registration data");
 
             return new RegisterResponse
             {
-                Token = _usersService.GenerateBearerToken(user),
+                Token = _usersService.GenerateBearerToken(response.Object).Object,
             };
         }
     }
