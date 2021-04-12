@@ -57,6 +57,27 @@ namespace BikesRentalServer.Tests.BikesService
         }
 
         [Fact]
+        public void GiveBikeBackShouldAssignBikeToStation()
+        {
+            var station = _dbContext.Stations.Add(new Station
+                {
+                    Name = "Dworzec Centralny",
+                })
+                .Entity;
+            var bike = _dbContext.Bikes.Add(new Bike
+                {
+                    Description = "whoosh",
+                    User = _user,
+                })
+                .Entity;
+            _dbContext.SaveChanges();
+
+            _bikesService.GiveBikeBack(bike.Id.ToString(), station.Id.ToString());
+
+            station.Bikes.Should().Contain(bike);
+        }
+
+        [Fact]
         public void GiveBikeBackToNotExistingStationShouldReturnEntityNotFound()
         {
             var bike = _dbContext.Bikes.Add(new Bike
