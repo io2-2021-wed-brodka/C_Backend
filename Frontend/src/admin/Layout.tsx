@@ -83,6 +83,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100vh',
     overflow: 'auto',
+    background: theme.palette.grey[100],
   },
   container: {
     paddingTop: theme.spacing(4),
