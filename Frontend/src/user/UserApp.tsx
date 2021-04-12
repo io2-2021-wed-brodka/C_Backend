@@ -18,6 +18,7 @@ import { services, ServicesContext } from '../common/services';
 import RentalsTab from './rentals-tab/RentalsTab';
 import LoginPage from '../common/components/LoginPage';
 import { getTokenFromLocalStorage } from '../common/authentication/token-functions';
+import pinkTheme from '../common/theme';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -40,18 +41,11 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const theme = createMuiTheme({
-  palette: {
-    primary: pink,
-    secondary: green,
-  },
-});
-
 const UserApp = () => {
   const classes = useStyles();
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={pinkTheme}>
       <ServicesContext.Provider value={services}>
         <BrowserRouter>
           <div className={classes.root}>
