@@ -1,9 +1,9 @@
-using BikesRentalServer.Authorization;
 using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -20,35 +20,33 @@ namespace BikesRentalServer.Tests.StationsService
             _stationsService = new Services.StationsService(_dbContext);
         }
 
-        #region RemoveStation tests
-
         [Fact]
         public void RemoveStationShouldDecrementStationCount()
         {
             var station = _dbContext.Stations.Add(new Station
-            {
-                Status = BikeStationStatus.Working,
-                Name = "Al. Jerozolimskie",
-            })
+                {
+                    Status = BikeStationStatus.Working,
+                    Name = "Al. Jerozolimskie",
+                })
                 .Entity;
             
             _dbContext.SaveChanges();
 
-            var initialCount = _dbContext.Stations.Count();
+            var initialStationCount = _dbContext.Stations.Count();
             var result = _stationsService.RemoveStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.Success);
-            _dbContext.Stations.Count().Should().Be(initialCount - 1);
+            _dbContext.Stations.Count().Should().Be(initialStationCount - 1);
         }
 
         [Fact]
         public void RemoveStationShouldReturnRemovedStation()
         {
             var station = _dbContext.Stations.Add(new Station
-            {
-                Status = BikeStationStatus.Working,
-                Name = "Al. Jerozolimskie",
-            })
+                {
+                    Status = BikeStationStatus.Working,
+                    Name = "Al. Jerozolimskie",
+                })
                 .Entity;
             _dbContext.SaveChanges();
 
@@ -71,17 +69,18 @@ namespace BikesRentalServer.Tests.StationsService
         public void RemoveStationWithBikesShouldReturnInvalidState()
         {
             var station = _dbContext.Stations.Add(new Station
-            {
-                Status = BikeStationStatus.Working,
-                Name = "Al. Jerozolimskie",
-            })
-                .Entity;
-            var bike = _dbContext.Bikes.Add(new Bike
-            {
-                Station = station,
-                Status = BikeStatus.Working,
-                Description = "bike",
-            })
+                {
+                    Status = BikeStationStatus.Working,
+                    Name = "Al. Jerozolimskie",
+                    Bikes = new List<Bike>
+                    {
+                        new Bike
+                        {
+                            Status = BikeStatus.Working,
+                            Description = "bike",
+                        },
+                    },
+                })
                 .Entity;
             _dbContext.SaveChanges();
 
@@ -90,7 +89,5 @@ namespace BikesRentalServer.Tests.StationsService
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
         }
-
-        #endregion
     }
 }
