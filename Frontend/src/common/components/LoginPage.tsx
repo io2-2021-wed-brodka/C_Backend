@@ -10,10 +10,10 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { useServices } from '../../common/services';
+import { useServices } from '../services';
 import { useHistory } from 'react-router-dom';
-import { useSnackbar } from '../../common/hooks/useSnackbar';
-import { SnackBar } from './../../common/components/SnackBar';
+import { useSnackbar } from '../hooks/useSnackbar';
+import { SnackBar } from './SnackBar';
 
 const Copyright = () => {
   return (

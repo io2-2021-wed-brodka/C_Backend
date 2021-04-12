@@ -16,7 +16,7 @@ import './UserApp.css';
 import StationsTab from './stations-tab/StationsTab';
 import { services, ServicesContext } from '../common/services';
 import RentalsTab from './rentals-tab/RentalsTab';
-import LoginPage from './login-page/LoginPage';
+import LoginPage from '../common/components/LoginPage';
 import { getTokenFromLocalStorage } from '../common/authentication/token-functions';
 
 const useStyles = makeStyles((theme: Theme) =>
