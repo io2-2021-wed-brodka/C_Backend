@@ -2,13 +2,11 @@ import React from 'react';
 import {
   AppBar,
   Container,
-  createMuiTheme,
   createStyles,
   makeStyles,
   Theme,
   ThemeProvider,
 } from '@material-ui/core';
-import { green, pink } from '@material-ui/core/colors';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import ApplicationBar from './ApplicationBar';
 import Navigation from './Navigation';
