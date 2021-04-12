@@ -33,7 +33,6 @@ namespace BikesRentalServer.Tests.UsersService
             var result = _usersService.GenerateBearerToken(user);
 
             result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeAssignableTo(typeof(string));
         }
     }
 }
