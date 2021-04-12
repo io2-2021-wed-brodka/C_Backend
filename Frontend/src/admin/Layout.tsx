@@ -5,7 +5,6 @@ import Drawer from '@material-ui/core/Drawer';
 import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -13,16 +12,12 @@ import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import { ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import PeopleIcon from '@material-ui/icons/People';
-import RoomIcon from '@material-ui/icons/Room';
-import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
-import BuildIcon from '@material-ui/icons/Build';
+import Menu from './Menu';
 
 const Copyright = () => {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      {'Team C'}
+      {'Team C '}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
@@ -82,9 +77,6 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     width: theme.spacing(7),
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(9),
-    },
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
@@ -161,34 +153,7 @@ const Layout = ({ children }: Props) => {
           </IconButton>
         </div>
         <Divider />
-        <List>
-          <div>
-            <ListItem button>
-              <ListItemIcon>
-                <RoomIcon />
-              </ListItemIcon>
-              <ListItemText primary="Stations" />
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <DirectionsBikeIcon />
-              </ListItemIcon>
-              <ListItemText primary="Bikes" />
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <PeopleIcon />
-              </ListItemIcon>
-              <ListItemText primary="Users" />
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <BuildIcon />
-              </ListItemIcon>
-              <ListItemText primary="Techs" />
-            </ListItem>
-          </div>
-        </List>
+        <Menu />
         <Divider />
       </Drawer>
       <main className={classes.content}>
