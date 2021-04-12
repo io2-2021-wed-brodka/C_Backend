@@ -7,7 +7,6 @@ using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace BikesRentalServer.Tests.BikesService
@@ -61,6 +60,32 @@ namespace BikesRentalServer.Tests.BikesService
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEquivalentTo(bike);
+        }
+
+        [Fact]
+        public void RentBikeShouldAssignBikeToUser()
+        {
+            var station = _dbContext.Stations.Add(new Station
+                {
+                    Name = "DS Ustronie",
+                    Status = BikeStationStatus.Working,
+                })
+                .Entity;
+            var bike = _dbContext.Bikes.Add(new Bike
+                {
+                    Station = station,
+                    Description = "some text",
+                })
+                .Entity;
+            _dbContext.SaveChanges();
+
+            var result = _bikesService.RentBike(new RentBikeRequest
+            {
+                Id = bike.Id.ToString(),
+            });
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.User.Should().Be(_user);
         }
 
         [Fact]
@@ -257,6 +282,47 @@ namespace BikesRentalServer.Tests.BikesService
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
             user.Reservations.Count.Should().Be(initialReservationCount);
+        }
+
+        [Fact]
+        public void RentBikeHavingExpiredReservationShouldSucceed()
+        {
+            var station = _dbContext.Stations.Add(new Station
+                {
+                    Name = "DS Riwiera",
+                    Status = BikeStationStatus.Working,
+                })
+                .Entity;
+            var bike = _dbContext.Bikes.Add(new Bike
+                {
+                    Description = "reserved.",
+                    Station = station,
+                })
+                .Entity;
+            var user = _dbContext.Users.Add(new User
+                {
+                    Role = UserRole.User,
+                    State = UserState.Active,
+                    Username = "another_one_that_does_not_bite_the_dust",
+                })
+                .Entity;
+            _dbContext.Reservations.Add(new Reservation
+            {
+                User = user,
+                Bike = bike,
+                ReservationDate = DateTime.Now.AddMinutes(-40),
+                ExpiryDate = DateTime.Now.AddMinutes(-10),
+            });
+            _dbContext.SaveChanges();
+
+            var result = _bikesService.RentBike(new RentBikeRequest
+            {
+                Id = bike.Id.ToString(),
+            });
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Should().BeEquivalentTo(bike);
+            result.Object.User.Should().Be(_user);
         }
     }
 }
