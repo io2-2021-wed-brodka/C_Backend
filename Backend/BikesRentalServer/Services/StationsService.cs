@@ -18,82 +18,38 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<IEnumerable<Station>> GetAllStations()
         {
-            return new ServiceActionResult<IEnumerable<Station>>
-            {
-                Object = _dbContext.Stations.ToArray(),
-                Status = Status.Success,
-            };
+            var result = _dbContext.Stations.AsEnumerable();
+            return ServiceActionResult.Success(result);
         }
 
         public ServiceActionResult<Station> GetStation(string id)
         {
             var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
             if (station is null)
-            {
-                return new ServiceActionResult<Station>
-                {
-                    Message = "Station not found.",
-                    Status = Status.EntityNotFound,
-                };
-            }
-            
-            return new ServiceActionResult<Station>
-            {
-                Object = station,
-                Status = Status.Success,
-            };
+                return ServiceActionResult.EntityNotFound<Station>("Station not found");
+            return ServiceActionResult.Success(station);
         }
         
         public ServiceActionResult<IEnumerable<Bike>> GetAllBikesAtStation(string id)
         {
             var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
             if (station is null)
-            {
-                return new ServiceActionResult<IEnumerable<Bike>>
-                {
-                    Message = "Station not found.",
-                    Status = Status.EntityNotFound,
-                };
-            }
-            
-            return new ServiceActionResult<IEnumerable<Bike>>
-            {
-                Object = station.Bikes,
-                Status = Status.Success,
-            };
+                return ServiceActionResult.EntityNotFound<IEnumerable<Bike>>("Station not found");
+            return ServiceActionResult.Success(station.Bikes.AsEnumerable());
         }
 
         public ServiceActionResult<Station> RemoveStation(string id)
         {
             var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
             if (station is null)
-            {
-                return new ServiceActionResult<Station>
-                {
-                    Message = "Station not found",
-                    Status = Status.EntityNotFound,
-                };
-            }           
+                return ServiceActionResult.EntityNotFound<Station>("Station not found");
             if (station.Bikes.Count > 0)
-            {
-                return new ServiceActionResult<Station>
-                {
-                    Message = "Station has bikes",
-                    Status = Status.InvalidState,
-                };
-            }
+                return ServiceActionResult.InvalidState<Station>("Station has bikes");
 
             _dbContext.Stations.Remove(station);
             _dbContext.SaveChanges();
 
-            return new ServiceActionResult<Station>
-            {
-                Object = station,
-                Status = Status.Success,
-            };
+            return ServiceActionResult.Success(station);
         }
-
-
-       
     }
 }
