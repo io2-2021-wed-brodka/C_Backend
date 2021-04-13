@@ -1,8 +1,14 @@
 import { createContext, useContext } from 'react';
 import {
+  addBike,
+  addStation,
+  blockBike,
+  blockStation,
   getBikesByStation,
   getRentedBikes,
   getStations,
+  removeBike,
+  removeStation,
   rentBike,
   returnBike,
 } from './api/endpoints';
@@ -25,6 +31,12 @@ type AllServices = {
   getRentedBikes: () => Promise<Bike[]>;
   returnBike: (stationId: string, bikeId: string) => Promise<Bike>;
   rentBike: (bikeId: string) => Promise<Bike>;
+  addStation: (name: string) => Promise<Station>;
+  addBike: (stationId: string) => Promise<Bike>;
+  removeBike: (bikeId: string) => Promise<void>;
+  removeStation: (stationId: string) => Promise<void>;
+  blockStation: (id: string) => Promise<Station>;
+  blockBike: (id: string) => Promise<Bike>;
 };
 
 export const services: AllServices = {
@@ -34,6 +46,12 @@ export const services: AllServices = {
   getRentedBikes: getRentedBikes,
   returnBike: returnBike,
   rentBike: rentBike,
+  addStation: addStation,
+  addBike: addBike,
+  removeBike: removeBike,
+  removeStation: removeStation,
+  blockStation: blockStation,
+  blockBike: blockBike,
 };
 
 export const mockedServices: AllServices = {
@@ -48,6 +66,12 @@ export const mockedServices: AllServices = {
   getRentedBikes: () => delay(mockedRentedBikes),
   returnBike: bikeId => delay<Bike>({ id: bikeId }),
   rentBike: bikeId => delay<Bike>({ id: bikeId }),
+  addStation: name => delay<Station>({ id: '1', name }),
+  addBike: () => delay<Bike>({ id: '1' }),
+  removeBike: () => delay<void>(undefined),
+  removeStation: () => delay<void>(undefined),
+  blockStation: id => delay<Station>({ id, name: '' }),
+  blockBike: id => delay<Bike>({ id }),
 };
 
 export const ServicesContext = createContext(services);

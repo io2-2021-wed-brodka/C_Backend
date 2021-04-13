@@ -41,3 +41,37 @@ export const rentBike = (bikeId: string) =>
     method: 'POST',
     data: { id: bikeId },
   });
+
+export const addStation = (name: string) =>
+  apiWithAuthConnection<Station>(`${API}/stations`, {
+    method: 'POST',
+    data: { name },
+  });
+
+export const addBike = (stationId: string) =>
+  apiWithAuthConnection<Station>(`${API}/bikes`, {
+    method: 'POST',
+    data: { stationId },
+  });
+
+export const removeBike = (bikeId: string) =>
+  apiWithAuthConnection<void>(`${API}/bikes/${bikeId}`, {
+    method: 'DELETE',
+  });
+
+export const removeStation = (stationId: string) =>
+  apiWithAuthConnection<void>(`${API}/stations/${stationId}`, {
+    method: 'DELETE',
+  });
+
+export const blockStation = (id: string) =>
+  apiWithAuthConnection<Station>(`${API}/stations/blocked`, {
+    method: 'POST',
+    data: { id },
+  });
+
+export const blockBike = (id: string) =>
+  apiWithAuthConnection<Bike>(`${API}/bikes/blocked`, {
+    method: 'POST',
+    data: { id },
+  });

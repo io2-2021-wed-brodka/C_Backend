@@ -45,5 +45,11 @@ namespace BikesRentalServer.Controllers
                 Token = _usersService.GenerateBearerToken(response.Object).Object,
             };
         }
+
+        [HttpPost("logout")]
+        public ActionResult<string> Logout()
+        {
+            return Ok("Logged out");
+        }
     }
 }
