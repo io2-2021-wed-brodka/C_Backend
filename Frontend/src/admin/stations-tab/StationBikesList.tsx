@@ -7,19 +7,18 @@ import BikesList, {
 import usePromise from '../../common/hooks/usePromise';
 import SnackBar from '../../common/components/SnackBar';
 import { useSnackbar } from '../../common/hooks/useSnackbar';
-import useRefresh from '../../common/hooks/useRefresh';
 
 type Props = {
   stationId: string;
+  refresh?: unknown;
 };
 
-const StationBikesList = ({ stationId }: Props) => {
-  const [refreshBikesState] = useRefresh();
+const StationBikesList = ({ stationId, refresh }: Props) => {
   const getBikesOnStation = useServices().getBikesOnStation;
   const snackbar = useSnackbar();
   const data = usePromise(() => getBikesOnStation(stationId), [
     stationId,
-    refreshBikesState,
+    refresh,
   ]);
 
   const bikeActions: BikeActionsForBike = bikeId => [

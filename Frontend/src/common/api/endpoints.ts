@@ -47,3 +47,9 @@ export const addStation = (name: string) =>
     method: 'POST',
     data: { name },
   });
+
+export const addBike = (stationId: string) =>
+  apiWithAuthConnection<Station>(`${API}/bikes`, {
+    method: 'POST',
+    data: { stationId },
+  });

@@ -12,6 +12,10 @@ import {
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import StationBikesList from './StationBikesList';
+import { useServices } from '../../common/services';
+import useRefresh from '../../common/hooks/useRefresh';
+import SnackBar from '../../common/components/SnackBar';
+import { useSnackbar } from '../../common/hooks/useSnackbar';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,12 +43,21 @@ type Props = {
 
 const Station = ({ name, id }: Props) => {
   const classes = useStyles();
+  const [refreshState, refresh] = useRefresh();
+  const snackbar = useSnackbar();
   const [hasBeenOpened, setHasBeenOpened] = useState(false);
+  const addBike = useServices().addBike;
 
   const handleChange = (_: unknown, isExpanded: boolean) => {
     if (isExpanded) {
       setHasBeenOpened(true);
     }
+  };
+
+  const onAddBike = () => {
+    addBike(id)
+      .then(() => refresh())
+      .catch(err => snackbar.open(err.message));
   };
 
   return (
@@ -56,7 +69,11 @@ const Station = ({ name, id }: Props) => {
         {hasBeenOpened && (
           <div className={classes.div}>
             <div className={classes.stationButtonsDiv}>
-              <Button variant="contained" color={'secondary'}>
+              <Button
+                variant="contained"
+                color={'secondary'}
+                onClick={onAddBike}
+              >
                 Add bike
               </Button>{' '}
               <Button variant="contained" color={'default'}>
@@ -67,10 +84,14 @@ const Station = ({ name, id }: Props) => {
               </Button>
             </div>
             <Divider />
-            <StationBikesList stationId={id}></StationBikesList>
+            <StationBikesList
+              stationId={id}
+              refresh={refreshState}
+            ></StationBikesList>
           </div>
         )}
       </AccordionDetails>
+      <SnackBar {...snackbar.props} />
     </Accordion>
   );
 };
