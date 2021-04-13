@@ -138,8 +138,8 @@ namespace BikesRentalServer.Controllers
             {
                 Status.Success => Ok(new GetStationResponse
                 {
-                    Id=response.Object.Id.ToString(),
-                    Name=response.Object.Name,
+                    Id = response.Object.Id.ToString(),
+                    Name = response.Object.Name,
                 }),
                 Status.EntityNotFound or Status.InvalidState or _ => throw new InvalidOperationException("Invalid state"),
             };

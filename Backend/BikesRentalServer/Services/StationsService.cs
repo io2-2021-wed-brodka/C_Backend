@@ -58,7 +58,7 @@ namespace BikesRentalServer.Services
             var newStation = new Station
             {
                 Name = request.Name,
-                Status=BikeStationStatus.Working,
+                Status = BikeStationStatus.Working,
             };
 
             _dbContext.Stations.Add(newStation);
