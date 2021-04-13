@@ -22,10 +22,12 @@ import { BearerToken } from './api/models/bearer-token';
 import {
   signInAndSaveToken,
   saveTokenInLocalStorage,
+  signUpAndSaveToken,
 } from './authentication/token-functions';
 
 type AllServices = {
   signIn: (login: string, password: string) => Promise<BearerToken>;
+  signUp: (login: string, password: string) => Promise<BearerToken>;
   getStations: () => Promise<Station[]>;
   getBikesOnStation: (stationId: string) => Promise<Bike[]>;
   getRentedBikes: () => Promise<Bike[]>;
@@ -41,6 +43,7 @@ type AllServices = {
 
 export const services: AllServices = {
   signIn: signInAndSaveToken,
+  signUp: signUpAndSaveToken,
   getStations: getStations,
   getBikesOnStation: getBikesByStation,
   getRentedBikes: getRentedBikes,
@@ -56,6 +59,12 @@ export const services: AllServices = {
 
 export const mockedServices: AllServices = {
   signIn: login => {
+    return delay({ token: login }).then(bearerToken => {
+      saveTokenInLocalStorage(bearerToken);
+      return bearerToken;
+    });
+  },
+  signUp: login => {
     return delay({ token: login }).then(bearerToken => {
       saveTokenInLocalStorage(bearerToken);
       return bearerToken;
