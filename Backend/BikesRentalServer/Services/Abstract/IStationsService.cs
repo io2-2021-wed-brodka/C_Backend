@@ -1,6 +1,6 @@
-﻿using BikesRentalServer.Models;
+﻿using BikesRentalServer.Dtos.Requests;
+using BikesRentalServer.Models;
 using System.Collections.Generic;
-using BikesRentalServer.Dtos.Requests;
 
 namespace BikesRentalServer.Services.Abstract
 {

@@ -44,7 +44,7 @@ namespace BikesRentalServer.Tests.StationsService
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().NotBeNull();
-            result.Object.Name.Should().BeEquivalentTo("Al. Jerozolimskie");
+            result.Object.Name.Should().Be("Al. Jerozolimskie");
         }     
     }
 }

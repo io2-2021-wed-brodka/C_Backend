@@ -141,9 +141,7 @@ namespace BikesRentalServer.Controllers
                     Id=response.Object.Id.ToString(),
                     Name=response.Object.Name,
                 }),
-                Status.EntityNotFound => NotFound(response.Message), // useless here but whatever
-                Status.InvalidState => UnprocessableEntity(response.Message),
-                _ => throw new InvalidOperationException("Invalid state"),
+                Status.EntityNotFound or Status.InvalidState or _ => throw new InvalidOperationException("Invalid state"),
             };
         }
     }
