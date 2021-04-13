@@ -5,38 +5,56 @@ import PeopleIcon from '@material-ui/icons/People';
 import RoomIcon from '@material-ui/icons/Room';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import BuildIcon from '@material-ui/icons/Build';
-import { Link } from 'react-router-dom';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { Link, useHistory } from 'react-router-dom';
+import { clearTokenFromLocalStorage } from '../common/authentication/token-functions';
 
-const Menu = () => (
-  <List>
-    <ListItem button component={Link} to={'/stations'}>
-      <ListItemIcon>
-        <RoomIcon />
-      </ListItemIcon>
-      <ListItemText primary="Stations" />
-    </ListItem>
+const Menu = () => {
+  const history = useHistory();
 
-    <ListItem button component={Link} to={'/bikes'}>
-      <ListItemIcon>
-        <DirectionsBikeIcon />
-      </ListItemIcon>
-      <ListItemText primary="Bikes" />
-    </ListItem>
+  const logout = () => {
+    clearTokenFromLocalStorage();
+    history.push('/');
+  };
 
-    <ListItem button component={Link} to={'/users'}>
-      <ListItemIcon>
-        <PeopleIcon />
-      </ListItemIcon>
-      <ListItemText primary="Users" />
-    </ListItem>
+  return (
+    <List>
+      <ListItem button component={Link} to={'/stations'}>
+        <ListItemIcon>
+          <RoomIcon />
+        </ListItemIcon>
+        <ListItemText primary="Stations" />
+      </ListItem>
 
-    <ListItem button component={Link} to={'/techs'}>
-      <ListItemIcon>
-        <BuildIcon />
-      </ListItemIcon>
-      <ListItemText primary="Techs" />
-    </ListItem>
-  </List>
-);
+      <ListItem button component={Link} to={'/bikes'}>
+        <ListItemIcon>
+          <DirectionsBikeIcon />
+        </ListItemIcon>
+        <ListItemText primary="Bikes" />
+      </ListItem>
+
+      <ListItem button component={Link} to={'/users'}>
+        <ListItemIcon>
+          <PeopleIcon />
+        </ListItemIcon>
+        <ListItemText primary="Users" />
+      </ListItem>
+
+      <ListItem button component={Link} to={'/techs'}>
+        <ListItemIcon>
+          <BuildIcon />
+        </ListItemIcon>
+        <ListItemText primary="Techs" />
+      </ListItem>
+
+      <ListItem button onClick={logout}>
+        <ListItemIcon>
+          <ArrowBackIcon />
+        </ListItemIcon>
+        <ListItemText primary="Logout" />
+      </ListItem>
+    </List>
+  );
+};
 
 export default Menu;
