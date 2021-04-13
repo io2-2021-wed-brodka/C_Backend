@@ -41,7 +41,7 @@ namespace BikesRentalServer
             services.AddScoped<UserContext>();
             services.AddDbContext<DatabaseContext>(options =>
             {
-                options.UseSqlServer(_configuration.GetConnectionString("Default"));
+                options.UseSqlite(_configuration.GetConnectionString("Default"));
             });
 
             services.AddScoped<AuthorizationFilter>();
