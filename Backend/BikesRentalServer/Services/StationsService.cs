@@ -51,5 +51,20 @@ namespace BikesRentalServer.Services
 
             return ServiceActionResult.Success(station);
         }
+
+        
+        public ServiceActionResult<Station> AddStation(AddStationRequest request)
+        {
+            var newStation = new Station
+            {
+                Name = request.Name,
+                Status=BikeStationStatus.Working,
+            };
+
+            _dbContext.Stations.Add(newStation);
+            _dbContext.SaveChanges();
+
+            return ServiceActionResult.Success(newStation);
+        }
     }
 }
