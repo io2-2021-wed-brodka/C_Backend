@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react';
 import {
+  addStation,
   getBikesByStation,
   getRentedBikes,
   getStations,
@@ -25,6 +26,7 @@ type AllServices = {
   getRentedBikes: () => Promise<Bike[]>;
   returnBike: (stationId: string, bikeId: string) => Promise<Bike>;
   rentBike: (bikeId: string) => Promise<Bike>;
+  addStation: (name: string) => Promise<Station>;
 };
 
 export const services: AllServices = {
@@ -34,6 +36,7 @@ export const services: AllServices = {
   getRentedBikes: getRentedBikes,
   returnBike: returnBike,
   rentBike: rentBike,
+  addStation: addStation,
 };
 
 export const mockedServices: AllServices = {
@@ -48,6 +51,7 @@ export const mockedServices: AllServices = {
   getRentedBikes: () => delay(mockedRentedBikes),
   returnBike: bikeId => delay<Bike>({ id: bikeId }),
   rentBike: bikeId => delay<Bike>({ id: bikeId }),
+  addStation: name => delay<Station>({ id: '1', name }),
 };
 
 export const ServicesContext = createContext(services);

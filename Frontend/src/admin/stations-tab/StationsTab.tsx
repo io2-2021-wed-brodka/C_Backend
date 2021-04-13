@@ -3,49 +3,32 @@ import { useServices } from '../../common/services';
 import DataLoader from '../../common/components/DataLoader';
 import usePromise from '../../common/hooks/usePromise';
 import Station from './Station';
-import {
-  Button,
-  createStyles,
-  makeStyles,
-  TextField,
-  Theme,
-} from '@material-ui/core';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    topBar: {
-      paddingBottom: theme.spacing(2),
-      display: 'flex',
-      alignItems: 'flex-end',
-    },
-    input: {
-      marginRight: theme.spacing(1),
-    },
-    newStationButton: {
-      marginRight: theme.spacing(1),
-    },
-  }),
-);
+import NewStationForm from './NewStationForm';
+import useRefresh from './../../common/hooks/useRefresh';
+import { useSnackbar } from './../../common/hooks/useSnackbar';
+import SnackBar from '../../common/components/SnackBar';
 
 const StationsTab = () => {
-  const classes = useStyles();
+  const [refreshState, refresh] = useRefresh();
+  const data = usePromise(useServices().getStations, [refreshState]);
+  const addStation = useServices().addStation;
+  const snackbar = useSnackbar();
 
-  const data = usePromise(useServices().getStations);
+  const onAddStation = (name: string) => {
+    addStation(name)
+      .then(() => refresh())
+      .catch(err => snackbar.open(err.message));
+  };
 
   return (
     <>
-      <div className={classes.topBar}>
-        <TextField label="New station's name" className={classes.input} />
-        <Button variant="contained" color={'secondary'}>
-          Add station
-        </Button>
-      </div>
-
+      <NewStationForm onAdd={onAddStation} />
       <DataLoader data={data}>
         {stations =>
           stations.map(station => <Station key={station.id} {...station} />)
         }
       </DataLoader>
+      <SnackBar {...snackbar.props} />
     </>
   );
 };
