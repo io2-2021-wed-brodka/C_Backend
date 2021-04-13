@@ -5,7 +5,7 @@ namespace BikesRentalServer.DataAccess
 {
     public class DatabaseContext : DbContext
     {
-        public DatabaseContext(DbContextOptions options) : base(options) { }
+        public DatabaseContext(DbContextOptions options) : base(options) { Database.EnsureCreated(); }
         public DbSet<User> Users { get; set; }
         public DbSet<Bike> Bikes { get; set; }
         public DbSet<Station> Stations { get; set; }

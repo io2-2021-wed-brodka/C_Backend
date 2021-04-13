@@ -94,7 +94,7 @@ namespace BikesRentalServer.Services
             if (rentalCount >= 4)
                 return ServiceActionResult.InvalidState<Bike>("Rental limit exceeded");
             
-            var reservation = _dbContext.Reservations.SingleOrDefault(r => r.Bike.Id == bike.Id && r.ExpiryDate > DateTime.Now);
+            var reservation = _dbContext.Reservations.SingleOrDefault(r => r.Bike.Id == bike.Id && r.ExpirationDate > DateTime.Now);
             if (reservation is not null )
             {
                 if (reservation.User.Id != user.Id)
