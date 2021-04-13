@@ -5,6 +5,7 @@ import {
   getBikesByStation,
   getRentedBikes,
   getStations,
+  removeBike,
   rentBike,
   returnBike,
 } from './api/endpoints';
@@ -29,6 +30,7 @@ type AllServices = {
   rentBike: (bikeId: string) => Promise<Bike>;
   addStation: (name: string) => Promise<Station>;
   addBike: (stationId: string) => Promise<Bike>;
+  removeBike: (bikeId: string) => Promise<void>;
 };
 
 export const services: AllServices = {
@@ -40,6 +42,7 @@ export const services: AllServices = {
   rentBike: rentBike,
   addStation: addStation,
   addBike: addBike,
+  removeBike: removeBike,
 };
 
 export const mockedServices: AllServices = {
@@ -56,6 +59,7 @@ export const mockedServices: AllServices = {
   rentBike: bikeId => delay<Bike>({ id: bikeId }),
   addStation: name => delay<Station>({ id: '1', name }),
   addBike: () => delay<Bike>({ id: '1' }),
+  removeBike: () => delay<void>(undefined),
 };
 
 export const ServicesContext = createContext(services);

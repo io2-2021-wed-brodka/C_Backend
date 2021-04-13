@@ -53,3 +53,8 @@ export const addBike = (stationId: string) =>
     method: 'POST',
     data: { stationId },
   });
+
+export const removeBike = (bikeId: string) =>
+  apiWithAuthConnection<void>(`${API}/bikes/${bikeId}`, {
+    method: 'DELETE',
+  });

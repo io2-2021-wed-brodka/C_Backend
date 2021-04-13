@@ -7,6 +7,7 @@ import BikesList, {
 import usePromise from '../../common/hooks/usePromise';
 import SnackBar from '../../common/components/SnackBar';
 import { useSnackbar } from '../../common/hooks/useSnackbar';
+import useRefresh from '../../common/hooks/useRefresh';
 
 type Props = {
   stationId: string;
@@ -15,10 +16,13 @@ type Props = {
 
 const StationBikesList = ({ stationId, refresh }: Props) => {
   const getBikesOnStation = useServices().getBikesOnStation;
+  const removeBike = useServices().removeBike;
   const snackbar = useSnackbar();
+  const [internalRefreshState, internalRefresh] = useRefresh();
   const data = usePromise(() => getBikesOnStation(stationId), [
     stationId,
     refresh,
+    internalRefreshState,
   ]);
 
   const bikeActions: BikeActionsForBike = bikeId => [
@@ -33,7 +37,9 @@ const StationBikesList = ({ stationId, refresh }: Props) => {
       label: 'Remove',
       type: 'primary',
       onClick: () => {
-        console.log(bikeId);
+        removeBike(bikeId)
+          .then(() => internalRefresh())
+          .catch(err => snackbar.open(err.message));
       },
     },
   ];
