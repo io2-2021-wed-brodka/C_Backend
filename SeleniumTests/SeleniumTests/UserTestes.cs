@@ -104,7 +104,6 @@ namespace SeleniumTests
                 );
             station.Click();
             
-            webDriver.FindElement(By.ClassName("MuiButton-containedPrimary")).Click();
             navbar.FindElement(By.CssSelector("a:nth-child(2)")).Click();
             var rentedBikes = webDriver.FindElement(
                 By.CssSelector("#root > div.makeStyles-root-1 > div.MuiContainer-maxWidthMd.MuiContainer-root.makeStyles-container-4 > div.MuiPaper-elevation1.MuiPaper-root.MuiPaper-rounded > ul.MuiList-dense.MuiList-padding.MuiList-root")
