@@ -63,3 +63,9 @@ export const removeStation = (stationId: string) =>
   apiWithAuthConnection<void>(`${API}/stations/${stationId}`, {
     method: 'DELETE',
   });
+
+export const blockStation = (id: string) =>
+  apiWithAuthConnection<Station>(`${API}/stations/blocked`, {
+    method: 'POST',
+    data: { id },
+  });

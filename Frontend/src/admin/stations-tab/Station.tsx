@@ -48,6 +48,7 @@ const Station = ({ name, id }: Props) => {
   const [hasBeenOpened, setHasBeenOpened] = useState(false);
   const addBike = useServices().addBike;
   const removeStation = useServices().removeStation;
+  const blockStation = useServices().blockStation;
 
   const handleChange = (_: unknown, isExpanded: boolean) => {
     if (isExpanded) {
@@ -63,6 +64,12 @@ const Station = ({ name, id }: Props) => {
 
   const onRemoveStation = () => {
     removeStation(id)
+      .then(() => refresh())
+      .catch(err => snackbar.open(err.message));
+  };
+
+  const onBlockStation = () => {
+    blockStation(id)
       .then(() => refresh())
       .catch(err => snackbar.open(err.message));
   };
@@ -83,7 +90,11 @@ const Station = ({ name, id }: Props) => {
               >
                 Add bike
               </Button>{' '}
-              <Button variant="contained" color={'default'}>
+              <Button
+                variant="contained"
+                color={'default'}
+                onClick={onBlockStation}
+              >
                 Block
               </Button>{' '}
               <Button
