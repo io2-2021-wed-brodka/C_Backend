@@ -11,9 +11,9 @@ import LoginPage from '../common/components/LoginPage';
 import { getTokenFromLocalStorage } from '../common/authentication/token-functions';
 import pinkTheme from '../common/theme';
 import Layout from './Layout';
+import StationsTab from './stations-tab/StationsTab';
 
 import './AdminApp.css';
-import StationsTab from './stations-tab/StationsTab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
