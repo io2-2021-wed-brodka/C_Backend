@@ -69,3 +69,9 @@ export const blockStation = (id: string) =>
     method: 'POST',
     data: { id },
   });
+
+export const blockBike = (id: string) =>
+  apiWithAuthConnection<Bike>(`${API}/bikes/blocked`, {
+    method: 'POST',
+    data: { id },
+  });

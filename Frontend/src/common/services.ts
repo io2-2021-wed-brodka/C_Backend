@@ -2,6 +2,7 @@ import { createContext, useContext } from 'react';
 import {
   addBike,
   addStation,
+  blockBike,
   blockStation,
   getBikesByStation,
   getRentedBikes,
@@ -35,6 +36,7 @@ type AllServices = {
   removeBike: (bikeId: string) => Promise<void>;
   removeStation: (stationId: string) => Promise<void>;
   blockStation: (id: string) => Promise<Station>;
+  blockBike: (id: string) => Promise<Bike>;
 };
 
 export const services: AllServices = {
@@ -49,6 +51,7 @@ export const services: AllServices = {
   removeBike: removeBike,
   removeStation: removeStation,
   blockStation: blockStation,
+  blockBike: blockBike,
 };
 
 export const mockedServices: AllServices = {
@@ -68,6 +71,7 @@ export const mockedServices: AllServices = {
   removeBike: () => delay<void>(undefined),
   removeStation: () => delay<void>(undefined),
   blockStation: id => delay<Station>({ id, name: '' }),
+  blockBike: id => delay<Bike>({ id }),
 };
 
 export const ServicesContext = createContext(services);

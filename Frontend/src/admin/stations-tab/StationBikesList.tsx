@@ -17,6 +17,7 @@ type Props = {
 const StationBikesList = ({ stationId, refresh }: Props) => {
   const getBikesOnStation = useServices().getBikesOnStation;
   const removeBike = useServices().removeBike;
+  const blockBike = useServices().blockBike;
   const snackbar = useSnackbar();
   const [internalRefreshState, internalRefresh] = useRefresh();
   const data = usePromise(() => getBikesOnStation(stationId), [
@@ -30,7 +31,9 @@ const StationBikesList = ({ stationId, refresh }: Props) => {
       label: 'Block',
       type: 'secondary',
       onClick: () => {
-        console.log(bikeId);
+        blockBike(bikeId)
+          .then(() => internalRefresh())
+          .catch(err => snackbar.open(err.message));
       },
     },
     {
