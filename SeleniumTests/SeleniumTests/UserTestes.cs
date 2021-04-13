@@ -56,7 +56,7 @@ namespace SeleniumTests
             var navbar = webDriver.FindElement(
                 By.CssSelector("#root > div.makeStyles-root-1 > header.MuiAppBar-colorPrimary.MuiAppBar-positionSticky.MuiAppBar-root.MuiPaper-elevation4.MuiPaper-root > div.MuiPaper-elevation0.MuiPaper-root.makeStyles-root-7 > div.MuiTabs-root > div.MuiTabs-fixed.MuiTabs-scroller > div.MuiTabs-centered.MuiTabs-flexContainer")
                 );
-            navbar.FindElement(By.CssSelector("a:nth-child(2)")).Click();
+            navbar.FindElement(By.CssSelector("a:nth-child(1)")).Click();
             Assert.AreEqual(webDriver.Url, _url + "/stations");
             webDriver.Close();
         }
@@ -109,12 +109,27 @@ namespace SeleniumTests
             var rentedBikes = webDriver.FindElement(
                 By.CssSelector("#root > div.makeStyles-root-1 > div.MuiContainer-maxWidthMd.MuiContainer-root.makeStyles-container-4 > div.MuiPaper-elevation1.MuiPaper-root.MuiPaper-rounded > ul.MuiList-dense.MuiList-padding.MuiList-root")
                 );
+            var rentedBikesList = rentedBikes.FindElements(By.CssSelector("li"));
+            int rentedBikesCount = rentedBikesList.Count;
+            
             rentedBikes.FindElement(By.CssSelector("button:nth-child(2)")).Click();
+
             var popupStations = webDriver.FindElement(
                 By.CssSelector("body > div.MuiDialog-root > div.MuiDialog-container.MuiDialog-scrollPaper > div.MuiDialog-paper.MuiDialog-paperScrollPaper.MuiDialog-paperWidthSm.MuiPaper-elevation24.MuiPaper-root.MuiPaper-rounded > ul.MuiList-padding.MuiList-root")
                 );
             popupStations.FindElement(By.CssSelector("div:nth-child(1)")).Click();
-            Assert.Pass();
+            int newRentedBikesCount = 0;
+            try
+            {
+                rentedBikes = webDriver.FindElement(
+                  By.CssSelector("#root > div.makeStyles-root-1 > div.MuiContainer-maxWidthMd.MuiContainer-root.makeStyles-container-4 > div.MuiPaper-elevation1.MuiPaper-root.MuiPaper-rounded > ul.MuiList-dense.MuiList-padding.MuiList-root")
+                  );
+                rentedBikesList = rentedBikes.FindElements(By.CssSelector("li"));
+                newRentedBikesCount = rentedBikesList.Count;
+            }
+            catch { }
+            Assert.AreEqual(rentedBikesCount, newRentedBikesCount+1);
+            webDriver.Close();
         }
     }
 }
