@@ -227,7 +227,7 @@ namespace BikesRentalServer.Tests.BikesService
                 User = _user,
                 Bike = bike,
                 ReservationDate = DateTime.Now.AddMinutes(-10),
-                ExpiryDate = DateTime.Now.AddMinutes(20),
+                ExpirationDate = DateTime.Now.AddMinutes(20),
             });
             _dbContext.SaveChanges();
 
@@ -269,7 +269,7 @@ namespace BikesRentalServer.Tests.BikesService
                 User = user,
                 Bike = bike,
                 ReservationDate = DateTime.Now.AddMinutes(-10),
-                ExpiryDate = DateTime.Now.AddMinutes(20),
+                ExpirationDate = DateTime.Now.AddMinutes(20),
             });
             _dbContext.SaveChanges();
 
@@ -311,7 +311,7 @@ namespace BikesRentalServer.Tests.BikesService
                 User = user,
                 Bike = bike,
                 ReservationDate = DateTime.Now.AddMinutes(-40),
-                ExpiryDate = DateTime.Now.AddMinutes(-10),
+                ExpirationDate = DateTime.Now.AddMinutes(-10),
             });
             _dbContext.SaveChanges();
 

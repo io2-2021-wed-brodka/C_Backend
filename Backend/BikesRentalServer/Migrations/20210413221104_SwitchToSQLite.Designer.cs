@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BikesRentalServer.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20210413214019_SwitchToSQLite")]
+    [Migration("20210413221104_SwitchToSQLite")]
     partial class SwitchToSQLite
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,7 +84,7 @@ namespace BikesRentalServer.Migrations
                     b.Property<int?>("BikeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("ExpiryDate")
+                    b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("ReservationDate")

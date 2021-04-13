@@ -82,7 +82,7 @@ namespace BikesRentalServer.Migrations
                     b.Property<int?>("BikeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("ExpiryDate")
+                    b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("ReservationDate")
