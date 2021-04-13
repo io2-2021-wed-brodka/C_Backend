@@ -58,3 +58,8 @@ export const removeBike = (bikeId: string) =>
   apiWithAuthConnection<void>(`${API}/bikes/${bikeId}`, {
     method: 'DELETE',
   });
+
+export const removeStation = (stationId: string) =>
+  apiWithAuthConnection<void>(`${API}/stations/${stationId}`, {
+    method: 'DELETE',
+  });
