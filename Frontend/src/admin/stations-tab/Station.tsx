@@ -39,9 +39,10 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = {
   name: string;
   id: string;
+  forceRefresh?: () => void;
 };
 
-const Station = ({ name, id }: Props) => {
+const Station = ({ name, id, forceRefresh }: Props) => {
   const classes = useStyles();
   const [refreshState, refresh] = useRefresh();
   const snackbar = useSnackbar();
@@ -64,7 +65,7 @@ const Station = ({ name, id }: Props) => {
 
   const onRemoveStation = () => {
     removeStation(id)
-      .then(() => refresh())
+      .then(() => forceRefresh && forceRefresh())
       .catch(err => snackbar.open(err.message));
   };
 

@@ -25,7 +25,9 @@ const StationsTab = () => {
       <NewStationForm onAdd={onAddStation} />
       <DataLoader data={data}>
         {stations =>
-          stations.map(station => <Station key={station.id} {...station} />)
+          stations.map(station => (
+            <Station key={station.id} forceRefresh={refresh} {...station} />
+          ))
         }
       </DataLoader>
       <SnackBar {...snackbar.props} />
