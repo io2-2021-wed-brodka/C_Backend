@@ -353,4 +353,6 @@ MigrationBackup/
 .idea/
 
 # Sqlite db files
-.db
+*.db
+*.db-shm
+*.db-wal
