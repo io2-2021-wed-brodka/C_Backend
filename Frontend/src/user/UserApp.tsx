@@ -17,6 +17,7 @@ import RentalsTab from './rentals-tab/RentalsTab';
 import LoginPage from '../common/components/LoginPage';
 import { getTokenFromLocalStorage } from '../common/authentication/token-functions';
 import pinkTheme from '../common/theme';
+import RegistrationPage from './registration/RegistrationPage';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -59,6 +60,7 @@ const UserApp = () => {
                 </audio>
               </Route>
               <Route path="/login" component={LoginPage} />
+              <Route path="/signup" component={RegistrationPage} />
               <Route exact path="/">
                 <Redirect to={'/stations'} />
               </Route>

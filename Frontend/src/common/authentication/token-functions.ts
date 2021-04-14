@@ -1,5 +1,5 @@
 import { BearerToken } from './../api/models/bearer-token';
-import { signIn } from './../api/endpoints';
+import { signIn, signUp } from './../api/endpoints';
 
 const localStorageKey = 'token';
 
@@ -22,6 +22,13 @@ export const getTokenFromLocalStorage = () => {
 
 export const signInAndSaveToken = (login: string, password: string) => {
   return signIn(login, password).then(bearerToken => {
+    saveTokenInLocalStorage(bearerToken);
+    return bearerToken;
+  });
+};
+
+export const signUpAndSaveToken = (login: string, password: string) => {
+  return signUp(login, password).then(bearerToken => {
     saveTokenInLocalStorage(bearerToken);
     return bearerToken;
   });

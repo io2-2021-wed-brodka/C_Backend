@@ -15,6 +15,12 @@ export const signIn = (login: string, password: string) =>
     data: { login, password },
   });
 
+export const signUp = (login: string, password: string) =>
+  apiConnection<BearerToken>(`${API}/register`, {
+    method: 'POST',
+    data: { login, password },
+  });
+
 export const getStations = () =>
   apiWithAuthConnection<StationsResponse>(`${API}/stations`).then(
     res => res.stations,

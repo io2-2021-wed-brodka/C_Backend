@@ -10,10 +10,10 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { useServices } from '../services';
 import { useHistory } from 'react-router-dom';
-import { useSnackbar } from '../hooks/useSnackbar';
-import { SnackBar } from './SnackBar';
+import { useServices } from '../../common/services';
+import { useSnackbar } from '../../common/hooks/useSnackbar';
+import SnackBar from '../../common/components/SnackBar';
 
 const Copyright = () => {
   return (
@@ -44,25 +44,24 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const LoginPage = () => {
+const RegistrationPage = () => {
   const classes = useStyles();
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
 
-  const signIn = useServices().signIn;
+  const signUp = useServices().signUp;
   const history = useHistory();
   const snackbar = useSnackbar();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    signIn(login, password)
+    signUp(login, password)
       .then(() => {
         history.push('/');
       })
       .catch(err => {
         snackbar.open(err.message);
-        process.env.REACT_APP_FOR === 'user' && history.push('/easteregg');
       });
   };
 
@@ -74,7 +73,7 @@ const LoginPage = () => {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Sign up
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
           <TextField
@@ -112,11 +111,9 @@ const LoginPage = () => {
           </Button>
           <Grid container>
             <Grid item>
-              {process.env.REACT_APP_FOR === 'user' && (
-                <Link href="/signup" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              )}
+              <Link href="/login" variant="body2">
+                {'Already have an account? Sign In'}
+              </Link>
             </Grid>
           </Grid>
         </form>
@@ -129,4 +126,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegistrationPage;
