@@ -25,7 +25,14 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<Station> GetStation(string id)
         {
-            var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
+            // TODO: FIX ISSUE WITH TOSTRING
+            //
+
+            if(!int.TryParse(id, out int idAsInt))
+                return ServiceActionResult.EntityNotFound<Station>("Station not found");
+
+            //
+            var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id == idAsInt);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
             return ServiceActionResult.Success(station);
@@ -33,7 +40,15 @@ namespace BikesRentalServer.Services
         
         public ServiceActionResult<IEnumerable<Bike>> GetAllBikesAtStation(string id)
         {
-            var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
+            // TODO: FIX ISSUE WITH TOSTRING
+            //
+
+            if (!int.TryParse(id, out int idAsInt))
+                return ServiceActionResult.EntityNotFound<IEnumerable<Bike>>("Station not found");
+
+            //
+
+            var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id == idAsInt);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<IEnumerable<Bike>>("Station not found");
             return ServiceActionResult.Success(station.Bikes.AsEnumerable());
@@ -41,7 +56,14 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<Station> RemoveStation(string id)
         {
-            var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id.ToString() == id);
+            // TODO: FIX ISSUE WITH TOSTRING
+            //
+
+            if (!int.TryParse(id, out int idAsInt))
+                return ServiceActionResult.EntityNotFound<Station>("Station not found");
+
+            //
+            var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id == idAsInt);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
             if (station.Bikes.Count > 0)
