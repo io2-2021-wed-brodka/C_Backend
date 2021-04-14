@@ -128,5 +128,21 @@ namespace BikesRentalServer.Controllers
                 _ => throw new InvalidOperationException("Invalid state"),
             };
         }
+
+        [HttpPost]
+        [AdminAuthorization]
+        public ActionResult<GetStationResponse> AddStation(AddStationRequest request)
+        {
+            var response = _stationsService.AddStation(request);
+            return response.Status switch
+            {
+                Status.Success => Ok(new GetStationResponse
+                {
+                    Id = response.Object.Id.ToString(),
+                    Name = response.Object.Name,
+                }),
+                Status.EntityNotFound or Status.InvalidState or _ => throw new InvalidOperationException("Invalid state"),
+            };
+        }
     }
 }

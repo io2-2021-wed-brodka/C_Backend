@@ -1,4 +1,5 @@
-﻿using BikesRentalServer.Models;
+﻿using BikesRentalServer.Dtos.Requests;
+using BikesRentalServer.Models;
 using System.Collections.Generic;
 
 namespace BikesRentalServer.Services.Abstract
@@ -9,5 +10,6 @@ namespace BikesRentalServer.Services.Abstract
         ServiceActionResult<Station> GetStation(string id);
         ServiceActionResult<IEnumerable<Bike>> GetAllBikesAtStation(string id);
         ServiceActionResult<Station> RemoveStation(string id);
+        ServiceActionResult<Station> AddStation(AddStationRequest request);
     }
 }
