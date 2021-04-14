@@ -29,10 +29,17 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<Bike> GetBike(string id)
         {
+            // TODO: FIX ISSUE WITH TOSTRING
+            //
+
+            if (!int.TryParse(id, out int idAsInt))
+                return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
+
+            //
             var bike = _dbContext.Bikes
                 .Include(b => b.User)
                 .Include(b => b.Station)
-                .SingleOrDefault(b => b.Id.ToString() == id);
+                .SingleOrDefault(b => b.Id == idAsInt);
 
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
@@ -41,9 +48,16 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<Bike> AddBike(AddBikeRequest request)
         {
+            // TODO: FIX ISSUE WITH TOSTRING
+            //
+
+            if (!int.TryParse(request.StationId, out int idAsInt))
+                return ServiceActionResult.EntityNotFound<Bike>("Station does not exist");
+
+            //
             var station = _dbContext.Stations
                 .Include(s => s.Bikes)
-                .SingleOrDefault(s => request.StationId == s.Id.ToString());
+                .SingleOrDefault(s => idAsInt == s.Id);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Station does not exist");
 
@@ -62,7 +76,14 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<Bike> RemoveBike(string id)
         {
-            var bike = _dbContext.Bikes.SingleOrDefault(b => b.Id.ToString() == id);
+            // TODO: FIX ISSUE WITH TOSTRING
+            //
+
+            if (!int.TryParse(id, out int idAsInt))
+                return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
+
+            //
+            var bike = _dbContext.Bikes.SingleOrDefault(b => b.Id == idAsInt);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
             if (bike.Status != BikeStatus.Blocked)
@@ -78,10 +99,17 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<Bike> RentBike(RentBikeRequest request)
         {
+            // TODO: FIX ISSUE WITH TOSTRING
+            //
+
+            if (!int.TryParse(request.Id, out int idAsInt))
+                return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
+
+            //
             var bike = _dbContext.Bikes
                 .Include(b => b.User)
                 .Include(b => b.Station)
-                .SingleOrDefault(b => b.Id.ToString() == request.Id);
+                .SingleOrDefault(b => b.Id == idAsInt);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
             if (bike.Status is BikeStatus.Blocked)
@@ -120,14 +148,28 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<Bike> GiveBikeBack(string bikeId, string stationId)
         {
-            var station = _dbContext.Stations.SingleOrDefault(s => s.Id.ToString() == stationId);
+            // TODO: FIX ISSUE WITH TOSTRING
+            //
+
+            if (!int.TryParse(stationId, out int idAsInt))
+                return ServiceActionResult.EntityNotFound<Bike>("Station not found");
+
+            //
+            var station = _dbContext.Stations.SingleOrDefault(s => s.Id == idAsInt);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Station not found");
-            
+
+            // TODO: FIX ISSUE WITH TOSTRING
+            //
+
+            if (!int.TryParse(bikeId, out int bikeIdAsInt))
+                return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
+
+            //
             var bike = _dbContext.Bikes
                 .Include(b => b.User)
                 .Include(b => b.Station)
-                .SingleOrDefault(b => b.Id.ToString() == bikeId);
+                .SingleOrDefault(b => b.Id == bikeIdAsInt);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
 
