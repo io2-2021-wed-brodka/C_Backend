@@ -1,9 +1,11 @@
 ﻿using BikesRentalServer.Authorization;
+using BikesRentalServer.Authorization.Attributes;
 using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Dtos.Responses;
 using BikesRentalServer.Services;
 using BikesRentalServer.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace BikesRentalServer.Controllers
 {
@@ -50,6 +52,22 @@ namespace BikesRentalServer.Controllers
         public ActionResult<string> Logout()
         {
             return Ok("Logged out");
+        }
+
+        [AdminAuthorization]
+        public ActionResult<GetAllUsersResponse> GetAllUsers()
+        {
+            var response = new GetAllUsersResponse
+            {
+                Users = _usersService.GetAllUsers().Object
+                    .Select(user => new GetUserResponse
+                    {
+                        Id = user.Id.ToString(),
+                        Name = user.Username,
+                    }),
+            };
+
+            return Ok(response);
         }
     }
 }

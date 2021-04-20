@@ -1,7 +1,9 @@
 ﻿using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -47,6 +49,12 @@ namespace BikesRentalServer.Services
         {
             var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(user.Username));
             return ServiceActionResult.Success(token);
+        }
+
+        public ServiceActionResult<IEnumerable<User>> GetAllUsers()
+        {
+            var result = _dbContext.Users.Where(u => u.Role == UserRole.User).AsEnumerable();
+            return ServiceActionResult.Success(result);
         }
     }
 }
