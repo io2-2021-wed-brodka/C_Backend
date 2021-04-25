@@ -5,7 +5,6 @@ using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace BikesRentalServer.Tests.BikesService
