@@ -7,5 +7,7 @@ namespace BikesRentalServer.Services.Abstract
         ServiceActionResult<User> AddUser(string username, string password);
         ServiceActionResult<User> GetUserByUsernameAndPassword(string username, string password);
         ServiceActionResult<string> GenerateBearerToken(User user);
+        ServiceActionResult<User> BlockUser(string userId);
+        ServiceActionResult<User> UnblockUser(string userId);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BikesRentalServer.Authorization;
+using BikesRentalServer.Authorization.Attributes;
 using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Dtos.Responses;
 using BikesRentalServer.Services;
@@ -50,6 +51,32 @@ namespace BikesRentalServer.Controllers
         public ActionResult<string> Logout()
         {
             return Ok("Logged out");
+        }
+
+        [HttpPost("{id}")]
+        [AdminAuthorization]
+        public ActionResult<string> Block(string id)
+        {
+            var response = _usersService.BlockUser(id);
+            if (response.Status is Status.InvalidState)
+                return Conflict("User already blocked.");
+            if (response.Status is Status.EntityNotFound)
+                return Conflict("User does not exist.");
+
+            return Ok("Blocked User.");
+        }
+
+        [HttpPost("{id}")]
+        [AdminAuthorization]
+        public ActionResult<string> Unblock(string id)
+        {
+            var response = _usersService.UnblockUser(id);
+            if (response.Status is Status.InvalidState)
+                return Conflict("User already unblocked.");
+            if(response.Status is Status.EntityNotFound)
+                return Conflict("User does not exist.");
+
+            return Ok("Unblocked User.");
         }
     }
 }
