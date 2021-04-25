@@ -218,5 +218,13 @@ namespace BikesRentalServer.Services
             _dbContext.SaveChanges();
             return ServiceActionResult.Success(bike);
         }
+
+        public ServiceActionResult<IEnumerable<Bike>> GetBlockedBikes()
+        {
+            var bikes = _dbContext.Bikes.Where(b => b.Status == BikeStatus.Blocked)
+                        .Include(s => s.Station)
+                        .AsEnumerable();
+            return ServiceActionResult.Success(bikes);
+        }
     }
 }
