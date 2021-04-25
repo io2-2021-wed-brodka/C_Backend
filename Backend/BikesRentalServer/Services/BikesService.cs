@@ -197,6 +197,7 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.InvalidState<Bike>("Bike is rented");
             bike.Status = BikeStatus.Blocked;
             _dbContext.SaveChanges();
+            return ServiceActionResult.Success(bike);
         }
     }
 }
