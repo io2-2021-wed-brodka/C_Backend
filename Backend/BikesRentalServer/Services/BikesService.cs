@@ -206,7 +206,9 @@ namespace BikesRentalServer.Services
             if (!int.TryParse(id, out int idAsInt))
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
 
-            var bike = _dbContext.Bikes.SingleOrDefault(b => b.Id == idAsInt);
+            var bike = _dbContext.Bikes
+                .Include(s => s.Station)
+                .SingleOrDefault(b => b.Id == idAsInt);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
             if (bike.Status == BikeStatus.Working)
