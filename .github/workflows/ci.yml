@@ -23,3 +23,13 @@ jobs:
       run: dotnet build ./**/*.sln --no-restore
     - name: Test
       run: dotnet test ./**/*.sln --no-build --verbosity normal
+    - name: API Tests
+      id: run-newman
+      uses: anthonyvscode/newman-action@v1
+      with:
+        collection: ./**/ApiTests/API_tests.json
+        reporters: cli
+
+
+
+  
