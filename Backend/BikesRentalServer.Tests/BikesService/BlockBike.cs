@@ -5,7 +5,6 @@ using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -15,11 +14,11 @@ namespace BikesRentalServer.Tests.BikesService
     {
         private readonly DatabaseContext _dbContext;
         private readonly Services.BikesService _bikesService;
-        private readonly User _user;
+
         public BlockBike()
         {
             _dbContext = MockedDbFactory.GetContext();
-            _user = _dbContext.Users.Add(new User
+            var user = _dbContext.Users.Add(new User
                 {
                     Username = "test_admin",
                     State = UserState.Active,
@@ -30,7 +29,7 @@ namespace BikesRentalServer.Tests.BikesService
             _dbContext.SaveChanges();
 
             var userContext = new UserContext();
-            userContext.SetOnce(_user.Username, _user.Role);
+            userContext.SetOnce(user.Username, user.Role);
 
             _bikesService = new Services.BikesService(_dbContext, userContext);
         }
@@ -52,6 +51,7 @@ namespace BikesRentalServer.Tests.BikesService
                 })
                 .Entity;
             _dbContext.SaveChanges();
+            
             var result = _bikesService.BlockBike(new BlockBikeRequest
             {
                 Id = bike.Id.ToString(),
@@ -78,10 +78,12 @@ namespace BikesRentalServer.Tests.BikesService
                 })
                 .Entity;
             _dbContext.SaveChanges();
+            
             var result = _bikesService.BlockBike(new BlockBikeRequest
             {
                 Id = bike.Id.ToString(),
             });
+            
             result.Status.Should().Be(Status.Success);
             result.Object.Status.Should().Be(BikeStatus.Blocked);
         }
@@ -93,6 +95,7 @@ namespace BikesRentalServer.Tests.BikesService
             {
                 Id = "27",
             });
+            
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
         }
@@ -114,10 +117,12 @@ namespace BikesRentalServer.Tests.BikesService
                 })
                 .Entity;
             _dbContext.SaveChanges();
+            
             var result = _bikesService.BlockBike(new BlockBikeRequest
             {
                 Id = bike.Id.ToString()
             });
+            
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
         }
@@ -140,10 +145,12 @@ namespace BikesRentalServer.Tests.BikesService
                 })
                 .Entity;
             _dbContext.SaveChanges();
+            
             var result = _bikesService.BlockBike(new BlockBikeRequest
             {
                 Id = bike.Id.ToString(),
             });
+            
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
         }
