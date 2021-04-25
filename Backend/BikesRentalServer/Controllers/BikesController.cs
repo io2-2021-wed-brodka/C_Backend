@@ -175,5 +175,29 @@ namespace BikesRentalServer.Controllers
                 }),
             };
         }
+
+        [HttpPost("blocked")]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetBikeResponse> BlockBike(BlockBikeRequest request)
+        {
+            var response = _bikesService.BlockBike(request);
+            return response.Status switch
+            {
+                Status.Success => Ok(new GetBikeResponse
+                {
+                    Id = response.Object.Id.ToString(),
+                    Status = response.Object.Status,
+                    Station = new GetBikeResponse.StationDto
+                    {
+                        Id = response.Object.Station.Id.ToString(),
+                        Name = response.Object.Station.Name,
+                    },
+                }),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
+            };
+        }
     }
 }

@@ -179,5 +179,26 @@ namespace BikesRentalServer.Services
 
             return ServiceActionResult.Success(bike);
         }
+
+        public ServiceActionResult<Bike> BlockBike(BlockBikeRequest request)
+        {
+            if (!int.TryParse(request.Id, out int idAsInt))
+                return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
+            
+            var bike = _dbContext.Bikes
+                .Include(u => u.User)
+                .Include(s => s.Station)
+                .SingleOrDefault(b => b.Id == idAsInt);
+            if (bike is null)
+                return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
+            if (bike.Status is BikeStatus.Blocked)
+                return ServiceActionResult.InvalidState<Bike>("Bike is already blocked");
+            if (bike.User is not null)
+                return ServiceActionResult.InvalidState<Bike>("Bike is rented");
+            
+            bike.Status = BikeStatus.Blocked;
+            _dbContext.SaveChanges();
+            return ServiceActionResult.Success(bike);
+        }
     }
 }
