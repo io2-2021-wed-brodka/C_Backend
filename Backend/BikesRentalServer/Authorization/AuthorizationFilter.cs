@@ -1,8 +1,6 @@
 ﻿using BikesRentalServer.Authorization.Attributes;
 using BikesRentalServer.DataAccess;
-using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;

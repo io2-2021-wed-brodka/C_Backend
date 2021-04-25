@@ -1,4 +1,5 @@
 using BikesRentalServer.Authorization;
+using BikesRentalServer.Authorization.Attributes;
 using BikesRentalServer.DataAccess;
 using BikesRentalServer.Filters;
 using BikesRentalServer.Services;
@@ -9,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using System;
 using System.Text.Json.Serialization;
 
 namespace BikesRentalServer
@@ -36,7 +39,18 @@ namespace BikesRentalServer
                 });
 
             services.AddCors();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("Bearer Auth", new OpenApiSecurityScheme
+                {
+                    Name = "Bearer token",
+                    Scheme = "bearer",
+                    Description = "Authorization bearer token.",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                });
+                options.OperationFilter<SwaggerAuthorizationOperationFilter>();
+            });
 
             services.AddScoped<UserContext>();
             services.AddDbContext<DatabaseContext>(options =>
