@@ -1,3 +1,4 @@
+using BikesRentalServer.Authorization;
 using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
@@ -17,7 +18,7 @@ namespace BikesRentalServer.Tests.StationsService
         public RemoveStation()
         {
             _dbContext = MockedDbFactory.GetContext();
-            _stationsService = new Services.StationsService(_dbContext);
+            _stationsService = new Services.StationsService(_dbContext, new UserContext());
         }
 
         [Fact]

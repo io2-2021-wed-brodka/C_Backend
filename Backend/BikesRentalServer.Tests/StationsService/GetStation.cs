@@ -15,7 +15,7 @@ namespace BikesRentalServer.Tests.StationsService
         public GetStation()
         {
             _dbContext = MockedDbFactory.GetContext();
-            _stationsService = new Services.StationsService(_dbContext);
+            _stationsService = new Services.StationsService(_dbContext, new UserContext());
         }
 
         [Fact]
