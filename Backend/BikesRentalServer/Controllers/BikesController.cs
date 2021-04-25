@@ -223,5 +223,26 @@ namespace BikesRentalServer.Controllers
                 _ => throw new InvalidOperationException("Invalid state"),
             };
         }
+
+        [HttpGet("blocked")]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetAllBikesResponse> GetBlockedBikes()
+        {
+            var response = _bikesService.GetBlockedBikes();
+            return new GetAllBikesResponse
+            {
+                Bikes = response.Object.Select(bike => new GetBikeResponse
+                {
+                    Id = bike.Id.ToString(),
+                    Station = new GetBikeResponse.StationDto
+                    {
+                        Id = bike.Station.Id.ToString(),
+                        Name = bike.Station.Name,
+                    },
+                    Status = bike.Status,
+                }),
+            };
+        }
     }
 }
