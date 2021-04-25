@@ -88,5 +88,13 @@ namespace BikesRentalServer.Services
 
             return ServiceActionResult.Success(newStation);
         }
+
+        public ServiceActionResult<IEnumerable<Station>> GetBlockedStations()
+        { 
+            var stations = _dbContext.Stations.Where(s => s.Status == BikeStationStatus.Blocked)
+                .Include(s => s.Bikes)
+                .AsEnumerable();
+            return ServiceActionResult.Success(stations);
+        }
     }
 }

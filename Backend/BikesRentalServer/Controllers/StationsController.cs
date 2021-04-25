@@ -144,5 +144,21 @@ namespace BikesRentalServer.Controllers
                 Status.EntityNotFound or Status.InvalidState or _ => throw new InvalidOperationException("Invalid state"),
             };
         }
+
+        [HttpGet("blocked")]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetAllStationsResponse> GetBlockedStations()
+        {
+            var response = _stationsService.GetBlockedStations();
+            return new GetAllStationsResponse
+            {
+                Stations = response.Object.Select(station => new GetStationResponse
+                {
+                    Id = station.Id.ToString(),
+                    Name = station.Name,
+                }),
+            };
+        }
     }
 }
