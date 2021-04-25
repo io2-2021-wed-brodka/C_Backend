@@ -160,5 +160,22 @@ namespace BikesRentalServer.Controllers
                 }),
             };
         }
+
+        [HttpGet("active")]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetAllStationsResponse> GetActiveStations()
+        {
+            var response = _stationsService.GetActiveStations();
+            return new GetAllStationsResponse
+            {
+                Stations = response.Object.Select(station => new GetStationResponse
+                {
+                    Id = station.Id.ToString(),
+                    Name = station.Name,
+                }),
+            };
+        }
     }
 }
