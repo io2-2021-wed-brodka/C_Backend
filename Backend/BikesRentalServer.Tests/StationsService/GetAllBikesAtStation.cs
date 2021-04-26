@@ -27,7 +27,7 @@ namespace BikesRentalServer.Tests.StationsService
                 Role = UserRole.User,
                 Reservations = new List<Reservation>(),
             })
-                .Entity;
+            .Entity;
             _dbContext.SaveChanges();
 
             var userContext = new UserContext();
@@ -40,11 +40,11 @@ namespace BikesRentalServer.Tests.StationsService
         public void GetAllBikesAtStationShouldReturnEmptyIEnumerateIfNoBikesAtStation()
         {
             var station = _dbContext.Stations.Add(new Station
-                {
-                    Id = 3,
-                    Name = "Dom Adama",
-                })
-                .Entity;
+            {
+                Id = 3,
+                Name = "Dom Adama",
+            })
+            .Entity;
             _dbContext.SaveChanges();
 
             var result = _stationsService.GetAllBikesAtStation(station.Id.ToString());
@@ -57,11 +57,11 @@ namespace BikesRentalServer.Tests.StationsService
         public void GetAllBikesAtStationShouldReturnAllBikesAtStation()
         {
             var station = _dbContext.Stations.Add(new Station
-                {
-                    Id = 3,
-                    Name = "Dom Adama",
-                })
-                .Entity;
+            {
+                Id = 3,
+                Name = "Dom Adama",
+            })
+            .Entity;
             var addedBikes = new []
             {
                 new Bike
@@ -111,7 +111,7 @@ namespace BikesRentalServer.Tests.StationsService
                 Name = "Buda Reksia",
                 Status = BikeStationStatus.Blocked,
             })
-               .Entity;
+            .Entity;
             _dbContext.SaveChanges();
 
             var result = _stationsService.GetAllBikesAtStation(station.Id.ToString());

@@ -54,7 +54,7 @@ namespace BikesRentalServer.Services
             var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id == idAsInt);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<IEnumerable<Bike>>("Station not found");
-            if(station.Status == BikeStationStatus.Blocked && _userContext.Role == UserRole.User)
+            if(station.Status is BikeStationStatus.Blocked && _userContext.Role is UserRole.User)
                 return ServiceActionResult.InvalidState<IEnumerable<Bike>>("User cannot get bikes from blocked station");
             return ServiceActionResult.Success(station.Bikes.AsEnumerable());
         }
