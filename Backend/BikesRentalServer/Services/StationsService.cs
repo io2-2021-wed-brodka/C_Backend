@@ -105,9 +105,26 @@ namespace BikesRentalServer.Services
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
             if (station.Status is BikeStationStatus.Blocked)
-                return ServiceActionResult.InvalidState<Station>("Station is already blocked");
+                return ServiceActionResult.InvalidState<Station>("Station already blocked");
 
             station.Status = BikeStationStatus.Blocked;
+            _dbContext.SaveChanges();
+            return ServiceActionResult.Success(station);
+        }
+
+        public ServiceActionResult<Station> UnblockStation(string id)
+        {
+            if (!int.TryParse(id, out int idAsInt))
+                return ServiceActionResult.EntityNotFound<Station>("Station not found");
+
+            var station = _dbContext.Stations
+                .SingleOrDefault(s => s.Id == idAsInt);
+            if (station is null)
+                return ServiceActionResult.EntityNotFound<Station>("Station not found");
+            if (station.Status == BikeStationStatus.Working)
+                return ServiceActionResult.InvalidState<Station>("Station not blocked");
+
+            station.Status = BikeStationStatus.Working;
             _dbContext.SaveChanges();
             return ServiceActionResult.Success(station);
         }
