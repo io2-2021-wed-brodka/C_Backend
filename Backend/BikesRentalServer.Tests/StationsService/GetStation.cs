@@ -1,4 +1,5 @@
-﻿using BikesRentalServer.DataAccess;
+﻿using BikesRentalServer.Authorization;
+using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
