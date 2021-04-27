@@ -49,9 +49,6 @@ namespace BikesRentalServer.Repositories
 
         public Bike Remove(Bike entity)
         {
-            if (!_dbContext.Bikes.Any(b => b.Id == entity.Id))
-                return null;
-
             var bike = _dbContext.Bikes.Remove(entity).Entity;
             _dbContext.SaveChanges();
 

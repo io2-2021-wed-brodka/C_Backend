@@ -5,6 +5,8 @@
     /// </summary>
     public class Bike
     {
+        public const BikeStatus DefaultBikeStatus = BikeStatus.Working;
+        
         /// <summary>
         /// Bike's database ID.
         /// </summary>

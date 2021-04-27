@@ -47,11 +47,13 @@ namespace BikesRentalServer.Services
             var station = _stationsRepository.Get(request.StationId);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Station does not exist");
-            
-            return ServiceActionResult.Success(_bikesRepository.Add(new Bike
+
+            var bike = _bikesRepository.Add(new Bike
             {
                 Station = station,
-            }));
+                Status = Bike.DefaultBikeStatus,
+            });
+            return ServiceActionResult.Success(bike);
         }
 
         public ServiceActionResult<Bike> RemoveBike(string id)
@@ -64,7 +66,8 @@ namespace BikesRentalServer.Services
             if (bike.User is not null)
                 throw new InvalidOperationException("Trying to remove rented bike");
 
-            return ServiceActionResult.Success(_bikesRepository.Remove(id));
+            bike = _bikesRepository.Remove(bike);
+            return ServiceActionResult.Success(bike);
         }
 
         public ServiceActionResult<Bike> RentBike(RentBikeRequest request)
@@ -146,7 +149,8 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<IEnumerable<Bike>> GetBlockedBikes()
         {
-            return ServiceActionResult.Success(_bikesRepository.GetBlocked());
+            var bikes = _bikesRepository.GetBlocked();
+            return ServiceActionResult.Success(bikes);
         }
     }
 }

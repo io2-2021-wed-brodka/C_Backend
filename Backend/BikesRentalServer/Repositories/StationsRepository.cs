@@ -49,13 +49,20 @@ namespace BikesRentalServer.Repositories
 
         public Station Remove(Station entity)
         {
-            if (!_dbContext.Stations.Any(s => s.Id == entity.Id))
-                return null;
-
             var station = _dbContext.Stations.Remove(entity).Entity;
             _dbContext.SaveChanges();
 
             return station;
+        }
+
+        public IEnumerable<Station> GetActive()
+        {
+            return _dbContext.Stations.Where(s => s.Status == StationStatus.Working);
+        }
+        
+        public IEnumerable<Station> GetBlocked()
+        {
+            return _dbContext.Stations.Where(s => s.Status == StationStatus.Blocked);
         }
 
         public Station SetStatus(string id, StationStatus status)
