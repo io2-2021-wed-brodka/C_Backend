@@ -1,5 +1,4 @@
 ﻿using BikesRentalServer.DataAccess;
-using BikesRentalServer.Dtos.Responses;
 using BikesRentalServer.Models;
 using BikesRentalServer.Repositories.Abstract;
 using System.Collections.Generic;
@@ -18,7 +17,7 @@ namespace BikesRentalServer.Repositories
         
         public IEnumerable<Bike> GetAll()
         {
-            return _dbContext.Bikes.ToArray();
+            return _dbContext.Bikes;
         }
 
         public Bike Get(string id)
