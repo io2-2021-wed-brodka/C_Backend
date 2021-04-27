@@ -1,62 +1,70 @@
-﻿using BikesRentalServer.DataAccess;
-using BikesRentalServer.Models;
+﻿using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
+using Moq;
 using Xunit;
 
 namespace BikesRentalServer.Tests.UsersServiceTests
 {
-    public class UnblockUser
+    public class UnblockUser : UsersServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.UsersService _usersService;
-
-        public UnblockUser()
+        public UnblockUser() : base()
         {
-            _dbContext = MockedDbFactory.GetContext();
-            _usersService = new Services.UsersService(_dbContext);
         }
 
         [Fact]
         public void UnblockUserThatDoesntExist()
         {
-            var response = _usersService.UnblockUser("");
+            var userId = "2";
+            _usersRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((User)null);
+
+            var usersService = GetUsersService();
+
+            var response = usersService.UnblockUser(userId);
 
             response.Status.Should().Be(Status.EntityNotFound);
-            response.Object.Should().Be(null);
+            response.Object.Should().BeNull();
         }
 
         [Fact]
         public void UnblockUserAlreadyUnblocked()
         {
-            int testId = 100;
-            _dbContext.Users.Add(new User
-            {
-                Id = testId,
-                Status = UserStatus.Active,
-            });
-            _dbContext.SaveChanges();
-            var response = _usersService.UnblockUser(testId.ToString());
+            var userId = "2";
+            _usersRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new User
+                {
+                    Id = 34,
+                    Status = UserStatus.Active
+                });
+
+            var usersService = GetUsersService();
+
+            var response = usersService.UnblockUser(userId);
 
             response.Status.Should().Be(Status.InvalidState);
-            response.Object.Should().Be(null);
+            response.Object.Should().BeNull();
         }
 
         [Fact]
         public void UnblockUserSimpleSuccess()
         {
-            int testId = 100;
-            _dbContext.Users.Add(new User
-            {
-                Id = testId,
-                Status = UserStatus.Banned,
-            });
-            _dbContext.SaveChanges();
-            var response = _usersService.UnblockUser(testId.ToString());
+            var userId = "2";
+            _usersRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<UserStatus>(s => s == UserStatus.Active))).Verifiable();
+            _usersRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new User
+                {
+                    Id = 2,
+                    Status = UserStatus.Banned
+                });
+
+            var usersService = GetUsersService();
+
+            var response = usersService.UnblockUser(userId);
 
             response.Status.Should().Be(Status.Success);
-            response.Object.Id.Should().Be(testId);
+            response.Object.Should().NotBeNull();
+            response.Object.Status.Should().Be(UserStatus.Active);
+            _usersRepository.Verify();
         }
     }
 }

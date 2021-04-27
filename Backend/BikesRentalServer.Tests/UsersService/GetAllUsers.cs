@@ -1,55 +1,34 @@
-﻿using BikesRentalServer.DataAccess;
-using BikesRentalServer.Models;
+﻿using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
+using System.Collections.Generic;
 using Xunit;
 
 namespace BikesRentalServer.Tests.UsersServiceTests
 {
-    public class GetAllUsers
+    public class GetAllUsers : UsersServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.UsersService _usersService;
-
-        public GetAllUsers()
+        public GetAllUsers() : base()
         {
-            _dbContext = MockedDbFactory.GetContext();
-            _usersService = new Services.UsersService(_dbContext);
         }
 
         [Fact]
         public void GetAllUsersNonShouldExist()
         {
-            var result = _usersService.GetAllUsers();
+            _usersRepository.Setup(r => r.GetAll()).Returns(new List<User>());
+
+            var usersService = GetUsersService();
+
+            var result = usersService.GetAllUsers();
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEmpty();
         }
 
         [Fact]
-        public void GetAllUsersOnlyOneUserExists()
-        {
-            var user = _dbContext.Users.Add(new User
-                {
-                    Role = UserRole.User,
-                    Status = UserStatus.Active,
-                    Username = "wojtek",
-                })
-                .Entity;
-            _dbContext.Users.Add(user);
-            _dbContext.SaveChanges();
-
-            var result = _usersService.GetAllUsers();
-
-            result.Status.Should().Be(Status.Success);
-            result.Object.Should().HaveCount(1);
-        }
-
-        [Fact]
         public void GetAllUsersMultipleUsersExists()
         {
-            _dbContext.Users.AddRange(new[]
+            var users = new[]
             {
                 new User
                 {
@@ -69,13 +48,15 @@ namespace BikesRentalServer.Tests.UsersServiceTests
                     Status = UserStatus.Active,
                     Username = "kacper",
                 },
-            });
-            _dbContext.SaveChanges();
+            };
+            _usersRepository.Setup(r => r.GetAll()).Returns(users);
 
-            var result = _usersService.GetAllUsers();
+            var usersService = GetUsersService();
+
+            var result = usersService.GetAllUsers();
 
             result.Status.Should().Be(Status.Success);
-            result.Object.Should().HaveCount(3);
+            result.Object.Should().BeEquivalentTo(users);
         }
 
         [Fact]
@@ -95,29 +76,33 @@ namespace BikesRentalServer.Tests.UsersServiceTests
                     Status = UserStatus.Active,
                     Username = "kasia",
                 },
-            };
-            _dbContext.Users.AddRange(users);
-            _dbContext.Users.AddRange(new[]
-            {
-                new User
-                {
-                    Role = UserRole.Tech,
-                    Status = UserStatus.Active,
-                    Username = "aneta",
-                },
                 new User
                 {
                     Role = UserRole.Admin,
                     Status = UserStatus.Active,
-                    Username = "krzysztof",
+                    Username = "wiesiek",
                 },
-            });
-            _dbContext.SaveChanges();
+                new User
+                {
+                    Role = UserRole.Tech,
+                    Status = UserStatus.Active,
+                    Username = "maniek",
+                },
+                new User
+                {
+                    Role = UserRole.User,
+                    Status = UserStatus.Active,
+                    Username = "kacper",
+                },
+            };
+            _usersRepository.Setup(r => r.GetAll()).Returns(users);
 
-            var result = _usersService.GetAllUsers();
+            var usersService = GetUsersService();
+
+            var result = usersService.GetAllUsers();
 
             result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(users);
+            result.Object.Should().HaveCount(3);
         }
     }
 }

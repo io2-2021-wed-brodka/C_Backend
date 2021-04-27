@@ -1,38 +1,28 @@
-﻿using BikesRentalServer.DataAccess;
-using BikesRentalServer.Models;
+﻿using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
 using Xunit;
 
 namespace BikesRentalServer.Tests.UsersServiceTests
 {
-    public class GenerateBearerToken
+    public class GenerateBearerToken : UsersServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.UsersService _usersService;
-        
-        public GenerateBearerToken()
+        public GenerateBearerToken() : base()
         {
-            _dbContext = MockedDbFactory.GetContext();
-            _usersService = new Services.UsersService(_dbContext);
         }
 
         [Fact]
         public void GenerateBearerTokenShouldSucceedAndReturnToken()
         {
-            var user = _dbContext.Users.Add(new User
-                {
-                    Role = UserRole.Admin,
-                    Status = UserStatus.Active,
-                    Username = "test",
-                })
-                .Entity;
-            _dbContext.SaveChanges();
+            var usersService = GetUsersService();
 
-            var result = _usersService.GenerateBearerToken(user);
+            var result = usersService.GenerateBearerToken(new User 
+            { 
+                Username = "pudzian" 
+            });
 
             result.Status.Should().Be(Status.Success);
+            result.Object.Should().NotBeNull();
         }
     }
 }
