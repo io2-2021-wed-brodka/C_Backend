@@ -58,6 +58,11 @@ namespace BikesRentalServer.Repositories
             return bike;
         }
 
+        public IEnumerable<Bike> GetBlocked()
+        {
+            return _dbContext.Bikes.Where(b => b.Status == BikeStatus.Blocked);
+        }
+
         public Bike SetStatus(string id, BikeStatus status)
         {
             var bike = Get(id);
