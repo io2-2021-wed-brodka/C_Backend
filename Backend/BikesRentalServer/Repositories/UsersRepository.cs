@@ -47,6 +47,17 @@ namespace BikesRentalServer.Repositories
             return user;
         }
 
+        public User Remove(User entity)
+        {
+            if (!_dbContext.Users.Any(u => u.Id == entity.Id))
+                return null;
+
+            var user = _dbContext.Users.Remove(entity).Entity;
+            _dbContext.SaveChanges();
+
+            return user;
+        }
+
         public User GetByUsername(string username)
         {
             return _dbContext.Users.SingleOrDefault(u => u.Username == username);

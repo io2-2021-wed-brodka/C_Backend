@@ -47,6 +47,17 @@ namespace BikesRentalServer.Repositories
             return bike;
         }
 
+        public Bike Remove(Bike entity)
+        {
+            if (!_dbContext.Bikes.Any(b => b.Id == entity.Id))
+                return null;
+
+            var bike = _dbContext.Bikes.Remove(entity).Entity;
+            _dbContext.SaveChanges();
+
+            return bike;
+        }
+
         public Bike SetStatus(string id, BikeStatus status)
         {
             var bike = Get(id);
