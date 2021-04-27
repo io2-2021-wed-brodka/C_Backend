@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace BikesRentalServer.Controllers
 {
-    [Route("/")]
+    [Route("/users")]
     [ApiController]
     [ServiceFilter(typeof(AuthorizationFilter))]
     public class UsersController : ControllerBase
@@ -22,7 +22,7 @@ namespace BikesRentalServer.Controllers
             _usersService = usersService;
         }
         
-        [HttpPost("login")]
+        [HttpPost("/login")]
         public ActionResult<LogInResponse> LogIn(LogInRequest request)
         {
             var response = _usersService.GetUserByUsernameAndPassword(request.Login, request.Password);
@@ -38,7 +38,7 @@ namespace BikesRentalServer.Controllers
             };
         }
 
-        [HttpPost("register")]
+        [HttpPost("/register")]
         public ActionResult<RegisterResponse> Register(RegisterRequest request)
         {
             var response = _usersService.AddUser(request.Login, request.Password);
@@ -53,17 +53,17 @@ namespace BikesRentalServer.Controllers
             };
         }
 
-        [HttpPost("logout")]
+        [HttpPost("/logout")]
         public ActionResult<string> Logout()
         {
             return Ok("Logged out");
         }
 
-        [HttpPost("{id}")]
+        [HttpPost("blocked")]
         [AdminAuthorization]
-        public ActionResult<string> Block(string id)
+        public ActionResult<string> Block(BlockUserRequest request)
         {
-            var response = _usersService.BlockUser(id);
+            var response = _usersService.BlockUser(request.Id);
             return response.Status switch
             {
                 Status.Success => Ok(response.Object),
@@ -73,7 +73,7 @@ namespace BikesRentalServer.Controllers
             };
         }
 
-        [HttpPost("{id}")]
+        [HttpDelete("blocked/{id}")]
         [AdminAuthorization]
         public ActionResult<string> Unblock(string id)
         {
@@ -87,6 +87,7 @@ namespace BikesRentalServer.Controllers
             };
         }
 
+        [HttpGet]
         [AdminAuthorization]
         public ActionResult<GetAllUsersResponse> GetAllUsers()
         {
