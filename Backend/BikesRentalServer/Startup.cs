@@ -2,6 +2,8 @@ using BikesRentalServer.Authorization;
 using BikesRentalServer.Authorization.Attributes;
 using BikesRentalServer.DataAccess;
 using BikesRentalServer.Filters;
+using BikesRentalServer.Repositories;
+using BikesRentalServer.Repositories.Abstract;
 using BikesRentalServer.Services;
 using BikesRentalServer.Services.Abstract;
 using Microsoft.AspNetCore.Builder;
@@ -60,6 +62,11 @@ namespace BikesRentalServer
 
             services.AddScoped<AuthorizationFilter>();
             services.AddScoped<ErrorMappingFilter>();
+
+            services.AddTransient<IBikesRepository, BikesRepository>();
+            services.AddTransient<IStationsRepository, StationsRepository>();
+            services.AddTransient<IUsersRepository, UsersRepository>();
+            services.AddTransient<IReservationsRepository, ReservationsRepository>();
 
             services.AddTransient<IStationsService, StationsService>();
             services.AddTransient<IBikesService, BikesService>();
