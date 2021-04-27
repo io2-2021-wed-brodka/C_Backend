@@ -17,7 +17,7 @@ namespace BikesRentalServer.Repositories
         
         public IEnumerable<User> GetAll()
         {
-            return _dbContext.Users;
+            return _dbContext.Users.Where(u => u.Role == UserRole.User);
         }
 
         public User Get(string id)
@@ -58,6 +58,11 @@ namespace BikesRentalServer.Repositories
         public User GetByUsername(string username)
         {
             return _dbContext.Users.SingleOrDefault(u => u.Username == username);
+        }
+
+        public User GetByUsernameAndPassword(string username, string password)
+        {
+            return _dbContext.Users.SingleOrDefault(u => u.Username == username && u.PasswordHash == Toolbox.ComputeHash(password));
         }
 
         public User SetStatus(string id, UserStatus status)

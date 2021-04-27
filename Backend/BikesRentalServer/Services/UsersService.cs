@@ -1,46 +1,44 @@
-﻿using BikesRentalServer.DataAccess;
-using BikesRentalServer.Models;
+﻿using BikesRentalServer.Models;
+using BikesRentalServer.Repositories.Abstract;
 using BikesRentalServer.Services.Abstract;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace BikesRentalServer.Services
 {
     public class UsersService : IUsersService
     {
-        private readonly DatabaseContext _dbContext;
+        private readonly IUsersRepository _usersRepository;
+        private readonly IReservationsRepository _reservationsRepository;
 
-        public UsersService(DatabaseContext dbContext)
+        public UsersService(IUsersRepository usersRepository, IReservationsRepository reservationsRepository)
         {
-            _dbContext = dbContext;
+            _usersRepository = usersRepository;
+            _reservationsRepository = reservationsRepository;
         }
 
         public ServiceActionResult<User> AddUser(string username, string password)
         {
-            if (_dbContext.Users.Any(u => u.Username == username))
+            if (_usersRepository.GetByUsername(username) is not null)
                 return ServiceActionResult.InvalidState<User>("Username already taken");
 
-            var user = _dbContext.Users
-                .Add(new User
-                {
-                    Username = username,
-                    PasswordHash = Toolbox.ComputeHash(password),
-                    Role = UserRole.User,
-                    Status = UserStatus.Active,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-
+            var user = _usersRepository.Add(new User
+            {
+                Username = username,
+                PasswordHash = Toolbox.ComputeHash(password),
+                Role = UserRole.User,
+                Status = UserStatus.Active,
+            });
             return ServiceActionResult.Success(user);
         }
         
         public ServiceActionResult<User> GetUserByUsernameAndPassword(string username, string password)
         {
-            var user = _dbContext.Users.SingleOrDefault(u => u.Username == username && u.PasswordHash == Toolbox.ComputeHash(password));
+            var user = _usersRepository.GetByUsernameAndPassword(username, password);
             if (user is null)
                 return ServiceActionResult.EntityNotFound<User>("User not found");
+            
             return ServiceActionResult.Success(user);
         }
 
@@ -52,46 +50,37 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<User> BlockUser(string userId)
         {
-            var matchingUsers = _dbContext.Users.Where(u => u.Id.ToString() == userId);
-            if (matchingUsers.Count() != 1)
+            var user = _usersRepository.Get(userId);
+            if (user is null)
                 return ServiceActionResult.EntityNotFound<User>("User doesn't exist");
-
-            var user = matchingUsers.First();
             if (user.Status is UserStatus.Banned)
                 return ServiceActionResult.InvalidState<User>("User already blocked");
 
-            user.Status = UserStatus.Banned;
-
-            var userReservations = _dbContext.Reservations.Where(r => r.User.Id.ToString() == userId);
-            _dbContext.Reservations.RemoveRange(userReservations);
+            user = _usersRepository.SetStatus(userId, UserStatus.Banned);
+            foreach (var reservation in user.Reservations)
+                _reservationsRepository.Remove(reservation);
 
             // We don't touch user's rented bikes here. He won't be able to rent new ones, he can return only.
-            
-            _dbContext.SaveChanges();
 
             return ServiceActionResult.Success(user);
         }
 
         public ServiceActionResult<User> UnblockUser(string userId)
         {
-            var matchingUsers = _dbContext.Users.Where(u => u.Id.ToString() == userId);
-            if (matchingUsers.Count() != 1)
+            var user = _usersRepository.Get(userId);
+            if (user is null)
                 return ServiceActionResult.EntityNotFound<User>("User doesn't exist");
-
-            var user = matchingUsers.First();
             if (user.Status is UserStatus.Active)
                 return ServiceActionResult.InvalidState<User>("User already unblocked");
 
-            user.Status = UserStatus.Active;
-            _dbContext.SaveChanges();
-
+            _usersRepository.SetStatus(userId, UserStatus.Active);
             return ServiceActionResult.Success(user);
         }
 
         public ServiceActionResult<IEnumerable<User>> GetAllUsers()
         {
-            var result = _dbContext.Users.Where(u => u.Role == UserRole.User).AsEnumerable();
-            return ServiceActionResult.Success(result);
+            var users = _usersRepository.GetAll();
+            return ServiceActionResult.Success(users);
         }
     }
 }
