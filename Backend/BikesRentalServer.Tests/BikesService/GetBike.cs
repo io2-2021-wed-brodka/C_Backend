@@ -1,71 +1,53 @@
-﻿using BikesRentalServer.Authorization;
-using BikesRentalServer.DataAccess;
+﻿using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
+using Moq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.BikesService
+namespace BikesRentalServer.Tests.BikesServiceTests
 {
-    public class GetBike
+    public class GetBike : BikesServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.BikesService _bikesService;
-
-        public GetBike()
+        public GetBike() : base()
         {
-            _dbContext = MockedDbFactory.GetContext();
-            _bikesService = new Services.BikesService(_dbContext, new UserContext());
         }
 
         [Fact]
         public void GetExistingBikeShouldSucceed()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Status = StationStatus.Working,
-                    Name = "Al. Jerozolimskie",
-                })
-                .Entity;
-            _dbContext.Bikes.Add(new Bike
-            {
-                Station = station,
-            });
-            var bike = _dbContext.Bikes.Add(new Bike
-                {
-                    Station = station,
-                    Status = BikeStatus.Blocked,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
+            var bikeId = "123";
 
-            var result = _bikesService.GetBike(bike.Id.ToString());
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns((Bike)null);
 
-            result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(bike);
+            var bikesService = GetBikesService();
+
+            var result = bikesService.GetBike(bikeId);
+
+            result.Status.Should().Be(Status.EntityNotFound);
+            result.Object.Should().BeNull();
         }
 
         [Fact]
         public void GetNotExistingBikeShouldReturnEntityNotFound()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Status = StationStatus.Working,
-                    Name = "Al. Jerozolimskie",
-                })
-                .Entity;
-            _dbContext.Bikes.Add(new Bike
+            var bikeId = 123;
+            var bike = new Bike
             {
-                Id = 1,
-                Station = station,
-            });
-            _dbContext.SaveChanges();
+                Id = bikeId,
+                Status = BikeStatus.Working
+            };
 
-            var result = _bikesService.GetBike("4");
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(bike);
 
-            result.Status.Should().Be(Status.EntityNotFound);
-            result.Object.Should().BeNull();
+            var bikesService = GetBikesService();
+
+            var result = bikesService.GetBike(bikeId.ToString());
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Should().BeEquivalentTo(bike);
         }
     }
 }

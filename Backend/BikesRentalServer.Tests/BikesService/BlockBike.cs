@@ -1,159 +1,153 @@
-﻿using BikesRentalServer.Authorization;
-using BikesRentalServer.DataAccess;
-using BikesRentalServer.Dtos.Requests;
+﻿using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
-using System.Collections.Generic;
+using Moq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.BikesService
+namespace BikesRentalServer.Tests.BikesServiceTests
 {
-    public class BlockBike
+    public class BlockBike : BikesServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.BikesService _bikesService;
-
-        public BlockBike()
+        public BlockBike() : base()
         {
-            _dbContext = MockedDbFactory.GetContext();
-            var user = _dbContext.Users.Add(new User
-                {
-                    Username = "test_admin",
-                    Status = UserStatus.Active,
-                    Role = UserRole.Admin,
-                    Reservations = new List<Reservation>(),
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-
-            var userContext = new UserContext();
-            userContext.SetOnce(user.Username, user.Role);
-
-            _bikesService = new Services.BikesService(_dbContext, userContext);
         }
 
         [Fact]
         public void BlockBikeShouldSucceed()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Name = "DS Ustronie",
-                    Status = StationStatus.Working,
-                })
-                .Entity;
-            var bike = _dbContext.Bikes.Add(new Bike
-                {
-                    Station = station,
-                    Description = "some text",
-                    Status = BikeStatus.Working,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-            
-            var result = _bikesService.BlockBike(new BlockBikeRequest
+            var bikeId = 123;
+            var blockBikeRequest = new BlockBikeRequest
             {
-                Id = bike.Id.ToString(),
-            });
+                Id = bikeId.ToString()
+            };
+            _bikesRepository.Setup(r => 
+                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
+            ).Verifiable();
+
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Working
+                });
+
+            var bikesService = GetBikesService();
+
+            var result = bikesService.BlockBike(blockBikeRequest);
 
             result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(bike);
+            _bikesRepository.Verify();
+            result.Object.Should().NotBeNull();
+            result.Object.Id.Should().Be(bikeId);
+            result.Object.Status.Should().Be(BikeStatus.Blocked);
         }
 
         [Fact]
         public void BlockBikeShouldChangeBikeStatusForBlocked()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Name = "DS Ustronie",
-                    Status = StationStatus.Working,
-                })
-              .Entity;
-            var bike = _dbContext.Bikes.Add(new Bike
-                {
-                    Station = station,
-                    Description = "some text",
-                    Status = BikeStatus.Working,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-            
-            var result = _bikesService.BlockBike(new BlockBikeRequest
+            var bikeId = 123;
+            var blockBikeRequest = new BlockBikeRequest
             {
-                Id = bike.Id.ToString(),
-            });
-            
+                Id = bikeId.ToString()
+            };
+            _bikesRepository.Setup(r =>
+                r.SetStatus(It.Is<string>(id => id == bikeId.ToString()), It.Is<BikeStatus>(b => b == BikeStatus.Blocked))
+            ).Verifiable();
+
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Working
+                });
+
+            var bikesService = GetBikesService();
+
+            var result = bikesService.BlockBike(blockBikeRequest);
+
             result.Status.Should().Be(Status.Success);
-            result.Object.Status.Should().Be(BikeStatus.Blocked);
+            _bikesRepository.Verify();
         }
 
         [Fact]
         public void BlockNotExistingBikeShouldReturnEntityNotFound()
         {
-            var result = _bikesService.BlockBike(new BlockBikeRequest
+            var bikeId = 123;
+            var blockBikeRequest = new BlockBikeRequest
             {
-                Id = "27",
-            });
-            
+                Id = bikeId.ToString()
+            };
+            _bikesRepository.Setup(r =>
+                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
+            ).Verifiable();
+
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns((Bike)null);
+
+            var bikesService = GetBikesService();
+
+            var result = bikesService.BlockBike(blockBikeRequest);
+
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
+            _bikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
         }
 
         [Fact] 
         public void BlockAlreadyBlockedBikeShouldReturnInvalidState()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Name = "DS Ustronie",
-                    Status = StationStatus.Working,
-                })
-                .Entity;
-            var bike = _dbContext.Bikes.Add(new Bike
-                {
-                    Station = station,
-                    Description = "some text",
-                    Status = BikeStatus.Blocked,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-            
-            var result = _bikesService.BlockBike(new BlockBikeRequest
+            var bikeId = 123;
+            var blockBikeRequest = new BlockBikeRequest
             {
-                Id = bike.Id.ToString()
-            });
-            
+                Id = bikeId.ToString()
+            };
+            _bikesRepository.Setup(r =>
+                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
+            ).Verifiable();
+
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Blocked
+                });
+
+            var bikesService = GetBikesService();
+
+            var result = bikesService.BlockBike(blockBikeRequest);
+
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
+            _bikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
         }
 
         [Fact] 
         public void BlockRentedBikeShouldReturnInvalidState()
         {
-            var user = _dbContext.Users.Add(new User
-                {
-                    Role = UserRole.User,
-                    Status = UserStatus.Active,
-                    Username = "user_with_bike",
-                })
-                .Entity;
-            var bike = _dbContext.Bikes.Add(new Bike
-                {
-                    User = user,
-                    Description = "some text",
-                    Status = BikeStatus.Working,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-            
-            var result = _bikesService.BlockBike(new BlockBikeRequest
+            var bikeId = 123;
+            var blockBikeRequest = new BlockBikeRequest
             {
-                Id = bike.Id.ToString(),
-            });
-            
+                Id = bikeId.ToString()
+            };
+            _bikesRepository.Setup(r =>
+                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
+            ).Verifiable();
+
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Blocked // Should be rented, but BikeStatus.Rented is missing ;(
+                });
+
+            var bikesService = GetBikesService();
+
+            var result = bikesService.BlockBike(blockBikeRequest);
+
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
+            _bikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
         }
-
     }
 }

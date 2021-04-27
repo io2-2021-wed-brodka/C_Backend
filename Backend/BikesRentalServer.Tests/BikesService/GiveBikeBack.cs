@@ -1,115 +1,217 @@
-﻿using BikesRentalServer.Authorization;
-using BikesRentalServer.DataAccess;
+﻿using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
-using System.Collections.Generic;
+using Moq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.BikesService
+namespace BikesRentalServer.Tests.BikesServiceTests
 {
-    public class GiveBikeBack
+    public class GiveBackBike : BikesServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.BikesService _bikesService;
-        private readonly User _user;
-        
-        public GiveBikeBack()
+        public GiveBackBike() : base()
         {
-            _dbContext = MockedDbFactory.GetContext();
-            _user = _dbContext.Users.Add(new User
-                {
-                    Username = "test_user",
-                    Status = UserStatus.Active,
-                    Role = UserRole.Admin,
-                    Reservations = new List<Reservation>(),
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-            
-            var userContext = new UserContext();
-            userContext.SetOnce(_user.Username, _user.Role);
-            
-            _bikesService = new Services.BikesService(_dbContext, userContext);
         }
 
         [Fact]
         public void GiveBikeBackShouldSucceed()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Name = "Dworzec Centralny",
-                })
-                .Entity;
-            var bike = _dbContext.Bikes.Add(new Bike
-                {
-                    Description = "whoosh",
-                    User = _user,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
+            var bikeId = 123;
+            var stationId = 1;
+            var thisUser = new User
+            {
+                Id = 1,
+                Username = "zdzislaw"
+            };
 
-            var result = _bikesService.GiveBikeBack(bike.Id.ToString(), station.Id.ToString());
+            _bikesRepository.Setup(r =>
+                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
+            ).Verifiable();
+
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Working, // Should be rented
+                    User = thisUser,
+                });
+
+            _stationsRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Station
+                {
+                    Id = stationId,
+                    Status = StationStatus.Working
+                });
+
+            var bikesService = GetBikesService(thisUser.Username);
+
+            var result = bikesService.GiveBikeBack(bikeId.ToString(), stationId.ToString());
 
             result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(bike);
+            _bikesRepository.Verify();
+            result.Object.Should().NotBeNull();
+            result.Object.Id.Should().Be(bikeId);
+            result.Object.Status.Should().Be(BikeStatus.Working);
         }
 
         [Fact]
         public void GiveBikeBackShouldAssignBikeToStation()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Name = "Dworzec Centralny",
-                })
-                .Entity;
-            var bike = _dbContext.Bikes.Add(new Bike
-                {
-                    Description = "whoosh",
-                    User = _user,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
+            var bikeId = 123;
+            var stationId = 1;
+            var thisUser = new User
+            {
+                Id = 1,
+                Username = "zdzislaw"
+            };
 
-            _bikesService.GiveBikeBack(bike.Id.ToString(), station.Id.ToString());
+            _bikesRepository.Setup(r =>
+                r.Associate(It.IsAny<string>(), It.Is<Station>(s => s.Id == stationId))
+            ).Verifiable();
 
-            station.Bikes.Should().Contain(bike);
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Working, // Should be rented
+                    User = thisUser,
+                });
+
+            _stationsRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Station
+                {
+                    Id = stationId,
+                    Status = StationStatus.Working
+                });
+
+            var bikesService = GetBikesService(thisUser.Username);
+
+            var result = bikesService.GiveBikeBack(bikeId.ToString(), stationId.ToString());
+
+            result.Status.Should().Be(Status.Success);
+            _bikesRepository.Verify();
+            result.Object.Should().NotBeNull();
+            result.Object.Id.Should().Be(bikeId);
+            result.Object.Station.Id.Should().Be(stationId);
         }
 
         [Fact]
         public void GiveBikeBackToNotExistingStationShouldReturnEntityNotFound()
         {
-            var bike = _dbContext.Bikes.Add(new Bike
-                {
-                    Description = "whoosh",
-                    User = _user,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
+            var bikeId = 123;
+            var stationId = 1;
+            var thisUser = new User
+            {
+                Id = 1,
+                Username = "zdzislaw"
+            };
 
-            var result = _bikesService.GiveBikeBack(bike.Id.ToString(), "1");
-            
+            _bikesRepository.Setup(r =>
+                r.Associate(It.IsAny<string>(), It.IsAny<Station>())
+            ).Verifiable();
+            _bikesRepository.Setup(r =>
+                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
+            ).Verifiable();
+
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Working, // Should be rented
+                    User = thisUser,
+                });
+
+            _stationsRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns((Station)null);
+
+            var bikesService = GetBikesService(thisUser.Username);
+
+            var result = bikesService.GiveBikeBack(bikeId.ToString(), stationId.ToString());
+
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
-            bike.User.Should().Be(_user);
-            bike.Station.Should().BeNull();
+            _bikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
+            _bikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>()), Times.Never);
         }
 
         [Fact]
         public void GiveNotExistingBikeBackShouldReturnEntityNotFound()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Name = "Dworzec Centralny",
-                })
-                .Entity;
-            _dbContext.SaveChanges();
+            var bikeId = 123;
+            var stationId = 1;
+            var thisUser = new User
+            {
+                Id = 1,
+                Username = "zdzislaw"
+            };
 
-            var result = _bikesService.GiveBikeBack("1", station.Id.ToString());
+            _bikesRepository.Setup(r =>
+                r.Associate(It.IsAny<string>(), It.Is<Station>(s => s.Id == stationId))
+            ).Verifiable();
+
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns((Bike)null);
+
+            _stationsRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Station
+                {
+                    Id = stationId,
+                    Status = StationStatus.Working
+                });
+
+            var bikesService = GetBikesService(thisUser.Username);
+
+            var result = bikesService.GiveBikeBack(bikeId.ToString(), stationId.ToString());
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
+            _bikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
+            _bikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>()), Times.Never);
+        }
+
+        [Fact]
+        public void GiveNotOwnBikeBackShouldReturnEntityNotFound()
+        {
+            var bikeId = 123;
+            var stationId = 1;
+            var thisUser = new User
+            {
+                Id = 1,
+                Username = "zdzislaw"
+            };
+            var otherUser = new User
+            {
+                Id = 1,
+                Username = "Czesiek"
+            };
+
+            _bikesRepository.Setup(r =>
+                r.Associate(It.IsAny<string>(), It.Is<Station>(s => s.Id == stationId))
+            ).Verifiable();
+
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Working, // Should be rented
+                    User = otherUser,
+                });
+
+            _stationsRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Station
+                {
+                    Id = stationId,
+                    Status = StationStatus.Working
+                });
+
+            var bikesService = GetBikesService(thisUser.Username);
+
+            var result = bikesService.GiveBikeBack(bikeId.ToString(), stationId.ToString());
+
+            result.Status.Should().Be(Status.EntityNotFound);
+            result.Object.Should().BeNull();
+            _bikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
+            _bikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>()), Times.Never);
         }
     }
 }

@@ -1,88 +1,114 @@
-﻿using BikesRentalServer.Authorization;
-using BikesRentalServer.DataAccess;
-using BikesRentalServer.Models;
+﻿using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.BikesService
+namespace BikesRentalServer.Tests.BikesServiceTests
 {
-    public class GetRentedBikes
+    public class GetRentedBikes : BikesServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.BikesService _bikesService;
-        private readonly User _user;
-        
-        public GetRentedBikes()
+        public GetRentedBikes() : base()
         {
-            _dbContext = MockedDbFactory.GetContext();
-            _user = _dbContext.Users.Add(new User
-                {
-                    Username = "test_user",
-                    Status = UserStatus.Active,
-                    Role = UserRole.Admin,
-                    Reservations = new List<Reservation>(),
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-            
-            var userContext = new UserContext();
-            userContext.SetOnce(_user.Username, _user.Role);
-            
-            _bikesService = new Services.BikesService(_dbContext, userContext);
         }
 
         [Fact]
         public void GetRentedBikesShouldReturnEmptyIEnumerableWhenNoRentals()
         {
-            var result = _bikesService.GetRentedBikes();
+            var noBikes = new List<Bike>();
+            _bikesRepository.Setup(r => r.GetAll()).Returns(noBikes);
+
+            var bikesService = GetBikesService();
+
+            var result = bikesService.GetRentedBikes();
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEmpty();
         }
 
         [Fact]
-        public void GetRentedBikesShouldReturnAllRentedBikes()
+        public void GetRentedBikesShouldReturnOnlyRentedBikesOfGivenUser()
         {
-            var rentedBikes = new []
+            var thisUser = new User
+            {
+                Id = 1,
+                Username = "zdzislaw"
+            };
+            var otherUser = new User
+            {
+                Id = 1,
+                Username = "Mietek"
+            };
+
+            var blockedBikes = new[]
             {
                 new Bike
                 {
-                    Description = "one",
-                    User = _user,
+                    Id = 1,
+                    Status = BikeStatus.Blocked,
                 },
                 new Bike
                 {
-                    Description = "two",
-                    User = _user,
-                },
-                new Bike
-                {
-                    Description = "three",
-                    User = _user,
-                },
-                new Bike
-                {
-                    Description = "four",
-                    User = _user,
-                },
-                new Bike
-                {
-                    Description = "six",
-                    User = _user,
+                    Id = 2,
+                    Status = BikeStatus.Blocked,
                 },
             };
-            _dbContext.Bikes.AddRange(rentedBikes);
-            _dbContext.SaveChanges();
 
-            var result = _bikesService.GetRentedBikes();
-            
+            var workingBikes = new[]
+            {
+                new Bike
+                {
+                    Id = 6,
+                    Status = BikeStatus.Working
+                },
+                new Bike
+                {
+                    Id = 5,
+                    Status = BikeStatus.Working
+                },
+            };
+
+            var otherUsersBikes = new[]
+            {
+                new Bike
+                {
+                    Id = 6,
+                    Status = BikeStatus.Working, // Rented!!!
+                    User = otherUser,
+                },
+                new Bike
+                {
+                    Id = 5,
+                    Status = BikeStatus.Working, // Rented !!!
+                    User = otherUser,
+                },
+            };
+
+            var thisUserBikes = new[]
+            {
+                new Bike
+                {
+                    Id = 6,
+                    Status = BikeStatus.Working, // Rented !!!111
+                    User = thisUser,
+                },
+                new Bike
+                {
+                    Id = 5,
+                    Status = BikeStatus.Working,  // Rented !!!1111oneoneone
+                    User = thisUser,
+                },
+            };
+            _bikesRepository.Setup(r => r.GetAll())
+                .Returns(blockedBikes.Concat(workingBikes).Concat(thisUserBikes).Concat(otherUsersBikes));
+
+            var bikesService = GetBikesService(thisUser.Username);
+
+            var result = bikesService.GetRentedBikes();
+
             result.Status.Should().Be(Status.Success);
-            result.Object.Count().Should().Be(rentedBikes.Length);
-            result.Object.Should().BeEquivalentTo(rentedBikes);
+            result.Object.Should().BeEquivalentTo(thisUserBikes);
         }
     }
 }

@@ -1,76 +1,79 @@
-﻿using BikesRentalServer.Authorization;
-using BikesRentalServer.DataAccess;
-using BikesRentalServer.Dtos.Requests;
+﻿using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
-using System.Linq;
+using Moq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.BikesService
+namespace BikesRentalServer.Tests.BikesServiceTests
 {
-    public class AddBike
+    public class AddBike : BikesServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.BikesService _bikesService;
-        
-        public AddBike()
+        public AddBike() : base()
         {
-            _dbContext = MockedDbFactory.GetContext();
-            _bikesService = new Services.BikesService(_dbContext, new UserContext());
         }
 
         [Fact]
-        public void AddBikeShouldIncrementBikeCount()
+        public void AddBikeShouldAddBike()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Status = StationStatus.Working,
-                    Name = "Al. Jerozolimskie",
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-
-            var initialBikeCount = _dbContext.Bikes.Count();
-            var result = _bikesService.AddBike(new AddBikeRequest
+            var stationId = 123;
+            var addBikeRequest = new AddBikeRequest
             {
-                StationId = station.Id.ToString(),
+                StationId = stationId.ToString()
+            };
+            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(new Station
+            {
+                Id = stationId
             });
+            _bikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
+            
+            var bikesService = GetBikesService();
+
+            var result = bikesService.AddBike(addBikeRequest);
 
             result.Status.Should().Be(Status.Success);
-            _dbContext.Bikes.Count().Should().Be(initialBikeCount + 1);
+            _bikesRepository.Verify();
         }
 
         [Fact]
         public void AddBikeShouldReturnCreatedBike()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Status = StationStatus.Working,
-                    Name = "Al. Jerozolimskie",
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-
-            var result = _bikesService.AddBike(new AddBikeRequest
+            var stationId = 123;
+            var addBikeRequest = new AddBikeRequest
             {
-                StationId = station.Id.ToString(),
+                StationId = stationId.ToString()
+            };
+            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(new Station
+            {
+                Id = stationId
             });
-            
+            _bikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
+
+            var bikesService = GetBikesService();
+
+            var result = bikesService.AddBike(addBikeRequest);
+
             result.Status.Should().Be(Status.Success);
             result.Object.Should().NotBeNull();
-            result.Object.Station.Should().BeEquivalentTo(station);
+            result.Object.Station.Should().NotBeNull();
         }
 
         [Fact]
         public void AddBikeToNotExistingStationShouldReturnEntityNotFound()
         {
-            var result = _bikesService.AddBike(new AddBikeRequest
+            var stationId = 123;
+            var addBikeRequest = new AddBikeRequest
             {
-                StationId = "3",
-            });
-            
+                StationId = stationId.ToString()
+            };
+            _stationsRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns((Station)null);
+            _bikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
+
+            var bikesService = GetBikesService();
+
+            var result = bikesService.AddBike(addBikeRequest);
+
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
         }

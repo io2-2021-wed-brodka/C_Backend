@@ -1,110 +1,92 @@
-﻿using BikesRentalServer.Authorization;
-using BikesRentalServer.DataAccess;
+﻿using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
-using System.Collections.Generic;
+using Moq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.BikesService
+namespace BikesRentalServer.Tests.BikesServiceTests
 {
-    public class UnblockBike
+    public class UnblockBike : BikesServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.BikesService _bikesService;
-
-        public UnblockBike()
+        public UnblockBike() : base()
         {
-            _dbContext = MockedDbFactory.GetContext();
-            var user = _dbContext.Users.Add(new User
-            {
-                Username = "test_admin",
-                Status = UserStatus.Active,
-                Role = UserRole.Admin,
-                Reservations = new List<Reservation>(),
-            })
-               .Entity;
-            _dbContext.SaveChanges();
-
-            var userContext = new UserContext();
-            userContext.SetOnce(user.Username, user.Role);
-
-            _bikesService = new Services.BikesService(_dbContext, new UserContext());
         }
 
         [Fact]
-        public void UnblockBikeShouldSucceed()
+        public void UnlockBikeShouldSucceed()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Status = StationStatus.Working,
-                    Name = "stacja",
-                })
-                .Entity;
-            var bike = _dbContext.Bikes.Add(new Bike
-                {
-                    Station = station,
-                    Status = BikeStatus.Blocked,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
+            var bikeId = 123;
 
-            var result = _bikesService.UnblockBike(bike.Id.ToString());
+            _bikesRepository.Setup(r =>
+                r.SetStatus(It.IsAny<string>(), It.Is<BikeStatus>(s => s == BikeStatus.Working))
+            ).Verifiable();
+
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Blocked
+                });
+
+            var bikesService = GetBikesService();
+
+            var result = bikesService.UnblockBike(bikeId.ToString());
 
             result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(bike);
+            _bikesRepository.Verify();
+            result.Object.Should().NotBeNull();
+            result.Object.Id.Should().Be(bikeId);
+            result.Object.Status.Should().Be(BikeStatus.Working);
         }
-        [Fact]
-        public void UnblockBikeShouldChangeBikeStatusForWorking()
-        {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Status = StationStatus.Working,
-                    Name = "stacja",
-                })
-                .Entity;
-            var bike = _dbContext.Bikes.Add(new Bike
-                {
-                    Station = station,
-                    Status = BikeStatus.Blocked,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
 
-            var result = _bikesService.UnblockBike(bike.Id.ToString());
-
-            result.Status.Should().Be(Status.Success);
-            result.Object.Status.Should().BeEquivalentTo(BikeStatus.Working);
-        }
         [Fact]
-        public void UnblockAlreadyWorkingBikeShouldReturnInvalidState()
+        public void UnlockNotExistingBikeShouldReturnEntityNotFound()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Status = StationStatus.Working,
-                    Name = "stacja",
-                })
-                .Entity;
-            var bike = _dbContext.Bikes.Add(new Bike
-                {
-                    Station = station,
-                    Status = BikeStatus.Working,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
+            var bikeId = 123;
 
-            var result = _bikesService.UnblockBike(bike.Id.ToString());
-            result.Status.Should().Be(Status.InvalidState);
-            result.Object.Should().BeNull();
-        }
-        [Fact]
-        public void UnblockNotExistingBikeShouldReturnEntityNotFound()
-        {
-            var result = _bikesService.UnblockBike("27");
+            _bikesRepository.Setup(r =>
+                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
+            ).Verifiable();
+
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns((Bike)null);
+
+            var bikesService = GetBikesService();
+
+            var result = bikesService.UnblockBike(bikeId.ToString());
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
+            _bikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
+        }
+
+        [Fact]
+        public void UnlockNotBlockedBikeShouldReturnInvalidState()
+        {
+            var bikeId = 123;
+            var blockBikeRequest = new BlockBikeRequest
+            {
+                Id = bikeId.ToString()
+            };
+            _bikesRepository.Setup(r =>
+                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
+            ).Verifiable();
+
+            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Working
+                });
+
+            var bikesService = GetBikesService();
+
+            var result = bikesService.UnblockBike(bikeId.ToString());
+
+            result.Status.Should().Be(Status.InvalidState);
+            result.Object.Should().BeNull();
+            _bikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
         }
     }
 }
