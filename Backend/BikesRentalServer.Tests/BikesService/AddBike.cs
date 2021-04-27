@@ -1,6 +1,7 @@
 ﻿using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
+using BikesRentalServer.Tests.BikesService;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -9,10 +10,6 @@ namespace BikesRentalServer.Tests.BikesServiceTests
 {
     public class AddBike : BikesServiceTestsBase
     {
-        public AddBike() : base()
-        {
-        }
-
         [Fact]
         public void AddBikeShouldAddBike()
         {
@@ -21,18 +18,18 @@ namespace BikesRentalServer.Tests.BikesServiceTests
             {
                 StationId = stationId.ToString()
             };
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(new Station
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(new Station
             {
                 Id = stationId
             });
-            _bikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
+            BikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
             
             var bikesService = GetBikesService();
 
             var result = bikesService.AddBike(addBikeRequest);
 
             result.Status.Should().Be(Status.Success);
-            _bikesRepository.Verify();
+            BikesRepository.Verify();
         }
 
         [Fact]
@@ -43,11 +40,11 @@ namespace BikesRentalServer.Tests.BikesServiceTests
             {
                 StationId = stationId.ToString()
             };
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(new Station
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(new Station
             {
                 Id = stationId
             });
-            _bikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
+            BikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
 
             var bikesService = GetBikesService();
 
@@ -66,9 +63,9 @@ namespace BikesRentalServer.Tests.BikesServiceTests
             {
                 StationId = stationId.ToString()
             };
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>()))
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns((Station)null);
-            _bikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
+            BikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
 
             var bikesService = GetBikesService();
 

@@ -1,6 +1,7 @@
 ﻿using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
+using BikesRentalServer.Tests.BikesService;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -24,7 +25,7 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                 Username = "zdzislaw"
             };
 
-            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
@@ -32,7 +33,7 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                     User = thisUser,
                 });
 
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>()))
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Station
                 {
                     Id = stationId,
@@ -60,11 +61,11 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                 Username = "zdzislaw"
             };
 
-            _bikesRepository.Setup(r =>
+            BikesRepository.Setup(r =>
                 r.Associate(It.IsAny<string>(), It.Is<Station>(s => s.Id == stationId))
             ).Verifiable();
 
-            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
@@ -72,7 +73,7 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                     User = thisUser,
                 });
 
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>()))
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Station
                 {
                     Id = stationId,
@@ -84,7 +85,7 @@ namespace BikesRentalServer.Tests.BikesServiceTests
             var result = bikesService.GiveBikeBack(bikeId.ToString(), stationId.ToString());
 
             result.Status.Should().Be(Status.Success);
-            _bikesRepository.Verify();
+            BikesRepository.Verify();
             result.Object.Should().NotBeNull();
             result.Object.Id.Should().Be(bikeId);
             result.Object.Station.Id.Should().Be(stationId);
@@ -101,14 +102,14 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                 Username = "zdzislaw"
             };
 
-            _bikesRepository.Setup(r =>
+            BikesRepository.Setup(r =>
                 r.Associate(It.IsAny<string>(), It.IsAny<Station>())
             ).Verifiable();
-            _bikesRepository.Setup(r =>
+            BikesRepository.Setup(r =>
                 r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
             ).Verifiable();
 
-            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
@@ -116,7 +117,7 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                     User = thisUser,
                 });
 
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>()))
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns((Station)null);
 
             var bikesService = GetBikesService(thisUser.Username);
@@ -125,8 +126,8 @@ namespace BikesRentalServer.Tests.BikesServiceTests
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
-            _bikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
-            _bikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>()), Times.Never);
+            BikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
+            BikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>()), Times.Never);
         }
 
         [Fact]
@@ -140,14 +141,14 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                 Username = "zdzislaw"
             };
 
-            _bikesRepository.Setup(r =>
+            BikesRepository.Setup(r =>
                 r.Associate(It.IsAny<string>(), It.Is<Station>(s => s.Id == stationId))
             ).Verifiable();
 
-            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns((Bike)null);
 
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>()))
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Station
                 {
                     Id = stationId,
@@ -160,8 +161,8 @@ namespace BikesRentalServer.Tests.BikesServiceTests
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
-            _bikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
-            _bikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>()), Times.Never);
+            BikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
+            BikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>()), Times.Never);
         }
 
         [Fact]
@@ -180,11 +181,11 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                 Username = "Czesiek"
             };
 
-            _bikesRepository.Setup(r =>
+            BikesRepository.Setup(r =>
                 r.Associate(It.IsAny<string>(), It.Is<Station>(s => s.Id == stationId))
             ).Verifiable();
 
-            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
@@ -192,7 +193,7 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                     User = otherUser,
                 });
 
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>()))
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Station
                 {
                     Id = stationId,
@@ -205,8 +206,8 @@ namespace BikesRentalServer.Tests.BikesServiceTests
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
-            _bikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
-            _bikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>()), Times.Never);
+            BikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
+            BikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>()), Times.Never);
         }
     }
 }

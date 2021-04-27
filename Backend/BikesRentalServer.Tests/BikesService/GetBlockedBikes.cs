@@ -1,5 +1,6 @@
 ﻿using BikesRentalServer.Models;
 using BikesRentalServer.Services;
+using BikesRentalServer.Tests.BikesService;
 using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace BikesRentalServer.Tests.BikesServiceTests
         public void GetBlocedBikesShouldReturnEmptyIEnumerableIfNoBikes()
         {
             var noBikes = new List<Bike>();
-            _bikesRepository.Setup(r => r.GetAll()).Returns(noBikes);
+            BikesRepository.Setup(r => r.GetAll()).Returns(noBikes);
 
             var bikesService = GetBikesService();
 
@@ -44,7 +45,7 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                 },
             };
 
-            _bikesRepository.Setup(r => r.GetBlocked()).Returns(blockedBikes);
+            BikesRepository.Setup(r => r.GetBlocked()).Returns(blockedBikes);
 
             var bikesService = GetBikesService();
 

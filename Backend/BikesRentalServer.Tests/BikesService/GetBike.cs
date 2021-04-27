@@ -1,6 +1,7 @@
 ﻿using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
+using BikesRentalServer.Tests.BikesService;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -18,7 +19,7 @@ namespace BikesRentalServer.Tests.BikesServiceTests
         {
             var bikeId = "123";
 
-            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns((Bike)null);
 
             var bikesService = GetBikesService();
@@ -39,7 +40,7 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                 Status = BikeStatus.Working
             };
 
-            _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(bike);
 
             var bikesService = GetBikesService();
