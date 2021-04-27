@@ -25,7 +25,7 @@ namespace BikesRentalServer.Tests.BikesService
         {
             var station = _dbContext.Stations.Add(new Station
                 {
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                     Name = "Al. Jerozolimskie",
                 })
                 .Entity;
@@ -49,7 +49,7 @@ namespace BikesRentalServer.Tests.BikesService
         {
             var station = _dbContext.Stations.Add(new Station
                 {
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                     Name = "Al. Jerozolimskie",
                 })
                 .Entity;
@@ -82,7 +82,7 @@ namespace BikesRentalServer.Tests.BikesService
         {
             var station = _dbContext.Stations.Add(new Station
                 {
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                     Name = "Al. Jerozolimskie",
                 })
                 .Entity;

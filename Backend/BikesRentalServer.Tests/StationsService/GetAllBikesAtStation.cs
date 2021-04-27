@@ -109,7 +109,7 @@ namespace BikesRentalServer.Tests.StationsService
             {
                 Id = 3,
                 Name = "Buda Reksia",
-                Status = BikeStationStatus.Blocked,
+                Status = StationStatus.Blocked,
             })
             .Entity;
             _dbContext.SaveChanges();

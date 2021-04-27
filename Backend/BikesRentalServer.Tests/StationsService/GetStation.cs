@@ -25,7 +25,7 @@ namespace BikesRentalServer.Tests.StationsService
             var station = _dbContext.Stations.Add(new Station
                 {
                     Id = 3,
-                    Status = BikeStationStatus.Blocked,
+                    Status = StationStatus.Blocked,
                     Name = "Dom Adama",
                 })
                 .Entity;

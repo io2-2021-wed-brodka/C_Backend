@@ -38,28 +38,28 @@ namespace BikesRentalServer.Tests.StationsService
                 new Station
                 {
                     Id = 1,
-                    Status = BikeStationStatus.Blocked,
+                    Status = StationStatus.Blocked,
                     Name = "First station",
                     Bikes = new List<Bike>(),
                 },
                 new Station
                 {
                     Id = 3,
-                    Status = BikeStationStatus.Blocked,
+                    Status = StationStatus.Blocked,
                     Name = "Second station",
                     Bikes = new List<Bike>(),
                 },
                 new Station
                 {
                     Id = 4,
-                    Status = BikeStationStatus.Blocked,
+                    Status = StationStatus.Blocked,
                     Name = "Third station",
                     Bikes = new List<Bike>(),
                 },
                 new Station
                 {
                     Id = 6,
-                    Status = BikeStationStatus.Blocked,
+                    Status = StationStatus.Blocked,
                     Name = "Forth station",
                     Bikes = new List<Bike>(),
                 },
@@ -70,28 +70,28 @@ namespace BikesRentalServer.Tests.StationsService
                 new Station
                 {
                     Id = 7,
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                     Name = "Working station",
                     Bikes = new List<Bike>(),
                 },
                 new Station
                 {
                     Id = 8,
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                     Name = "station",
                     Bikes = new List<Bike>(),
                 },
                 new Station
                 {
                     Id = 9,
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                     Name = "station7",
                     Bikes = new List<Bike>(),
                 },
                 new Station
                 {
                     Id = 69,
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                     Name = "station8",
                     Bikes = new List<Bike>(),
                 },
@@ -105,7 +105,7 @@ namespace BikesRentalServer.Tests.StationsService
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEquivalentTo(addedWorkingStations);
-            result.Object.Where(s => s.Status == BikeStationStatus.Blocked).Should().BeEmpty();
+            result.Object.Where(s => s.Status == StationStatus.Blocked).Should().BeEmpty();
         }
     }
 }

@@ -25,7 +25,7 @@ namespace BikesRentalServer.Tests.StationsService
             var station = _dbContext.Stations.Add(new Station
                 {
                     Name = "DS Ustronie",
-                    Status = BikeStationStatus.Blocked,
+                    Status = StationStatus.Blocked,
                 })
                 .Entity;
             _dbContext.SaveChanges();
@@ -42,7 +42,7 @@ namespace BikesRentalServer.Tests.StationsService
             var station = _dbContext.Stations.Add(new Station
                 {
                     Name = "DS Ustronie",
-                    Status = BikeStationStatus.Blocked,
+                    Status = StationStatus.Blocked,
                 })
                 .Entity;
             _dbContext.SaveChanges();
@@ -50,7 +50,7 @@ namespace BikesRentalServer.Tests.StationsService
             var result = _stationsService.UnblockStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.Success);
-            result.Object.Status.Should().Be(BikeStationStatus.Working);
+            result.Object.Status.Should().Be(StationStatus.Working);
         }
 
         [Fact]
@@ -68,7 +68,7 @@ namespace BikesRentalServer.Tests.StationsService
             var station = _dbContext.Stations.Add(new Station
                 {
                     Name = "DS Ustronie",
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                 })
                 .Entity;
             _dbContext.SaveChanges();

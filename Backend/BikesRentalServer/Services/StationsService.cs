@@ -55,7 +55,7 @@ namespace BikesRentalServer.Services
             var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id == idAsInt);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<IEnumerable<Bike>>("Station not found");
-            if(station.Status is BikeStationStatus.Blocked && _userContext.Role is UserRole.User)
+            if(station.Status is StationStatus.Blocked && _userContext.Role is UserRole.User)
                 return ServiceActionResult.InvalidState<IEnumerable<Bike>>("User cannot get bikes from blocked station");
 
             return ServiceActionResult.Success(station.Bikes.AsEnumerable());
@@ -87,7 +87,7 @@ namespace BikesRentalServer.Services
             var newStation = new Station
             {
                 Name = request.Name,
-                Status = BikeStationStatus.Working,
+                Status = StationStatus.Working,
             };
 
             _dbContext.Stations.Add(newStation);
@@ -98,13 +98,13 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<IEnumerable<Station>> GetBlockedStations()
         {
-            var stations = _dbContext.Stations.Where(s => s.Status == BikeStationStatus.Blocked).AsEnumerable();
+            var stations = _dbContext.Stations.Where(s => s.Status == StationStatus.Blocked).AsEnumerable();
             return ServiceActionResult.Success(stations);
         }
 
         public ServiceActionResult<IEnumerable<Station>> GetActiveStations()
         {
-            var stations = _dbContext.Stations.Where(s => s.Status == BikeStationStatus.Working).AsEnumerable();
+            var stations = _dbContext.Stations.Where(s => s.Status == StationStatus.Working).AsEnumerable();
             return ServiceActionResult.Success(stations);
         }
 
@@ -116,10 +116,10 @@ namespace BikesRentalServer.Services
             var station = _dbContext.Stations.SingleOrDefault(s => s.Id == idAsInt);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
-            if (station.Status is BikeStationStatus.Blocked)
+            if (station.Status is StationStatus.Blocked)
                 return ServiceActionResult.InvalidState<Station>("Station already blocked");
 
-            station.Status = BikeStationStatus.Blocked;
+            station.Status = StationStatus.Blocked;
             _dbContext.SaveChanges();
 
             return ServiceActionResult.Success(station);
@@ -133,10 +133,10 @@ namespace BikesRentalServer.Services
             var station = _dbContext.Stations.SingleOrDefault(s => s.Id == idAsInt);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
-            if (station.Status == BikeStationStatus.Working)
+            if (station.Status == StationStatus.Working)
                 return ServiceActionResult.InvalidState<Station>("Station not blocked");
 
-            station.Status = BikeStationStatus.Working;
+            station.Status = StationStatus.Working;
             _dbContext.SaveChanges();
             
             return ServiceActionResult.Success(station);

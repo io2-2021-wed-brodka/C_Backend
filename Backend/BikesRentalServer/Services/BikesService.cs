@@ -116,7 +116,7 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.InvalidState<Bike>("Bike is blocked");
             if (bike.User is not null)
                 return ServiceActionResult.InvalidState<Bike>("Bike is already rented");
-            if (bike.Station.Status is BikeStationStatus.Blocked)
+            if (bike.Station.Status is StationStatus.Blocked)
                 return ServiceActionResult.InvalidState<Bike>("Station is blocked");
 
             var user = _dbContext.Users.Single(u => u.Username == _userContext.Username);
@@ -160,7 +160,7 @@ namespace BikesRentalServer.Services
             var station = _dbContext.Stations.SingleOrDefault(s => s.Id == idAsInt);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Station not found");
-            if (station.Status is BikeStationStatus.Blocked)
+            if (station.Status is StationStatus.Blocked)
                 return ServiceActionResult.InvalidState<Bike>("Station is blocked");
             // TODO: FIX ISSUE WITH TOSTRING
             //

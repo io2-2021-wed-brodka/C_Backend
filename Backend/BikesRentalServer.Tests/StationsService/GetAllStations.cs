@@ -37,13 +37,13 @@ namespace BikesRentalServer.Tests.StationsService
                 new Station
                 {
                     Name = "Test Station 1",
-                    Status = BikeStationStatus.Working
+                    Status = StationStatus.Working
                 },
                 new Station
                 {
                     Id = 5,
                     Name = "Test Station 3",
-                    Status = BikeStationStatus.Blocked
+                    Status = StationStatus.Blocked
                 },
                 new Station
                 {

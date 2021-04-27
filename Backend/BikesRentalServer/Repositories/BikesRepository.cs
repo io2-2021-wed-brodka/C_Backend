@@ -24,7 +24,6 @@ namespace BikesRentalServer.Repositories
         {
             if (!int.TryParse(id, out var iid))
                 return null;
-
             return _dbContext.Bikes.SingleOrDefault(b => b.Id == iid);
         }
 

@@ -42,7 +42,7 @@ namespace BikesRentalServer.Tests.BikesService
             var station = _dbContext.Stations.Add(new Station
                 {
                     Name = "DS Ustronie",
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                 })
                 .Entity;
             var bike = _dbContext.Bikes.Add(new Bike
@@ -68,7 +68,7 @@ namespace BikesRentalServer.Tests.BikesService
             var station = _dbContext.Stations.Add(new Station
                 {
                     Name = "DS Ustronie",
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                 })
                 .Entity;
             var bike = _dbContext.Bikes.Add(new Bike
@@ -106,7 +106,7 @@ namespace BikesRentalServer.Tests.BikesService
             var station = _dbContext.Stations.Add(new Station
                 {
                     Name = "DS Ustronie",
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                 })
                 .Entity;
             var bike = _dbContext.Bikes.Add(new Bike
@@ -163,7 +163,7 @@ namespace BikesRentalServer.Tests.BikesService
             var station = _dbContext.Stations.Add(new Station
                 {
                     Name = "DS Ustronie",
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                 })
                 .Entity;
             _dbContext.Bikes.AddRange(new []
@@ -213,7 +213,7 @@ namespace BikesRentalServer.Tests.BikesService
             var station = _dbContext.Stations.Add(new Station
                 {
                     Name = "DS Ustronie",
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                 })
                 .Entity;
             var bike = _dbContext.Bikes.Add(new Bike
@@ -248,7 +248,7 @@ namespace BikesRentalServer.Tests.BikesService
             var station = _dbContext.Stations.Add(new Station
                 {
                     Name = "DS Riwiera",
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                 })
                 .Entity;
             var bike = _dbContext.Bikes.Add(new Bike
@@ -290,7 +290,7 @@ namespace BikesRentalServer.Tests.BikesService
             var station = _dbContext.Stations.Add(new Station
                 {
                     Name = "DS Riwiera",
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Working,
                 })
                 .Entity;
             var bike = _dbContext.Bikes.Add(new Bike
