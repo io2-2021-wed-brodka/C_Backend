@@ -17,7 +17,7 @@ enum StationFilterType {
 
 const StationsTab = () => {
   const [refreshState, refresh] = useRefresh();
-  const data = usePromise(useServices().getStations, [refreshState]);
+  const data = usePromise(useServices().getAllStations, [refreshState]);
   const addStation = useServices().addStation;
   const snackbar = useSnackbar();
   const [stationFilter, SetStationFilter] = useState(StationFilterType.All);

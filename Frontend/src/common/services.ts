@@ -6,7 +6,8 @@ import {
   blockStation,
   getBikesByStation,
   getRentedBikes,
-  getStations,
+  getActiveStations,
+  getAllStations,
   removeBike,
   removeStation,
   rentBike,
@@ -30,7 +31,8 @@ import {
 type AllServices = {
   signIn: (login: string, password: string) => Promise<BearerToken>;
   signUp: (login: string, password: string) => Promise<BearerToken>;
-  getStations: () => Promise<Station[]>;
+  getActiveStations: () => Promise<Station[]>;
+  getAllStations: () => Promise<Station[]>;
   getBikesOnStation: (stationId: string) => Promise<Bike[]>;
   getRentedBikes: () => Promise<Bike[]>;
   returnBike: (stationId: string, bikeId: string) => Promise<Bike>;
@@ -48,7 +50,8 @@ type AllServices = {
 export const services: AllServices = {
   signIn: signInAndSaveToken,
   signUp: signUpAndSaveToken,
-  getStations: getStations,
+  getActiveStations: getActiveStations,
+  getAllStations: getAllStations,
   getBikesOnStation: getBikesByStation,
   getRentedBikes: getRentedBikes,
   returnBike: returnBike,
@@ -76,7 +79,8 @@ export const mockedServices: AllServices = {
       return bearerToken;
     });
   },
-  getStations: () => delay(mockedStations),
+  getActiveStations: () => delay(mockedStations),
+  getAllStations: () => delay(mockedStations),
   getBikesOnStation: stationId => delay(mockedBikesByStations[stationId]),
   getRentedBikes: () => delay(mockedRentedBikes),
   returnBike: bikeId => delay<Bike>({ id: bikeId, status: 'available' }),
