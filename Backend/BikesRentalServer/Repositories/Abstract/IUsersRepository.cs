@@ -1,4 +1,5 @@
 ﻿using BikesRentalServer.Models;
+using System.Collections.Generic;
 
 namespace BikesRentalServer.Repositories.Abstract
 {
@@ -6,5 +7,6 @@ namespace BikesRentalServer.Repositories.Abstract
     {
         User GetByUsername(string username);
         User SetStatus(string id, UserStatus status);
+        IEnumerable<Bike> GetRentedBikes(string id);
     }
 }

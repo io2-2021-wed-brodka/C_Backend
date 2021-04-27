@@ -63,5 +63,11 @@ namespace BikesRentalServer.Repositories
 
             return user;
         }
+
+        public IEnumerable<Bike> GetRentedBikes(string id)
+        {
+            var user = Get(id);
+            return user?.RentedBikes;
+        }
     }
 }
