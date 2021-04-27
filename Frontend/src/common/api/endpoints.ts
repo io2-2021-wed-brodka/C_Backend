@@ -81,3 +81,8 @@ export const blockBike = (id: string) =>
     method: 'POST',
     data: { id },
   });
+
+export const unblockBike = (bikeId: string) =>
+  apiWithAuthConnection<void>(`${API}/bikes/blocked/${bikeId}`, {
+    method: 'DELETE',
+  });

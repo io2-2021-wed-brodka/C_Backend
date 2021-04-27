@@ -31,7 +31,7 @@ export type BikeAction = {
   label: string;
 };
 
-export type BikeActionsForBike = (bikeId: string) => BikeAction[];
+export type BikeActionsForBike = (bike: Bike) => BikeAction[];
 
 type Props = {
   bikes: Bike[];
@@ -49,16 +49,16 @@ const BikesList = ({ bikes, bikeActions }: Props) => {
       )}
       {!!bikes.length && (
         <List dense={true}>
-          {bikes.map(({ id }) => (
-            <ListItem key={id}>
+          {bikes.map(bike => (
+            <ListItem key={bike.id}>
               <ListItemIconSansPadding>
                 <DirectionsBikeIcon />
               </ListItemIconSansPadding>
               <ListItemText
-                primary={<Typography variant="h6">{`#${id}`}</Typography>}
+                primary={<Typography variant="h6">{`#${bike.id}`}</Typography>}
               />
               <ListItemSecondaryAction>
-                {bikeActions(id).map(({ onClick, label, type }) => (
+                {bikeActions(bike).map(({ onClick, label, type }) => (
                   <Button
                     variant="contained"
                     color={type}
