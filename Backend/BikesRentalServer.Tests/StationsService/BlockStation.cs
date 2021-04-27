@@ -24,11 +24,11 @@ namespace BikesRentalServer.Tests.StationsService
         public void BlockStationShouldReturnBlockedStation()
         {
             var station = _dbContext.Stations.Add(new Station
-            {
-                Name = "DS Ustronie",
-                Status = BikeStationStatus.Working,
-            })
-            .Entity;
+                {
+                    Name = "DS Ustronie",
+                    Status = BikeStationStatus.Working,
+                })
+                .Entity;
             _dbContext.SaveChanges();
 
             var result = _stationsService.BlockStation(new BlockStationRequest
@@ -44,11 +44,11 @@ namespace BikesRentalServer.Tests.StationsService
         public void BlockStationShouldChangeStationStatusToBlocked()
         {
             var station = _dbContext.Stations.Add(new Station
-            {
-                Name = "DS Ustronie",
-                Status = BikeStationStatus.Working,
-            })
-            .Entity;
+                {
+                    Name = "DS Ustronie",
+                    Status = BikeStationStatus.Working,
+                })
+                .Entity;
             _dbContext.SaveChanges();
 
             var result = _stationsService.BlockStation(new BlockStationRequest
@@ -76,11 +76,11 @@ namespace BikesRentalServer.Tests.StationsService
         public void BlockAlreadyBlockedStationShouldReturnInvalidState()
         {
             var station = _dbContext.Stations.Add(new Station
-            {
-                Name = "DS Ustronie",
-                Status = BikeStationStatus.Blocked,
-            })
-            .Entity;
+                {
+                    Name = "DS Ustronie",
+                    Status = BikeStationStatus.Blocked,
+                })
+                .Entity;
             _dbContext.SaveChanges();
 
             var result = _stationsService.BlockStation(new BlockStationRequest
