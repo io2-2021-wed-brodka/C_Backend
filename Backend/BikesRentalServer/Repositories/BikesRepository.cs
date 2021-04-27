@@ -58,5 +58,31 @@ namespace BikesRentalServer.Repositories
 
             return bike;
         }
+
+        public Bike Associate(string id, User user)
+        {
+            var bike = Get(id);
+            if (bike is null)
+                return null;
+
+            bike.Station = null;
+            bike.User = user;
+            _dbContext.SaveChanges();
+
+            return bike;
+        }
+
+        public Bike Associate(string id, Station station)
+        {
+            var bike = Get(id);
+            if (bike is null)
+                return null;
+
+            bike.User = null;
+            bike.Station = station;
+            _dbContext.SaveChanges();
+
+            return bike;
+        }
     }
 }
