@@ -83,7 +83,8 @@ namespace BikesRentalServer.Controllers
                     }),
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
-                Status.InvalidState or _ => throw new InvalidOperationException("Invalid status"),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
             };
         }
 
@@ -107,7 +108,8 @@ namespace BikesRentalServer.Controllers
                     Status = response.Object.Status,
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
-                Status.InvalidState or _ => throw new InvalidOperationException("Invalid status"),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
             };
         }
 
@@ -175,6 +177,24 @@ namespace BikesRentalServer.Controllers
                     Id = station.Id.ToString(),
                     Name = station.Name,
                 }),
+            };
+        }
+
+        [HttpPost("blocked")]
+        [AdminAuthorization]
+        public ActionResult<GetStationResponse> BlockStation(BlockStationRequest request)
+        {
+            var response = _stationsService.BlockStation(request);
+            return response.Status switch
+            {
+                Status.Success => Ok(new GetStationResponse
+                {
+                    Id = response.Object.Id.ToString(),
+                    Name = response.Object.Name,
+                }),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
             };
         }
     }

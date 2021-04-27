@@ -13,5 +13,6 @@ namespace BikesRentalServer.Services.Abstract
         ServiceActionResult<Station> AddStation(AddStationRequest request);
         ServiceActionResult<IEnumerable<Station>> GetBlockedStations();
         ServiceActionResult<IEnumerable<Station>> GetActiveStations();
+        ServiceActionResult<Station> BlockStation(BlockStationRequest request);
     }
 }

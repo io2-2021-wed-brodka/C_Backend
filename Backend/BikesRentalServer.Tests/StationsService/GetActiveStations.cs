@@ -1,4 +1,5 @@
-﻿using BikesRentalServer.DataAccess;
+﻿using BikesRentalServer.Authorization;
+using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
@@ -17,7 +18,7 @@ namespace BikesRentalServer.Tests.StationsService
         public GetActiveStations()
         {
             _dbContext = MockedDbFactory.GetContext();
-            _stationsService = new Services.StationsService(_dbContext);
+            _stationsService = new Services.StationsService(_dbContext, new UserContext());
         }
 
         [Fact]
