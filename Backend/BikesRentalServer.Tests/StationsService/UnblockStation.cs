@@ -1,6 +1,5 @@
 ﻿using BikesRentalServer.Authorization;
 using BikesRentalServer.DataAccess;
-using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
@@ -28,7 +27,7 @@ namespace BikesRentalServer.Tests.StationsService
                 Name = "DS Ustronie",
                 Status = BikeStationStatus.Blocked,
             })
-                .Entity;
+            .Entity;
             _dbContext.SaveChanges();
 
             var result = _stationsService.UnblockStation(station.Id.ToString());
@@ -45,7 +44,7 @@ namespace BikesRentalServer.Tests.StationsService
                 Name = "DS Ustronie",
                 Status = BikeStationStatus.Blocked,
             })
-              .Entity;
+            .Entity;
             _dbContext.SaveChanges();
 
             var result = _stationsService.UnblockStation(station.Id.ToString());
@@ -71,7 +70,7 @@ namespace BikesRentalServer.Tests.StationsService
                 Name = "DS Ustronie",
                 Status = BikeStationStatus.Working,
             })
-                .Entity;
+            .Entity;
             _dbContext.SaveChanges();
 
             var result = _stationsService.UnblockStation(station.Id.ToString());

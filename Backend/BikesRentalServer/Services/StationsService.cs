@@ -38,6 +38,7 @@ namespace BikesRentalServer.Services
             var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id == idAsInt);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
+
             return ServiceActionResult.Success(station);
         }
         
@@ -56,6 +57,7 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.EntityNotFound<IEnumerable<Bike>>("Station not found");
             if(station.Status is BikeStationStatus.Blocked && _userContext.Role is UserRole.User)
                 return ServiceActionResult.InvalidState<IEnumerable<Bike>>("User cannot get bikes from blocked station");
+
             return ServiceActionResult.Success(station.Bikes.AsEnumerable());
         }
 
@@ -99,9 +101,7 @@ namespace BikesRentalServer.Services
             if (!int.TryParse(request.Id, out int idAsInt))
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
 
-            var station = _dbContext.Stations
-                .Include(s => s.Bikes)
-                .SingleOrDefault(s => s.Id == idAsInt);
+            var station = _dbContext.Stations.SingleOrDefault(s => s.Id == idAsInt);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
             if (station.Status is BikeStationStatus.Blocked)
@@ -109,6 +109,7 @@ namespace BikesRentalServer.Services
 
             station.Status = BikeStationStatus.Blocked;
             _dbContext.SaveChanges();
+
             return ServiceActionResult.Success(station);
         }
 
@@ -117,8 +118,7 @@ namespace BikesRentalServer.Services
             if (!int.TryParse(id, out int idAsInt))
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
 
-            var station = _dbContext.Stations
-                .SingleOrDefault(s => s.Id == idAsInt);
+            var station = _dbContext.Stations.SingleOrDefault(s => s.Id == idAsInt);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
             if (station.Status == BikeStationStatus.Working)
@@ -126,6 +126,7 @@ namespace BikesRentalServer.Services
 
             station.Status = BikeStationStatus.Working;
             _dbContext.SaveChanges();
+
             return ServiceActionResult.Success(station);
         }
     }

@@ -28,7 +28,7 @@ namespace BikesRentalServer.Tests.StationsService
                 Name = "DS Ustronie",
                 Status = BikeStationStatus.Working,
             })
-                .Entity;
+            .Entity;
             _dbContext.SaveChanges();
 
             var result = _stationsService.BlockStation(new BlockStationRequest
@@ -48,7 +48,7 @@ namespace BikesRentalServer.Tests.StationsService
                 Name = "DS Ustronie",
                 Status = BikeStationStatus.Working,
             })
-              .Entity;
+            .Entity;
             _dbContext.SaveChanges();
 
             var result = _stationsService.BlockStation(new BlockStationRequest
@@ -80,12 +80,12 @@ namespace BikesRentalServer.Tests.StationsService
                 Name = "DS Ustronie",
                 Status = BikeStationStatus.Blocked,
             })
-                .Entity;
+            .Entity;
             _dbContext.SaveChanges();
 
             var result = _stationsService.BlockStation(new BlockStationRequest
             {
-                Id = station.Id.ToString()
+                Id = station.Id.ToString(),
             });
 
             result.Status.Should().Be(Status.InvalidState);
