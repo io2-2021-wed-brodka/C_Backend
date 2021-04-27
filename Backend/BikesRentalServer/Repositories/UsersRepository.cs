@@ -47,6 +47,11 @@ namespace BikesRentalServer.Repositories
             return user;
         }
 
+        public User GetByUsername(string username)
+        {
+            return _dbContext.Users.SingleOrDefault(u => u.Username == username);
+        }
+
         public User SetStatus(string id, UserStatus status)
         {
             var user = Get(id);
