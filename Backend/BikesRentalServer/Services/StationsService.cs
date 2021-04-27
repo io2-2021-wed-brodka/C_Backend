@@ -1,41 +1,32 @@
 ﻿using BikesRentalServer.Authorization;
-using BikesRentalServer.DataAccess;
 using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
+using BikesRentalServer.Repositories.Abstract;
 using BikesRentalServer.Services.Abstract;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BikesRentalServer.Services
 {
     public class StationsService : IStationsService
     {
-        private readonly DatabaseContext _dbContext;
+        private readonly IStationsRepository _stationsRepository;
         private readonly UserContext _userContext;
 
-        public StationsService(DatabaseContext context, UserContext userContext)
+        public StationsService(IStationsRepository stationsRepository, UserContext userContext)
         {
-            _dbContext = context;
+            _stationsRepository = stationsRepository;
             _userContext = userContext;
         }
 
         public ServiceActionResult<IEnumerable<Station>> GetAllStations()
         {
-            var result = _dbContext.Stations.AsEnumerable();
-            return ServiceActionResult.Success(result);
+            var stations = _stationsRepository.GetAll();
+            return ServiceActionResult.Success(stations);
         }
 
         public ServiceActionResult<Station> GetStation(string id)
         {
-            // TODO: FIX ISSUE WITH TOSTRING
-            //
-
-            if(!int.TryParse(id, out int idAsInt))
-                return ServiceActionResult.EntityNotFound<Station>("Station not found");
-
-            //
-            var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id == idAsInt);
+            var station = _stationsRepository.Get(id);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
 
@@ -44,101 +35,70 @@ namespace BikesRentalServer.Services
         
         public ServiceActionResult<IEnumerable<Bike>> GetAllBikesAtStation(string id)
         {
-            // TODO: FIX ISSUE WITH TOSTRING
-            //
-
-            if (!int.TryParse(id, out int idAsInt))
-                return ServiceActionResult.EntityNotFound<IEnumerable<Bike>>("Station not found");
-
-            //
-
-            var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id == idAsInt);
+            var station = _stationsRepository.Get(id);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<IEnumerable<Bike>>("Station not found");
-            if(station.Status is StationStatus.Blocked && _userContext.Role is UserRole.User)
+            if (station.Status is StationStatus.Blocked && _userContext.Role is UserRole.User)
                 return ServiceActionResult.InvalidState<IEnumerable<Bike>>("User cannot get bikes from blocked station");
 
-            return ServiceActionResult.Success(station.Bikes.AsEnumerable());
+            return ServiceActionResult.Success<IEnumerable<Bike>>(station.Bikes);
         }
 
         public ServiceActionResult<Station> RemoveStation(string id)
         {
-            // TODO: FIX ISSUE WITH TOSTRING
-            //
-
-            if (!int.TryParse(id, out int idAsInt))
-                return ServiceActionResult.EntityNotFound<Station>("Station not found");
-
-            //
-            var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id == idAsInt);
+            var station = _stationsRepository.Get(id);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
             if (station.Bikes.Count > 0)
                 return ServiceActionResult.InvalidState<Station>("Station has bikes");
 
-            _dbContext.Stations.Remove(station);
-            _dbContext.SaveChanges();
-
+            station = _stationsRepository.Remove(id);
             return ServiceActionResult.Success(station);
         }
   
         public ServiceActionResult<Station> AddStation(AddStationRequest request)
         {
-            var newStation = new Station
+            var station = _stationsRepository.Add(new Station
             {
                 Name = request.Name,
                 Status = StationStatus.Working,
-            };
-
-            _dbContext.Stations.Add(newStation);
-            _dbContext.SaveChanges();
-
-            return ServiceActionResult.Success(newStation);
+            });
+            return ServiceActionResult.Success(station);
         }
 
         public ServiceActionResult<IEnumerable<Station>> GetBlockedStations()
         {
-            var stations = _dbContext.Stations.Where(s => s.Status == StationStatus.Blocked).AsEnumerable();
+            var stations = _stationsRepository.GetBlocked();
             return ServiceActionResult.Success(stations);
         }
 
         public ServiceActionResult<IEnumerable<Station>> GetActiveStations()
         {
-            var stations = _dbContext.Stations.Where(s => s.Status == StationStatus.Working).AsEnumerable();
+            var stations = _stationsRepository.GetActive();
             return ServiceActionResult.Success(stations);
         }
 
         public ServiceActionResult<Station> BlockStation(BlockStationRequest request)
         {
-            if (!int.TryParse(request.Id, out int idAsInt))
-                return ServiceActionResult.EntityNotFound<Station>("Station not found");
-
-            var station = _dbContext.Stations.SingleOrDefault(s => s.Id == idAsInt);
+            var station = _stationsRepository.Get(request.Id);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
             if (station.Status is StationStatus.Blocked)
                 return ServiceActionResult.InvalidState<Station>("Station already blocked");
 
-            station.Status = StationStatus.Blocked;
-            _dbContext.SaveChanges();
-
+            station = _stationsRepository.SetStatus(request.Id, StationStatus.Blocked);
             return ServiceActionResult.Success(station);
         }
 
         public ServiceActionResult<Station> UnblockStation(string id)
         {
-            if (!int.TryParse(id, out int idAsInt))
-                return ServiceActionResult.EntityNotFound<Station>("Station not found");
-
-            var station = _dbContext.Stations.SingleOrDefault(s => s.Id == idAsInt);
+            var station = _stationsRepository.Get(id);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
             if (station.Status == StationStatus.Working)
                 return ServiceActionResult.InvalidState<Station>("Station not blocked");
 
-            station.Status = StationStatus.Working;
-            _dbContext.SaveChanges();
-            
+            station = _stationsRepository.SetStatus(id, StationStatus.Working);
             return ServiceActionResult.Success(station);
         }
     }
