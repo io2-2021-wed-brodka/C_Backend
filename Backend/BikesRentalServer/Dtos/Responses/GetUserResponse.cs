@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace BikesRentalServer.Dtos.Responses
+﻿namespace BikesRentalServer.Dtos.Responses
 {
     public class GetUserResponse
     {

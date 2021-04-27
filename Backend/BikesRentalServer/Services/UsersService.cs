@@ -1,7 +1,6 @@
 ﻿using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
