@@ -1,6 +1,7 @@
 ﻿using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Repositories.Abstract;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,14 +18,14 @@ namespace BikesRentalServer.Repositories
         
         public IEnumerable<User> GetAll()
         {
-            return _dbContext.Users;
+            return _dbContext.Users.Include(u => u.RentedBikes).Include(u => u.Reservations).Where(u => u.Role == UserRole.User);
         }
 
         public User Get(string id)
         {
             if (!int.TryParse(id, out var iid))
                 return null;
-            return _dbContext.Users.SingleOrDefault(u => u.Id == iid);
+            return _dbContext.Users.Include(u => u.RentedBikes).Include(u => u.Reservations).SingleOrDefault(u => u.Id == iid);
         }
 
         public User Add(User entity)
@@ -57,7 +58,15 @@ namespace BikesRentalServer.Repositories
 
         public User GetByUsername(string username)
         {
-            return _dbContext.Users.SingleOrDefault(u => u.Username == username);
+            return _dbContext.Users.Include(u => u.RentedBikes).Include(u => u.Reservations).SingleOrDefault(u => u.Username == username);
+        }
+
+        public User GetByUsernameAndPassword(string username, string password)
+        {
+            return _dbContext.Users
+                .Include(u => u.RentedBikes)
+                .Include(u => u.Reservations)
+                .SingleOrDefault(u => u.Username == username && u.PasswordHash == Toolbox.ComputeHash(password));
         }
 
         public User SetStatus(string id, UserStatus status)
@@ -70,12 +79,6 @@ namespace BikesRentalServer.Repositories
             _dbContext.SaveChanges();
 
             return user;
-        }
-
-        public IEnumerable<Bike> GetRentedBikes(string id)
-        {
-            var user = Get(id);
-            return user?.RentedBikes;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Repositories.Abstract;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,14 +19,14 @@ namespace BikesRentalServer.Repositories
 
         public IEnumerable<Reservation> GetAll()
         {
-            return _dbContext.Reservations;
+            return _dbContext.Reservations.Include(r => r.Bike).Include(r => r.User);
         }
 
         public Reservation Get(string id)
         {
             if (!int.TryParse(id, out var iid))
                 return null;
-            return _dbContext.Reservations.SingleOrDefault(r => r.Id == iid);
+            return _dbContext.Reservations.Include(r => r.Bike).Include(r => r.User).SingleOrDefault(r => r.Id == iid);
         }
 
         public Reservation Add(Reservation entity)
@@ -60,7 +61,7 @@ namespace BikesRentalServer.Repositories
         {
             if (!int.TryParse(bikeId, out var iid))
                 return null;
-            return _dbContext.Reservations.SingleOrDefault(r => r.Bike.Id == iid && r.ExpirationDate > DateTime.Now);
+            return _dbContext.Reservations.Include(r => r.Bike).Include(r => r.User).SingleOrDefault(r => r.Bike.Id == iid && r.ExpirationDate > DateTime.Now);
         }
     }
 }
