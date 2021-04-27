@@ -1,0 +1,64 @@
+﻿using BikesRentalServer.DataAccess;
+using BikesRentalServer.Dtos.Responses;
+using BikesRentalServer.Models;
+using BikesRentalServer.Repositories.Abstract;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace BikesRentalServer.Repositories
+{
+    public class BikesRepository : IBikesRepository
+    {
+        private readonly DatabaseContext _dbContext;
+        
+        public BikesRepository(DatabaseContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+        
+        public IEnumerable<Bike> GetAll()
+        {
+            return _dbContext.Bikes.ToArray();
+        }
+
+        public Bike Get(string id)
+        {
+            if (!int.TryParse(id, out var iid))
+                return null;
+
+            return _dbContext.Bikes.SingleOrDefault(b => b.Id == iid);
+        }
+
+        public Bike Add(Bike entity)
+        {
+            var bike = _dbContext.Bikes.Add(entity).Entity;
+            _dbContext.SaveChanges();
+
+            return bike;
+        }
+
+        public Bike Remove(string id)
+        {
+            var bike = Get(id);
+            if (bike is null)
+                return null;
+
+            _dbContext.Bikes.Remove(bike);
+            _dbContext.SaveChanges();
+
+            return bike;
+        }
+
+        public Bike SetStatus(string id, BikeStatus status)
+        {
+            var bike = Get(id);
+            if (bike is null)
+                return null;
+
+            bike.Status = status;
+            _dbContext.SaveChanges();
+
+            return bike;
+        }
+    }
+}
