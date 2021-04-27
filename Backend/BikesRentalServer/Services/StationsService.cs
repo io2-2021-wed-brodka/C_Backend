@@ -90,16 +90,14 @@ namespace BikesRentalServer.Services
         }
 
         public ServiceActionResult<IEnumerable<Station>> GetBlockedStations()
-        { 
-            var stations = _dbContext.Stations.Where(s => s.Status == BikeStationStatus.Blocked)
-                .AsEnumerable();
+        {
+            var stations = _dbContext.Stations.Where(s => s.Status == BikeStationStatus.Blocked).AsEnumerable();
             return ServiceActionResult.Success(stations);
         }
 
         public ServiceActionResult<IEnumerable<Station>> GetActiveStations()
         {
-            var stations = _dbContext.Stations.Where(s => s.Status == BikeStationStatus.Working)
-                .AsEnumerable();
+            var stations = _dbContext.Stations.Where(s => s.Status == BikeStationStatus.Working).AsEnumerable();
             return ServiceActionResult.Success(stations);
         }
     }
