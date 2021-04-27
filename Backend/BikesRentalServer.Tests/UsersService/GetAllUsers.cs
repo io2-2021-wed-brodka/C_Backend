@@ -47,7 +47,7 @@ namespace BikesRentalServer.Tests.UsersService
         }
 
         [Fact]
-        public void GetAllUsersOnlyMultipleUsersExists()
+        public void GetAllUsersMultipleUsersExists()
         {
             _dbContext.Users.AddRange(new[]
             {
