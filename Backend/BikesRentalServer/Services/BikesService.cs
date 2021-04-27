@@ -1,46 +1,42 @@
 ﻿using BikesRentalServer.Authorization;
-using BikesRentalServer.DataAccess;
 using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
+using BikesRentalServer.Repositories.Abstract;
 using BikesRentalServer.Services.Abstract;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BikesRentalServer.Services
 {
     public class BikesService : IBikesService
     {
-        private readonly DatabaseContext _dbContext;
+        private readonly IBikesRepository _bikesRepository;
+        private readonly IStationsRepository _stationsRepository;
+        private readonly IUsersRepository _usersRepository;
+        private readonly IReservationsRepository _reservationsRepository;
         private readonly UserContext _userContext;
 
-        public BikesService(DatabaseContext dbContext, UserContext userContext)
+        public BikesService(IBikesRepository bikesRepository,
+                            IStationsRepository stationsRepository,
+                            IUsersRepository usersRepository,
+                            IReservationsRepository reservationsRepository,
+                            UserContext userContext)
         {
-            _dbContext = dbContext;
+            _bikesRepository = bikesRepository;
+            _stationsRepository = stationsRepository;
+            _usersRepository = usersRepository;
+            _reservationsRepository = reservationsRepository;
             _userContext = userContext;
         }
 
         public ServiceActionResult<IEnumerable<Bike>> GetAllBikes()
         {
-            var result = _dbContext.Bikes.Include(b => b.Station).Include(b => b.User).AsEnumerable();
-            return ServiceActionResult.Success(result);
+            return ServiceActionResult.Success(_bikesRepository.GetAll());
         }
 
         public ServiceActionResult<Bike> GetBike(string id)
         {
-            // TODO: FIX ISSUE WITH TOSTRING
-            //
-
-            if (!int.TryParse(id, out int idAsInt))
-                return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
-
-            //
-            var bike = _dbContext.Bikes
-                .Include(b => b.User)
-                .Include(b => b.Station)
-                .SingleOrDefault(b => b.Id == idAsInt);
-
+            var bike = _bikesRepository.Get(id);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
             return ServiceActionResult.Success(bike);
@@ -48,68 +44,32 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<Bike> AddBike(AddBikeRequest request)
         {
-            // TODO: FIX ISSUE WITH TOSTRING
-            //
-
-            if (!int.TryParse(request.StationId, out int idAsInt))
-                return ServiceActionResult.EntityNotFound<Bike>("Station does not exist");
-
-            //
-            var station = _dbContext.Stations
-                .Include(s => s.Bikes)
-                .SingleOrDefault(s => idAsInt == s.Id);
+            var station = _stationsRepository.Get(request.StationId);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Station does not exist");
-
-            var newBike = new Bike
+            
+            return ServiceActionResult.Success(_bikesRepository.Add(new Bike
             {
-                Description = string.Empty,
                 Station = station,
-            };
-
-            station.Bikes.Add(newBike);
-            _dbContext.Bikes.Add(newBike);
-            _dbContext.SaveChanges();
-
-            return ServiceActionResult.Success(newBike);
+            }));
         }
 
         public ServiceActionResult<Bike> RemoveBike(string id)
         {
-            // TODO: FIX ISSUE WITH TOSTRING
-            //
-
-            if (!int.TryParse(id, out int idAsInt))
-                return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
-
-            //
-            var bike = _dbContext.Bikes.SingleOrDefault(b => b.Id == idAsInt);
+            var bike = _bikesRepository.Get(id);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
-            if (bike.Status != BikeStatus.Blocked)
+            if (bike.Status is not BikeStatus.Blocked)
                 return ServiceActionResult.InvalidState<Bike>("Bike not blocked");
             if (bike.User is not null)
                 throw new InvalidOperationException("Trying to remove rented bike");
 
-            _dbContext.Bikes.Remove(bike);
-            _dbContext.SaveChanges();
-
-            return ServiceActionResult.Success(bike);
+            return ServiceActionResult.Success(_bikesRepository.Remove(id));
         }
 
         public ServiceActionResult<Bike> RentBike(RentBikeRequest request)
         {
-            // TODO: FIX ISSUE WITH TOSTRING
-            //
-
-            if (!int.TryParse(request.Id, out int idAsInt))
-                return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
-
-            //
-            var bike = _dbContext.Bikes
-                .Include(b => b.User)
-                .Include(b => b.Station)
-                .SingleOrDefault(b => b.Id == idAsInt);
+            var bike = _bikesRepository.Get(request.Id);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
             if (bike.Status is BikeStatus.Blocked)
@@ -119,115 +79,74 @@ namespace BikesRentalServer.Services
             if (bike.Station.Status is StationStatus.Blocked)
                 return ServiceActionResult.InvalidState<Bike>("Station is blocked");
 
-            var user = _dbContext.Users.Single(u => u.Username == _userContext.Username);
-            var rentalCount = _dbContext.Bikes.Count(b => b.User.Id == user.Id);
-            if (rentalCount >= 4)
+            var user = _usersRepository.GetByUsername(_userContext.Username);
+            if (user.RentedBikes.Count >= 4)
                 return ServiceActionResult.InvalidState<Bike>("Rental limit exceeded");
-            
-            var reservation = _dbContext.Reservations.SingleOrDefault(r => r.Bike.Id == bike.Id && r.ExpirationDate > DateTime.Now);
+
+            var reservation = _reservationsRepository.GetActiveReservation(request.Id);
             if (reservation is not null )
             {
                 if (reservation.User.Id != user.Id)
                     return ServiceActionResult.InvalidState<Bike>("Bike is reserved by different user");
-                
-                _dbContext.Reservations.Remove(reservation);
+
+                _reservationsRepository.Remove(reservation);
             }
 
-            bike.Station = null;
-            bike.User = user;
-            _dbContext.SaveChanges();
-
+            bike = _bikesRepository.Associate(request.Id, user);
             return ServiceActionResult.Success(bike);
         }
 
         public ServiceActionResult<IEnumerable<Bike>> GetRentedBikes()
         {
-            var user = _dbContext.Users.Single(u => u.Username == _userContext.Username);
-            var bikes = _dbContext.Bikes.Where(b => b.User.Id == user.Id).AsEnumerable();
-
-            return ServiceActionResult.Success(bikes);
+            var user = _usersRepository.GetByUsername(_userContext.Username);
+            return ServiceActionResult.Success<IEnumerable<Bike>>(user.RentedBikes);
         }
 
         public ServiceActionResult<Bike> GiveBikeBack(string bikeId, string stationId)
         {
-            // TODO: FIX ISSUE WITH TOSTRING
-            //
-
-            if (!int.TryParse(stationId, out int idAsInt))
-                return ServiceActionResult.EntityNotFound<Bike>("Station not found");
-
-            //
-            var station = _dbContext.Stations.SingleOrDefault(s => s.Id == idAsInt);
+            var station = _stationsRepository.Get(stationId);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Station not found");
             if (station.Status is StationStatus.Blocked)
                 return ServiceActionResult.InvalidState<Bike>("Station is blocked");
-            // TODO: FIX ISSUE WITH TOSTRING
-            //
 
-            if (!int.TryParse(bikeId, out int bikeIdAsInt))
-                return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
-
-            //
-            var bike = _dbContext.Bikes
-                .Include(b => b.User)
-                .Include(b => b.Station)
-                .SingleOrDefault(b => b.Id == bikeIdAsInt);
+            var bike = _bikesRepository.Get(bikeId);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
 
-            bike.User = null;
-            bike.Station = station;
-            _dbContext.SaveChanges();
-
+            bike = _bikesRepository.Associate(bikeId, station);
             return ServiceActionResult.Success(bike);
         }
 
         public ServiceActionResult<Bike> BlockBike(BlockBikeRequest request)
         {
-            if (!int.TryParse(request.Id, out int idAsInt))
-                return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
-            
-            var bike = _dbContext.Bikes
-                .Include(u => u.User)
-                .Include(s => s.Station)
-                .SingleOrDefault(b => b.Id == idAsInt);
+            var bike = _bikesRepository.Get(request.Id);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
             if (bike.Status is BikeStatus.Blocked)
                 return ServiceActionResult.InvalidState<Bike>("Bike is already blocked");
             if (bike.User is not null)
                 return ServiceActionResult.InvalidState<Bike>("Bike is rented");
-            
-            bike.Status = BikeStatus.Blocked;
-            _dbContext.SaveChanges();
+
+            bike = _bikesRepository.SetStatus(request.Id, BikeStatus.Blocked);
             return ServiceActionResult.Success(bike);
         }
 
         public ServiceActionResult<Bike> UnblockBike(string id)
         {
-            if (!int.TryParse(id, out int idAsInt))
-                return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
-
-            var bike = _dbContext.Bikes
-                .Include(s => s.Station)
-                .SingleOrDefault(b => b.Id == idAsInt);
+            var bike = _bikesRepository.Get(id);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
             if (bike.Status == BikeStatus.Working)
                 return ServiceActionResult.InvalidState<Bike>("Bike not blocked");
 
-            bike.Status = BikeStatus.Working;
-            _dbContext.SaveChanges();
+            bike = _bikesRepository.SetStatus(id, BikeStatus.Working);
             return ServiceActionResult.Success(bike);
         }
 
         public ServiceActionResult<IEnumerable<Bike>> GetBlockedBikes()
         {
-            var bikes = _dbContext.Bikes.Where(b => b.Status == BikeStatus.Blocked)
-                        .Include(s => s.Station)
-                        .AsEnumerable();
-            return ServiceActionResult.Success(bikes);
+            return ServiceActionResult.Success(_bikesRepository.GetBlocked());
         }
     }
 }
