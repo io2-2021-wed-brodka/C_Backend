@@ -3,6 +3,8 @@ using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace BikesRentalServer.Tests.UsersService
@@ -19,89 +21,95 @@ namespace BikesRentalServer.Tests.UsersService
         }
 
         [Fact]
-        public void BlockUserThatDoesntExist()
+        public void BlockNotExistingUserShouldReturnEntityNotFound()
         {
             var response = _usersService.BlockUser("");
 
             response.Status.Should().Be(Status.EntityNotFound);
-            response.Object.Should().Be(null);
+            response.Object.Should().BeNull();
         }
 
         [Fact]
-        public void BlockUserAlreadyBlocked()
+        public void BlockAlreadyBlockedUserShouldReturnInvalidState()
         {
-            int testId = 100;
-            _dbContext.Users.Add(new User
-            {
-                Id = testId,
-                State = UserState.Banned,
-            });
+            var user = _dbContext.Users.Add(new User
+                {
+                    Id = 100,
+                    State = UserState.Banned,
+                })
+                .Entity;
             _dbContext.SaveChanges();
-            var response = _usersService.BlockUser(testId.ToString());
+            
+            var response = _usersService.BlockUser(user.Id.ToString());
 
             response.Status.Should().Be(Status.InvalidState);
-            response.Object.Should().Be(null);
+            response.Object.Should().BeNull();
         }
 
         [Fact]
-        public void BlockUserSimpleSuccess()
+        public void BlockUserShouldSetUserStateToBanned()
         {
-            int testId = 100;
-            _dbContext.Users.Add(new User
-            {
-                Id = testId,
-                State = UserState.Active,
-            });
+            var user = _dbContext.Users.Add(new User
+                {
+                    Id = 100,
+                    State = UserState.Active,
+                })
+                .Entity;
             _dbContext.SaveChanges();
-            var response = _usersService.BlockUser(testId.ToString());
+            var response = _usersService.BlockUser(user.Id.ToString());
 
             response.Status.Should().Be(Status.Success);
-            response.Object.Id.Should().Be(testId);
+            response.Object.State.Should().Be(UserState.Banned);
+            response.Object.Should().BeEquivalentTo(user);
         }
 
         [Fact]
-        public void BlockUserWithReservations()
+        public void BlockUserWithReservationsShouldDeleteTheirReservationsAndNotDeleteOtherReservations()
         {
-            int testId = 100;
-            var user = new User();
-            user.Id = testId;
-            user.State = UserState.Active;
-
-            _dbContext.Users.Add(user);
-
             var bike1 = new Bike();
             var bike2 = new Bike();
             var bike3 = new Bike();
-            
-            _dbContext.Bikes.Add(bike1);
-            _dbContext.Bikes.Add(bike2);
-            _dbContext.Bikes.Add(bike3);
-
-            _dbContext.Reservations.Add(new Reservation()
-            {
-                Bike = bike1,
-                User = user,
-            });
-
-            _dbContext.Reservations.Add(new Reservation()
-            {
-                Bike = bike2,
-                User = user,
-            });
-            _dbContext.Reservations.Add(new Reservation()
+            var notBlockedUser = _dbContext.Users.Add(new User
+                {
+                    Id = 2,
+                    State = UserState.Active,
+                })
+                .Entity;
+            var blockedUser = _dbContext.Users.Add(new User
+                {
+                    Id = 100,
+                    State = UserState.Active,
+                    Reservations = new List<Reservation>
+                    {
+                        new Reservation
+                        {
+                            Bike = bike1,
+                        },
+                        new Reservation
+                        {
+                            Bike = bike2,
+                        },
+                        new Reservation
+                        {
+                            Bike = bike3,
+                        },
+                    },
+                })
+                .Entity;
+            _dbContext.Reservations.Add(new Reservation
             {
                 Bike = bike3,
+                User = notBlockedUser,
             });
             _dbContext.SaveChanges();
-            _dbContext.Reservations.Should().HaveCount(3);
 
-            _dbContext.SaveChanges();
-            var response = _usersService.BlockUser(testId.ToString());
-            _dbContext.SaveChanges();
+            var initialReservationCount = _dbContext.Reservations.Count();
+            var initialBlockedUserReservationCount = blockedUser.Reservations.Count;
+            var response = _usersService.BlockUser(blockedUser.Id.ToString());
 
             response.Status.Should().Be(Status.Success);
-            response.Object.Id.Should().Be(testId);
-            _dbContext.Reservations.Should().HaveCount(1);
+            response.Object.Should().BeEquivalentTo(blockedUser);
+            _dbContext.Reservations.Should().HaveCount(initialReservationCount - initialBlockedUserReservationCount);
         }
     }
 }
