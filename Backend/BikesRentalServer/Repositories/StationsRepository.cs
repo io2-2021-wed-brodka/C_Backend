@@ -1,6 +1,7 @@
 ﻿using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Repositories.Abstract;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,14 +18,14 @@ namespace BikesRentalServer.Repositories
 
         public IEnumerable<Station> GetAll()
         {
-            return _dbContext.Stations;
+            return _dbContext.Stations.Include(s => s.Bikes);
         }
 
         public Station Get(string id)
         {
             if (!int.TryParse(id, out var iid))
                 return null;
-            return _dbContext.Stations.SingleOrDefault(s => s.Id == iid);
+            return _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id == iid);
         }
 
         public Station Add(Station entity)
@@ -57,12 +58,12 @@ namespace BikesRentalServer.Repositories
 
         public IEnumerable<Station> GetActive()
         {
-            return _dbContext.Stations.Where(s => s.Status == StationStatus.Working);
+            return _dbContext.Stations.Where(s => s.Status == StationStatus.Working).Include(s => s.Bikes);
         }
         
         public IEnumerable<Station> GetBlocked()
         {
-            return _dbContext.Stations.Where(s => s.Status == StationStatus.Blocked);
+            return _dbContext.Stations.Where(s => s.Status == StationStatus.Blocked).Include(s => s.Bikes);
         }
 
         public Station SetStatus(string id, StationStatus status)
