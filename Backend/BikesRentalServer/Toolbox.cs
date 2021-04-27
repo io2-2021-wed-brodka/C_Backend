@@ -3,7 +3,7 @@ using System.Text;
 
 namespace BikesRentalServer
 {
-    public class Toolbox
+    public static class Toolbox
     {
         public static string ComputeHash(string data)
         {
