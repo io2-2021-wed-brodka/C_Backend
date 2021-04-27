@@ -5,7 +5,13 @@ namespace BikesRentalServer.DataAccess
 {
     public class DatabaseContext : DbContext
     {
-        public DatabaseContext(DbContextOptions options) : base(options) { Database.EnsureCreated(); }
+        public DatabaseContext(DbContextOptions options) : base(options)
+        {
+            // Some weird stuff happening with sqlite. In case of changes use trial-and-error with lines below to actually migrate.
+            // Database.EnsureCreated();
+            // Database.Migrate();
+        }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Bike> Bikes { get; set; }
         public DbSet<Station> Stations { get; set; }

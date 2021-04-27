@@ -10,6 +10,7 @@ namespace BikesRentalServer.Models
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public List<Reservation> Reservations { get; set; }
+        public List<Bike> RentedBikes { get; set; }
     }
 
     public enum UserStatus
