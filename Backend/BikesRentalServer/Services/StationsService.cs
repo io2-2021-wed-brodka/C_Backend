@@ -1,4 +1,5 @@
-﻿using BikesRentalServer.DataAccess;
+﻿using BikesRentalServer.Authorization;
+using BikesRentalServer.DataAccess;
 using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
@@ -11,10 +12,12 @@ namespace BikesRentalServer.Services
     public class StationsService : IStationsService
     {
         private readonly DatabaseContext _dbContext;
+        private readonly UserContext _userContext;
 
-        public StationsService(DatabaseContext context)
+        public StationsService(DatabaseContext context, UserContext userContext)
         {
             _dbContext = context;
+            _userContext = userContext;
         }
 
         public ServiceActionResult<IEnumerable<Station>> GetAllStations()
@@ -35,6 +38,7 @@ namespace BikesRentalServer.Services
             var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id == idAsInt);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
+
             return ServiceActionResult.Success(station);
         }
         
@@ -51,6 +55,9 @@ namespace BikesRentalServer.Services
             var station = _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id == idAsInt);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<IEnumerable<Bike>>("Station not found");
+            if(station.Status is BikeStationStatus.Blocked && _userContext.Role is UserRole.User)
+                return ServiceActionResult.InvalidState<IEnumerable<Bike>>("User cannot get bikes from blocked station");
+
             return ServiceActionResult.Success(station.Bikes.AsEnumerable());
         }
 
@@ -87,6 +94,52 @@ namespace BikesRentalServer.Services
             _dbContext.SaveChanges();
 
             return ServiceActionResult.Success(newStation);
+        }
+
+        public ServiceActionResult<IEnumerable<Station>> GetBlockedStations()
+        {
+            var stations = _dbContext.Stations.Where(s => s.Status == BikeStationStatus.Blocked).AsEnumerable();
+            return ServiceActionResult.Success(stations);
+        }
+
+        public ServiceActionResult<IEnumerable<Station>> GetActiveStations()
+        {
+            var stations = _dbContext.Stations.Where(s => s.Status == BikeStationStatus.Working).AsEnumerable();
+            return ServiceActionResult.Success(stations);
+        }
+
+        public ServiceActionResult<Station> BlockStation(BlockStationRequest request)
+        {
+            if (!int.TryParse(request.Id, out int idAsInt))
+                return ServiceActionResult.EntityNotFound<Station>("Station not found");
+
+            var station = _dbContext.Stations.SingleOrDefault(s => s.Id == idAsInt);
+            if (station is null)
+                return ServiceActionResult.EntityNotFound<Station>("Station not found");
+            if (station.Status is BikeStationStatus.Blocked)
+                return ServiceActionResult.InvalidState<Station>("Station already blocked");
+
+            station.Status = BikeStationStatus.Blocked;
+            _dbContext.SaveChanges();
+
+            return ServiceActionResult.Success(station);
+        }
+
+        public ServiceActionResult<Station> UnblockStation(string id)
+        {
+            if (!int.TryParse(id, out int idAsInt))
+                return ServiceActionResult.EntityNotFound<Station>("Station not found");
+
+            var station = _dbContext.Stations.SingleOrDefault(s => s.Id == idAsInt);
+            if (station is null)
+                return ServiceActionResult.EntityNotFound<Station>("Station not found");
+            if (station.Status == BikeStationStatus.Working)
+                return ServiceActionResult.InvalidState<Station>("Station not blocked");
+
+            station.Status = BikeStationStatus.Working;
+            _dbContext.SaveChanges();
+            
+            return ServiceActionResult.Success(station);
         }
     }
 }

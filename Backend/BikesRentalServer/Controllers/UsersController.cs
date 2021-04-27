@@ -6,6 +6,7 @@ using BikesRentalServer.Services;
 using BikesRentalServer.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 
 namespace BikesRentalServer.Controllers
 {
@@ -84,6 +85,22 @@ namespace BikesRentalServer.Controllers
                 Status.InvalidState => UnprocessableEntity(response.Message),
                 _ => throw new InvalidOperationException("Invalid state"),
             };
+        }
+
+        [AdminAuthorization]
+        public ActionResult<GetAllUsersResponse> GetAllUsers()
+        {
+            var response = new GetAllUsersResponse
+            {
+                Users = _usersService.GetAllUsers().Object
+                    .Select(user => new GetUserResponse
+                    {
+                        Id = user.Id.ToString(),
+                        Name = user.Username,
+                    }),
+            };
+
+            return Ok(response);
         }
     }
 }

@@ -199,5 +199,50 @@ namespace BikesRentalServer.Controllers
                 _ => throw new InvalidOperationException("Invalid state"),
             };
         }
+
+        [HttpDelete("blocked/{id}")]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetBikeResponse> UnblockBike(string id)
+        {
+            var response = _bikesService.UnblockBike(id);
+            return response.Status switch
+            {
+                Status.Success => Ok(new GetBikeResponse
+                {
+                    Id = response.Object.Id.ToString(),
+                    Status = response.Object.Status,
+                    Station = response.Object.Station is null ? null : new GetBikeResponse.StationDto
+                    {
+                        Id = response.Object.Station.Id.ToString(),
+                        Name = response.Object.Station.Name,
+                    },
+                }),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
+            };
+        }
+
+        [HttpGet("blocked")]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetAllBikesResponse> GetBlockedBikes()
+        {
+            var response = _bikesService.GetBlockedBikes();
+            return new GetAllBikesResponse
+            {
+                Bikes = response.Object.Select(bike => new GetBikeResponse
+                {
+                    Id = bike.Id.ToString(),
+                    Station = new GetBikeResponse.StationDto
+                    {
+                        Id = bike.Station.Id.ToString(),
+                        Name = bike.Station.Name,
+                    },
+                    Status = bike.Status,
+                }),
+            };
+        }
     }
 }

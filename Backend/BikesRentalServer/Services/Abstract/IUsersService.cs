@@ -1,4 +1,5 @@
 ﻿using BikesRentalServer.Models;
+using System.Collections.Generic;
 
 namespace BikesRentalServer.Services.Abstract
 {
@@ -9,5 +10,6 @@ namespace BikesRentalServer.Services.Abstract
         ServiceActionResult<string> GenerateBearerToken(User user);
         ServiceActionResult<User> BlockUser(string userId);
         ServiceActionResult<User> UnblockUser(string userId);
+        ServiceActionResult<IEnumerable<User>> GetAllUsers();
     }
 }

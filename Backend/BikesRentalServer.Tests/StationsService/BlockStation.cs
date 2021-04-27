@@ -1,91 +1,92 @@
-using BikesRentalServer.Authorization;
+﻿using BikesRentalServer.Authorization;
 using BikesRentalServer.DataAccess;
+using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace BikesRentalServer.Tests.StationsService
 {
-    public class RemoveStation
+    public class BlockStation
     {
         private readonly DatabaseContext _dbContext;
         private readonly Services.StationsService _stationsService;
 
-        public RemoveStation()
+        public BlockStation()
         {
             _dbContext = MockedDbFactory.GetContext();
             _stationsService = new Services.StationsService(_dbContext, new UserContext());
         }
 
         [Fact]
-        public void RemoveStationShouldDecrementStationCount()
+        public void BlockStationShouldReturnBlockedStation()
         {
             var station = _dbContext.Stations.Add(new Station
                 {
+                    Name = "DS Ustronie",
                     Status = BikeStationStatus.Working,
-                    Name = "Al. Jerozolimskie",
-                })
-                .Entity;
-            
-            _dbContext.SaveChanges();
-
-            var initialStationCount = _dbContext.Stations.Count();
-            var result = _stationsService.RemoveStation(station.Id.ToString());
-
-            result.Status.Should().Be(Status.Success);
-            _dbContext.Stations.Count().Should().Be(initialStationCount - 1);
-        }
-
-        [Fact]
-        public void RemoveStationShouldReturnRemovedStation()
-        {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Status = BikeStationStatus.Working,
-                    Name = "Al. Jerozolimskie",
                 })
                 .Entity;
             _dbContext.SaveChanges();
 
-            var result = _stationsService.RemoveStation(station.Id.ToString());
+            var result = _stationsService.BlockStation(new BlockStationRequest
+            {
+                Id = station.Id.ToString(),
+            });
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEquivalentTo(station);
         }
 
         [Fact]
-        public void RemoveNotExistingStationShouldReturnEntityNotFound()
+        public void BlockStationShouldChangeStationStatusToBlocked()
         {
-            var result = _stationsService.RemoveStation("1");
+            var station = _dbContext.Stations.Add(new Station
+                {
+                    Name = "DS Ustronie",
+                    Status = BikeStationStatus.Working,
+                })
+                .Entity;
+            _dbContext.SaveChanges();
+
+            var result = _stationsService.BlockStation(new BlockStationRequest
+            {
+                Id = station.Id.ToString(),
+            });
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Status.Should().Be(BikeStationStatus.Blocked);
+        }
+
+        [Fact]
+        public void BlockNotExistingStationShouldReturnEntityNotFound()
+        {
+            var result = _stationsService.BlockStation(new BlockStationRequest
+            {
+                Id = "997",
+            });
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
         }
 
         [Fact]
-        public void RemoveStationWithBikesShouldReturnInvalidState()
+        public void BlockAlreadyBlockedStationShouldReturnInvalidState()
         {
             var station = _dbContext.Stations.Add(new Station
                 {
-                    Status = BikeStationStatus.Working,
-                    Name = "Al. Jerozolimskie",
-                    Bikes = new List<Bike>
-                    {
-                        new Bike
-                        {
-                            Status = BikeStatus.Working,
-                            Description = "bike",
-                        },
-                    },
+                    Name = "DS Ustronie",
+                    Status = BikeStationStatus.Blocked,
                 })
                 .Entity;
             _dbContext.SaveChanges();
 
-            var result = _stationsService.RemoveStation(station.Id.ToString());
+            var result = _stationsService.BlockStation(new BlockStationRequest
+            {
+                Id = station.Id.ToString(),
+            });
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();

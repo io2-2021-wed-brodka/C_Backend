@@ -83,7 +83,8 @@ namespace BikesRentalServer.Controllers
                     }),
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
-                Status.InvalidState or _ => throw new InvalidOperationException("Invalid status"),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
             };
         }
 
@@ -107,7 +108,8 @@ namespace BikesRentalServer.Controllers
                     Status = response.Object.Status,
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
-                Status.InvalidState or _ => throw new InvalidOperationException("Invalid status"),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
             };
         }
 
@@ -142,6 +144,75 @@ namespace BikesRentalServer.Controllers
                     Name = response.Object.Name,
                 }),
                 Status.EntityNotFound or Status.InvalidState or _ => throw new InvalidOperationException("Invalid state"),
+            };
+        }
+
+        [HttpGet("blocked")]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetAllStationsResponse> GetBlockedStations()
+        {
+            var response = _stationsService.GetBlockedStations();
+            return new GetAllStationsResponse
+            {
+                Stations = response.Object.Select(station => new GetStationResponse
+                {
+                    Id = station.Id.ToString(),
+                    Name = station.Name,
+                }),
+            };
+        }
+
+        [HttpGet("active")]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetAllStationsResponse> GetActiveStations()
+        {
+            var response = _stationsService.GetActiveStations();
+            return new GetAllStationsResponse
+            {
+                Stations = response.Object.Select(station => new GetStationResponse
+                {
+                    Id = station.Id.ToString(),
+                    Name = station.Name,
+                }),
+            };
+        }
+
+        [HttpPost("blocked")]
+        [AdminAuthorization]
+        public ActionResult<GetStationResponse> BlockStation(BlockStationRequest request)
+        {
+            var response = _stationsService.BlockStation(request);
+            return response.Status switch
+            {
+                Status.Success => Ok(new GetStationResponse
+                {
+                    Id = response.Object.Id.ToString(),
+                    Name = response.Object.Name,
+                }),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
+            };
+        }
+
+        [HttpDelete("blocked/{id}")]
+        [AdminAuthorization]
+        public ActionResult<GetStationResponse> UnblockStation(string id)
+        {
+            var response = _stationsService.UnblockStation(id);
+            return response.Status switch
+            {
+                Status.Success => Ok(new GetStationResponse
+                {
+                    Id = response.Object.Id.ToString(),
+                    Name = response.Object.Name,
+                }),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
             };
         }
     }

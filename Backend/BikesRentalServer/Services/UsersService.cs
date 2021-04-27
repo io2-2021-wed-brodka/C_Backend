@@ -2,6 +2,7 @@
 using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -85,6 +86,12 @@ namespace BikesRentalServer.Services
             _dbContext.SaveChanges();
 
             return ServiceActionResult.Success(user);
+        }
+
+        public ServiceActionResult<IEnumerable<User>> GetAllUsers()
+        {
+            var result = _dbContext.Users.Where(u => u.Role == UserRole.User).AsEnumerable();
+            return ServiceActionResult.Success(result);
         }
     }
 }
