@@ -147,6 +147,39 @@ namespace BikesRentalServer.Controllers
             };
         }
 
+        [HttpGet("blocked")]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetAllStationsResponse> GetBlockedStations()
+        {
+            var response = _stationsService.GetBlockedStations();
+            return new GetAllStationsResponse
+            {
+                Stations = response.Object.Select(station => new GetStationResponse
+                {
+                    Id = station.Id.ToString(),
+                    Name = station.Name,
+                }),
+            };
+        }
+
+        [HttpGet("active")]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetAllStationsResponse> GetActiveStations()
+        {
+            var response = _stationsService.GetActiveStations();
+            return new GetAllStationsResponse
+            {
+                Stations = response.Object.Select(station => new GetStationResponse
+                {
+                    Id = station.Id.ToString(),
+                    Name = station.Name,
+                }),
+            };
+        }
+
         [HttpPost("blocked")]
         [AdminAuthorization]
         public ActionResult<GetStationResponse> BlockStation(BlockStationRequest request)
