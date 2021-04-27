@@ -21,7 +21,12 @@ export const signUp = (login: string, password: string) =>
     data: { login, password },
   });
 
-export const getStations = () =>
+export const getActiveStations = () =>
+  apiWithAuthConnection<StationsResponse>(`${API}/stations/active`).then(
+    res => res.stations,
+  );
+
+export const getAllStations = () =>
   apiWithAuthConnection<StationsResponse>(`${API}/stations`).then(
     res => res.stations,
   );

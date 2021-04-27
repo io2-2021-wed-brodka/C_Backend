@@ -10,7 +10,7 @@ import SnackBar from '../../common/components/SnackBar';
 
 const StationsTab = () => {
   const [refreshState, refresh] = useRefresh();
-  const data = usePromise(useServices().getStations, [refreshState]);
+  const data = usePromise(useServices().getAllStations, [refreshState]);
   const addStation = useServices().addStation;
   const snackbar = useSnackbar();
 

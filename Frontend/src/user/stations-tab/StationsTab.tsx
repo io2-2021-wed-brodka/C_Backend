@@ -5,7 +5,7 @@ import DataLoader from '../../common/components/DataLoader';
 import usePromise from '../../common/hooks/usePromise';
 
 const StationsTab = () => {
-  const data = usePromise(useServices().getStations);
+  const data = usePromise(useServices().getActiveStations);
 
   return (
     <DataLoader data={data}>
