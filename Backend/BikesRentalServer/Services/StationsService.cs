@@ -94,6 +94,18 @@ namespace BikesRentalServer.Services
             return ServiceActionResult.Success(newStation);
         }
 
+        public ServiceActionResult<IEnumerable<Station>> GetBlockedStations()
+        {
+            var stations = _dbContext.Stations.Where(s => s.Status == BikeStationStatus.Blocked).AsEnumerable();
+            return ServiceActionResult.Success(stations);
+        }
+
+        public ServiceActionResult<IEnumerable<Station>> GetActiveStations()
+        {
+            var stations = _dbContext.Stations.Where(s => s.Status == BikeStationStatus.Working).AsEnumerable();
+            return ServiceActionResult.Success(stations);
+        }
+
         public ServiceActionResult<Station> BlockStation(BlockStationRequest request)
         {
             if (!int.TryParse(request.Id, out int idAsInt))
@@ -109,6 +121,7 @@ namespace BikesRentalServer.Services
 
             station.Status = BikeStationStatus.Blocked;
             _dbContext.SaveChanges();
+            
             return ServiceActionResult.Success(station);
         }
     }
