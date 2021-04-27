@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.UsersService
+namespace BikesRentalServer.Tests.UsersServiceTests
 {
     public class BlockUser
     {

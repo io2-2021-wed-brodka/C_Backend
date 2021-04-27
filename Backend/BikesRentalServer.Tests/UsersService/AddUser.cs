@@ -5,7 +5,7 @@ using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
 using Xunit;
 
-namespace BikesRentalServer.Tests.UsersService
+namespace BikesRentalServer.Tests.UsersServiceTests
 {
     public class AddUser
     {

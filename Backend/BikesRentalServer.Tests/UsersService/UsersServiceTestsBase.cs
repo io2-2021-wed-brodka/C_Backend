@@ -5,30 +5,30 @@ using Moq;
 using BikesRentalServer.Authorization;
 using BikesRentalServer.Models;
 
-namespace BikesRentalServer.Tests.BikesServiceTests
+namespace BikesRentalServer.Tests.UsersServiceTests
 {
-    public class BikesServiceTestsBase
+    public class UsersServiceTestsBase
     {
         protected readonly Mock<IBikesRepository> _bikesRepository = new Mock<IBikesRepository>();
         protected readonly Mock<IUsersRepository> _usersRepository = new Mock<IUsersRepository>();
         protected readonly Mock<IStationsRepository> _stationsRepository = new Mock<IStationsRepository>();
         protected readonly Mock<IReservationsRepository> _reservationsRepository = new Mock<IReservationsRepository>();
 
-        protected BikesServiceTestsBase()
+        protected UsersServiceTestsBase()
         {
         }
 
-        protected IBikesService GetBikesService()
+        protected IBikesService GetUsersService()
         {
-            return GetBikesService("maklowitz");
+            return GetUsersService("maklowitz");
         }
 
-        protected IBikesService GetBikesService(string userName, UserRole role = UserRole.Admin)
+        protected IBikesService GetUsersService(string userName, UserRole role = UserRole.Admin)
         {
             var userContext = new UserContext();
             userContext.SetOnce(userName, role);
 
-            return new BikesService(
+            return new UsersService(
                 _bikesRepository.Object,
                 _stationsRepository.Object,
                 _usersRepository.Object,
