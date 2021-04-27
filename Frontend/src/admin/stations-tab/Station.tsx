@@ -39,10 +39,11 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = {
   name: string;
   id: string;
+  status: 'active' | 'blocked';
   forceRefresh?: () => void;
 };
 
-const Station = ({ name, id, forceRefresh }: Props) => {
+const Station = ({ name, id, status, forceRefresh }: Props) => {
   const classes = useStyles();
   const [refreshState, refresh] = useRefresh();
   const snackbar = useSnackbar();
@@ -50,6 +51,7 @@ const Station = ({ name, id, forceRefresh }: Props) => {
   const addBike = useServices().addBike;
   const removeStation = useServices().removeStation;
   const blockStation = useServices().blockStation;
+  const unblockStation = useServices().unblockStation;
 
   const handleChange = (_: unknown, isExpanded: boolean) => {
     if (isExpanded) {
@@ -75,6 +77,12 @@ const Station = ({ name, id, forceRefresh }: Props) => {
       .catch(err => snackbar.open(err.message));
   };
 
+  const onUnblockStation = () => {
+    unblockStation(id)
+      .then(() => refresh())
+      .catch(err => snackbar.open(err.message));
+  };
+
   return (
     <Accordion onChange={handleChange}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -91,13 +99,24 @@ const Station = ({ name, id, forceRefresh }: Props) => {
               >
                 Add bike
               </Button>{' '}
-              <Button
-                variant="contained"
-                color={'default'}
-                onClick={onBlockStation}
-              >
-                Block
-              </Button>{' '}
+              {status == 'active' && (
+                <Button
+                  variant="contained"
+                  color={'default'}
+                  onClick={onBlockStation}
+                >
+                  Block
+                </Button>
+              )}
+              {status == 'blocked' && (
+                <Button
+                  variant="contained"
+                  color={'default'}
+                  onClick={onUnblockStation}
+                >
+                  Unblock
+                </Button>
+              )}{' '}
               <Button
                 variant="contained"
                 color={'primary'}

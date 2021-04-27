@@ -18,6 +18,7 @@ const StationBikesList = ({ stationId, refresh }: Props) => {
   const getBikesOnStation = useServices().getBikesOnStation;
   const removeBike = useServices().removeBike;
   const blockBike = useServices().blockBike;
+  const unblockBike = useServices().unblockBike;
   const snackbar = useSnackbar();
   const [internalRefreshState, internalRefresh] = useRefresh();
   const data = usePromise(() => getBikesOnStation(stationId), [
@@ -26,12 +27,12 @@ const StationBikesList = ({ stationId, refresh }: Props) => {
     internalRefreshState,
   ]);
 
-  const bikeActions: BikeActionsForBike = bikeId => [
+  const bikeActions: BikeActionsForBike = ({ id, status }) => [
     {
-      label: 'Block',
+      label: status == 'blocked' ? 'Unblock' : 'Block',
       type: 'secondary',
       onClick: () => {
-        blockBike(bikeId)
+        (status == 'blocked' ? unblockBike(id) : blockBike(id))
           .then(() => internalRefresh())
           .catch(err => snackbar.open(err.message));
       },
@@ -40,7 +41,7 @@ const StationBikesList = ({ stationId, refresh }: Props) => {
       label: 'Remove',
       type: 'primary',
       onClick: () => {
-        removeBike(bikeId)
+        removeBike(id)
           .then(() => internalRefresh())
           .catch(err => snackbar.open(err.message));
       },

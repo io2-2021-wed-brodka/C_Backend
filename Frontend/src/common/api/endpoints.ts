@@ -55,7 +55,7 @@ export const addStation = (name: string) =>
   });
 
 export const addBike = (stationId: string) =>
-  apiWithAuthConnection<Station>(`${API}/bikes`, {
+  apiWithAuthConnection<Bike>(`${API}/bikes`, {
     method: 'POST',
     data: { stationId },
   });
@@ -80,4 +80,14 @@ export const blockBike = (id: string) =>
   apiWithAuthConnection<Bike>(`${API}/bikes/blocked`, {
     method: 'POST',
     data: { id },
+  });
+
+export const unblockBike = (bikeId: string) =>
+  apiWithAuthConnection<void>(`${API}/bikes/blocked/${bikeId}`, {
+    method: 'DELETE',
+  });
+
+export const unblockStation = (stationId: string) =>
+  apiWithAuthConnection<void>(`${API}/stations/blocked/${stationId}`, {
+    method: 'DELETE',
   });
