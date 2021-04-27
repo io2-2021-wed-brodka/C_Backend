@@ -23,21 +23,21 @@ const StationBikesList = ({ stationId }: Props) => {
     refreshBikesState,
   ]);
 
-  const bikeActions: BikeActionsForBike = bikeId => [
+  const bikeActions: BikeActionsForBike = ({ id }) => [
     {
       label: 'Reserve',
       type: 'secondary',
       onClick: () => {
-        console.log(bikeId);
+        console.log(id);
       },
     },
     {
       label: 'Rent',
       type: 'primary',
       onClick: () => {
-        rentBike(bikeId).then(() => {
+        rentBike(id).then(() => {
           refreshBikes();
-          snackbar.open(`Rented bike #${bikeId}`);
+          snackbar.open(`Rented bike #${id}`);
         });
       },
     },
