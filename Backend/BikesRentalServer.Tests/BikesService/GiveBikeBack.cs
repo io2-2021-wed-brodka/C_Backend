@@ -24,10 +24,6 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                 Username = "zdzislaw"
             };
 
-            _bikesRepository.Setup(r =>
-                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
-            ).Verifiable();
-
             _bikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
@@ -48,7 +44,6 @@ namespace BikesRentalServer.Tests.BikesServiceTests
             var result = bikesService.GiveBikeBack(bikeId.ToString(), stationId.ToString());
 
             result.Status.Should().Be(Status.Success);
-            _bikesRepository.Verify();
             result.Object.Should().NotBeNull();
             result.Object.Id.Should().Be(bikeId);
             result.Object.Status.Should().Be(BikeStatus.Working);

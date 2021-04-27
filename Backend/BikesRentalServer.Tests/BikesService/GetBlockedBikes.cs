@@ -28,7 +28,7 @@ namespace BikesRentalServer.Tests.BikesServiceTests
         }
 
         [Fact]
-        public void GetBlocedBikesShouldReturnOnlyBlockedBikes()
+        public void GetBlockedBikesShouldReturnOnlyBlockedBikes()
         {
             var blockedBikes = new[]
             {
@@ -44,24 +44,11 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                 },
             };
 
-            var otherBikes = new[]
-            {
-                new Bike
-                {
-                    Id = 6,
-                    Status = BikeStatus.Working
-                },
-                new Bike
-                {
-                    Id = 5,
-                    Status = BikeStatus.Working
-                },
-            };
-            _bikesRepository.Setup(r => r.GetAll()).Returns(blockedBikes.Concat(otherBikes));
+            _bikesRepository.Setup(r => r.GetBlocked()).Returns(blockedBikes);
 
             var bikesService = GetBikesService();
 
-            var result = bikesService.GetAllBikes();
+            var result = bikesService.GetBlockedBikes();
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEquivalentTo(blockedBikes);

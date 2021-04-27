@@ -291,7 +291,7 @@ namespace BikesRentalServer.Tests.BikesServiceTests
             };
 
             _bikesRepository.Setup(r =>
-                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
+                r.Associate(It.IsAny<string>(), It.IsAny<Station>())
             ).Verifiable();
 
             _usersRepository.Setup(r =>
@@ -319,7 +319,7 @@ namespace BikesRentalServer.Tests.BikesServiceTests
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
-            _bikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Exactly(4));
+            _bikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>()), Times.Never);
         }
 
         [Fact]
