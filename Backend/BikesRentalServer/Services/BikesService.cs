@@ -31,7 +31,8 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<IEnumerable<Bike>> GetAllBikes()
         {
-            return ServiceActionResult.Success(_bikesRepository.GetAll());
+            var bikes = _bikesRepository.GetAll();
+            return ServiceActionResult.Success(bikes);
         }
 
         public ServiceActionResult<Bike> GetBike(string id)
