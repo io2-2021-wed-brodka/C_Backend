@@ -56,19 +56,16 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.EntityNotFound<User>("User doesn't exist");
 
             var user = matchingUsers.First();
-
-            if (user.State == UserState.Banned)
+            if (user.State is UserState.Banned)
                 return ServiceActionResult.InvalidState<User>("User already blocked");
 
             user.State = UserState.Banned;
 
-            // Remove all user reservations.
             var userReservations = _dbContext.Reservations.Where(r => r.User.Id.ToString() == userId);
-            foreach (var userReservation in userReservations)
-                _dbContext.Reservations.Remove(userReservation);
+            _dbContext.Reservations.RemoveRange(userReservations);
 
             // We don't touch user's rented bikes here. He won't be able to rent new ones, he can return only.
-
+            
             _dbContext.SaveChanges();
 
             return ServiceActionResult.Success(user);
@@ -81,8 +78,7 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.EntityNotFound<User>("User doesn't exist");
 
             var user = matchingUsers.First();
-
-            if (user.State == UserState.Active)
+            if (user.State is UserState.Active)
                 return ServiceActionResult.InvalidState<User>("User already unblocked");
 
             user.State = UserState.Active;
