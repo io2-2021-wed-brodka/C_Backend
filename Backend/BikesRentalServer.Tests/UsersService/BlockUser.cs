@@ -35,7 +35,7 @@ namespace BikesRentalServer.Tests.UsersService
             var user = _dbContext.Users.Add(new User
                 {
                     Id = 100,
-                    State = UserState.Banned,
+                    Status = UserStatus.Banned,
                 })
                 .Entity;
             _dbContext.SaveChanges();
@@ -52,14 +52,14 @@ namespace BikesRentalServer.Tests.UsersService
             var user = _dbContext.Users.Add(new User
                 {
                     Id = 100,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                 })
                 .Entity;
             _dbContext.SaveChanges();
             var response = _usersService.BlockUser(user.Id.ToString());
 
             response.Status.Should().Be(Status.Success);
-            response.Object.State.Should().Be(UserState.Banned);
+            response.Object.Status.Should().Be(UserStatus.Banned);
             response.Object.Should().BeEquivalentTo(user);
         }
 
@@ -72,13 +72,13 @@ namespace BikesRentalServer.Tests.UsersService
             var notBlockedUser = _dbContext.Users.Add(new User
                 {
                     Id = 2,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                 })
                 .Entity;
             var blockedUser = _dbContext.Users.Add(new User
                 {
                     Id = 100,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Reservations = new List<Reservation>
                     {
                         new Reservation

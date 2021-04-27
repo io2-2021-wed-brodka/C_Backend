@@ -34,7 +34,7 @@ namespace BikesRentalServer.Tests.UsersService
             _dbContext.Users.Add(new User
             {
                 Id = testId,
-                State = UserState.Active,
+                Status = UserStatus.Active,
             });
             _dbContext.SaveChanges();
             var response = _usersService.UnblockUser(testId.ToString());
@@ -50,7 +50,7 @@ namespace BikesRentalServer.Tests.UsersService
             _dbContext.Users.Add(new User
             {
                 Id = testId,
-                State = UserState.Banned,
+                Status = UserStatus.Banned,
             });
             _dbContext.SaveChanges();
             var response = _usersService.UnblockUser(testId.ToString());

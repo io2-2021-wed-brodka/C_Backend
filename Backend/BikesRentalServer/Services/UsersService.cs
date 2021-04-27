@@ -28,7 +28,7 @@ namespace BikesRentalServer.Services
                     Username = username,
                     PasswordHash = Toolbox.ComputeHash(password),
                     Role = UserRole.User,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                 })
                 .Entity;
             _dbContext.SaveChanges();
@@ -57,10 +57,10 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.EntityNotFound<User>("User doesn't exist");
 
             var user = matchingUsers.First();
-            if (user.State is UserState.Banned)
+            if (user.Status is UserStatus.Banned)
                 return ServiceActionResult.InvalidState<User>("User already blocked");
 
-            user.State = UserState.Banned;
+            user.Status = UserStatus.Banned;
 
             var userReservations = _dbContext.Reservations.Where(r => r.User.Id.ToString() == userId);
             _dbContext.Reservations.RemoveRange(userReservations);
@@ -79,10 +79,10 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.EntityNotFound<User>("User doesn't exist");
 
             var user = matchingUsers.First();
-            if (user.State is UserState.Active)
+            if (user.Status is UserStatus.Active)
                 return ServiceActionResult.InvalidState<User>("User already unblocked");
 
-            user.State = UserState.Active;
+            user.Status = UserStatus.Active;
             _dbContext.SaveChanges();
 
             return ServiceActionResult.Success(user);

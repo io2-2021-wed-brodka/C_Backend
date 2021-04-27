@@ -33,7 +33,7 @@ namespace BikesRentalServer.Tests.UsersService
             var user = _dbContext.Users.Add(new User
                 {
                     Role = UserRole.User,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Username = "wojtek",
                 })
                 .Entity;
@@ -54,19 +54,19 @@ namespace BikesRentalServer.Tests.UsersService
                 new User
                 {
                     Role = UserRole.User,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Username = "wojtek",
                 },
                 new User
                 {
                     Role = UserRole.User,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Username = "kasia",
                 },
                 new User
                 {
                     Role = UserRole.User,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Username = "kacper",
                 },
             });
@@ -86,13 +86,13 @@ namespace BikesRentalServer.Tests.UsersService
                 new User
                 {
                     Role = UserRole.User,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Username = "wojtek",
                 },
                 new User
                 {
                     Role = UserRole.User,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Username = "kasia",
                 },
             };
@@ -102,13 +102,13 @@ namespace BikesRentalServer.Tests.UsersService
                 new User
                 {
                     Role = UserRole.Tech,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Username = "aneta",
                 },
                 new User
                 {
                     Role = UserRole.Admin,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Username = "krzysztof",
                 },
             });

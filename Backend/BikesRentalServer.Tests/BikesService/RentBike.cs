@@ -23,7 +23,7 @@ namespace BikesRentalServer.Tests.BikesService
             _user = _dbContext.Users.Add(new User
                 {
                     Username = "test_user",
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Role = UserRole.Admin,
                     Reservations = new List<Reservation>(),
                 })
@@ -134,7 +134,7 @@ namespace BikesRentalServer.Tests.BikesService
             var user = _dbContext.Users.Add(new User
                 {
                     Role = UserRole.User,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Username = "another_one_that_bites_the_dust",
                 })
                 .Entity;
@@ -260,7 +260,7 @@ namespace BikesRentalServer.Tests.BikesService
             var user = _dbContext.Users.Add(new User
                 {
                     Role = UserRole.User,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Username = "another_one_that_does_not_bite_the_dust",
                 })
                 .Entity;
@@ -302,7 +302,7 @@ namespace BikesRentalServer.Tests.BikesService
             var user = _dbContext.Users.Add(new User
                 {
                     Role = UserRole.User,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Username = "another_one_that_does_not_bite_the_dust",
                 })
                 .Entity;

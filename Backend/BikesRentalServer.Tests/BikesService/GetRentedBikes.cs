@@ -22,7 +22,7 @@ namespace BikesRentalServer.Tests.BikesService
             _user = _dbContext.Users.Add(new User
                 {
                     Username = "test_user",
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Role = UserRole.Admin,
                     Reservations = new List<Reservation>(),
                 })

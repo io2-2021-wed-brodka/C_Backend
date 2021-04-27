@@ -25,7 +25,7 @@ namespace BikesRentalServer.Tests.UsersService
             var user = _dbContext.Users.Add(new User
                 {
                     Role = UserRole.Tech,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Username = "adam_malysz",
                     PasswordHash = Toolbox.ComputeHash(password),
                 })

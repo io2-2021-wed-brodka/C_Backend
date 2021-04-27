@@ -24,7 +24,7 @@ namespace BikesRentalServer.Tests.UsersService
             var user = _dbContext.Users.Add(new User
                 {
                     Role = UserRole.Admin,
-                    State = UserState.Active,
+                    Status = UserStatus.Active,
                     Username = "test",
                 })
                 .Entity;
