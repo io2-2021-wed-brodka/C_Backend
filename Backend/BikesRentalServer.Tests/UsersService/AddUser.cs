@@ -17,10 +17,12 @@ namespace BikesRentalServer.Tests.UsersServiceTests
         {
             const string username = "test_user";
             const string password = "theBestTESTp4ssWd";
+            var expectedPassword = Toolbox.ComputeHash(password);
             _usersRepository.Setup(r => r.Add(It.IsAny<User>())).Returns(new User
             {
                 Username = username,
-                Id = 3
+                Id = 3,
+                PasswordHash = expectedPassword,
             }).Verifiable();
 
             var usersService = GetUsersService();
@@ -29,7 +31,7 @@ namespace BikesRentalServer.Tests.UsersServiceTests
 
             response.Status.Should().Be(Status.Success);
             response.Object.Username.Should().Be(username);
-            response.Object.PasswordHash.Should().Be(Toolbox.ComputeHash(password));
+            response.Object.PasswordHash.Should().Be(expectedPassword);
             _usersRepository.Verify();
         }
 

@@ -53,12 +53,19 @@ namespace BikesRentalServer.Tests.UsersServiceTests
         {
             var userId = "2";
             _reservationsRepository.Setup(r => r.GetAll()).Returns(new List<Reservation>());
-            _usersRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<UserStatus>(s => s == UserStatus.Banned))).Verifiable();
+            _usersRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<UserStatus>(s => s == UserStatus.Banned)))
+                .Returns(new User
+                {
+                    Id = 2,
+                    Status = UserStatus.Banned,
+                    Reservations = new List<Reservation>()
+                }).Verifiable();
             _usersRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new User
                 {
                     Id = 2,
-                    Status = UserStatus.Active
+                    Status = UserStatus.Banned,
+                    Reservations = new List<Reservation>()
                 });
 
             var usersService = GetUsersService();
