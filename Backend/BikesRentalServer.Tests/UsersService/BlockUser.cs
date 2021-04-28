@@ -64,7 +64,7 @@ namespace BikesRentalServer.Tests.UsersServiceTests
                 .Returns(new User
                 {
                     Id = 2,
-                    Status = UserStatus.Banned,
+                    Status = UserStatus.Active,
                     Reservations = new List<Reservation>()
                 });
 
