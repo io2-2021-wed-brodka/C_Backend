@@ -14,7 +14,7 @@ namespace BikesRentalServer.Tests.StationsService
             var station = new Station
             {
                 Name = "Trailer Park",
-                Status = StationStatus.Working,
+                Status = StationStatus.Active,
                 Id = 23,
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);

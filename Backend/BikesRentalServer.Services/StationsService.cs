@@ -60,7 +60,7 @@ namespace BikesRentalServer.Services
             var station = _stationsRepository.Add(new Station
             {
                 Name = name,
-                Status = StationStatus.Working,
+                Status = StationStatus.Active,
             });
             return ServiceActionResult.Success(station);
         }
@@ -94,10 +94,10 @@ namespace BikesRentalServer.Services
             var station = _stationsRepository.Get(id);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
-            if (station.Status == StationStatus.Working)
+            if (station.Status == StationStatus.Active)
                 return ServiceActionResult.InvalidState<Station>("Station not blocked");
 
-            station = _stationsRepository.SetStatus(id, StationStatus.Working);
+            station = _stationsRepository.SetStatus(id, StationStatus.Active);
             return ServiceActionResult.Success(station);
         }
     }

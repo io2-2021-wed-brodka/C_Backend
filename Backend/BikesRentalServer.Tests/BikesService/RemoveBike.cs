@@ -50,7 +50,7 @@ namespace BikesRentalServer.Tests.BikesService
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(new Bike
             {
                 Id = bikeId,
-                Status = BikeStatus.Working,
+                Status = BikeStatus.Available,
             });
             BikesRepository.Setup(r => r.Remove(It.IsAny<Bike>())).Verifiable();
 

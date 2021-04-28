@@ -39,13 +39,13 @@ namespace BikesRentalServer.Tests.BikesService
                 new Bike
                 {
                     Id = 6,
-                    Status = BikeStatus.Working,
+                    Status = BikeStatus.Available,
                     User = user,
                 },
                 new Bike
                 {
                     Id = 5,
-                    Status = BikeStatus.Working,
+                    Status = BikeStatus.Available,
                     User = user,
                 },
             };

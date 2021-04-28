@@ -24,18 +24,19 @@ namespace BikesRentalServer.Tests.BikesService
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Working,
+                    Status = BikeStatus.Available,
                     Station = new Station
                     {
                         Id = 1,
-                        Status = StationStatus.Working,
+                        Status = StationStatus.Active,
                     },
                 });
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), BikeStatus.Rented)).Verifiable();
             BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), It.IsAny<User>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Working,
+                    Status = BikeStatus.Rented,
                     User = new User
                     {
                         Username = username,
@@ -48,7 +49,8 @@ namespace BikesRentalServer.Tests.BikesService
             result.Status.Should().Be(Status.Success);
             result.Object.Should().NotBeNull();
             result.Object.Id.Should().Be(bikeId);
-            result.Object.Status.Should().Be(BikeStatus.Working);
+            result.Object.Status.Should().Be(BikeStatus.Rented);
+            BikesRepository.Verify();
         }
 
         [Fact]
@@ -69,7 +71,7 @@ namespace BikesRentalServer.Tests.BikesService
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Working,
+                    Status = BikeStatus.Available,
                     Station = new Station
                     {
                         Id = 1,
@@ -140,7 +142,7 @@ namespace BikesRentalServer.Tests.BikesService
                     Station = new Station
                     {
                         Id = stationId,
-                        Status = StationStatus.Working,
+                        Status = StationStatus.Active,
                     },
                 });
             BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), It.IsAny<User>())).Verifiable();
@@ -181,7 +183,7 @@ namespace BikesRentalServer.Tests.BikesService
                 .Returns(new Station
                 {
                     Id = 1,
-                    Status = StationStatus.Working
+                    Status = StationStatus.Active
                 });
 
             var bikesService = GetBikesService(user.Username);
@@ -210,7 +212,7 @@ namespace BikesRentalServer.Tests.BikesService
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Working,
+                    Status = BikeStatus.Available,
                     Station = new Station
                     {
                         Id = 1,
@@ -240,11 +242,11 @@ namespace BikesRentalServer.Tests.BikesService
             var bike = new Bike
             {
                 Id = bikeId,
-                Status = BikeStatus.Working,
+                Status = BikeStatus.Available,
                 Station = new Station
                 {
                     Id = stationId,
-                    Status = StationStatus.Working,
+                    Status = StationStatus.Active,
                 },
             };
 
@@ -273,7 +275,7 @@ namespace BikesRentalServer.Tests.BikesService
             result.Object.Should().NotBeNull();
             result.Object.Id.Should().Be(bikeId);
             result.Object.Station.Should().BeNull();
-            result.Object.Status.Should().Be(BikeStatus.Working);
+            result.Object.Status.Should().Be(BikeStatus.Available);
             ReservationsRepository.Verify();
         }
 
@@ -296,12 +298,12 @@ namespace BikesRentalServer.Tests.BikesService
             var station = new Station
             {
                 Id = stationId,
-                Status = StationStatus.Working,
+                Status = StationStatus.Active,
             };
             var bike = new Bike
             {
                 Id = bikeId,
-                Status = BikeStatus.Working,
+                Status = BikeStatus.Available,
                 Station = station,
             };
 

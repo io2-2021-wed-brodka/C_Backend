@@ -12,7 +12,7 @@ namespace BikesRentalServer.Models
 
     public enum StationStatus
     {
-        Working,
+        Active,
         Blocked,
     }
 }

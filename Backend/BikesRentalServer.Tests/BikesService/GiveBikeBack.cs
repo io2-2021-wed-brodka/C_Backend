@@ -20,14 +20,14 @@ namespace BikesRentalServer.Tests.BikesService
             var station = new Station
             {
                 Id = 1,
-                Status = StationStatus.Working,
+                Status = StationStatus.Active,
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Working,
+                    Status = BikeStatus.Available,
                     User = user,
                 });
             BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), station))
@@ -43,7 +43,7 @@ namespace BikesRentalServer.Tests.BikesService
             result.Status.Should().Be(Status.Success);
             result.Object.Should().NotBeNull();
             result.Object.Id.Should().Be(bikeId);
-            result.Object.Status.Should().Be(BikeStatus.Working);
+            result.Object.Status.Should().Be(BikeStatus.Available);
         }
 
         [Fact]
@@ -58,14 +58,14 @@ namespace BikesRentalServer.Tests.BikesService
             var station = new Station
             {
                 Id = 1,
-                Status = StationStatus.Working
+                Status = StationStatus.Active
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Working,
+                    Status = BikeStatus.Available,
                     User = user,
                 });
             BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), It.Is<Station>(s => s.Id == station.Id)))
@@ -100,7 +100,7 @@ namespace BikesRentalServer.Tests.BikesService
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Working,
+                    Status = BikeStatus.Available,
                     User = user,
                 });
             BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>())).Verifiable();
@@ -125,7 +125,7 @@ namespace BikesRentalServer.Tests.BikesService
             var station = new Station
             {
                 Id = stationId,
-                Status = StationStatus.Working,
+                Status = StationStatus.Active,
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Bike)null);
@@ -156,7 +156,7 @@ namespace BikesRentalServer.Tests.BikesService
             var station = new Station
             {
                 Id = 1,
-                Status = StationStatus.Working
+                Status = StationStatus.Active
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))

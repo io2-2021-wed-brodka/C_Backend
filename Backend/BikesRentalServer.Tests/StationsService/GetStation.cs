@@ -17,7 +17,7 @@ namespace BikesRentalServer.Tests.StationsService
                 Name = "Palac Kultury",
                 Id = 2,
                 Bikes = new List<Bike>(),
-                Status = StationStatus.Working
+                Status = StationStatus.Active
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 

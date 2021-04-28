@@ -95,6 +95,7 @@ namespace BikesRentalServer.Services
                 _reservationsRepository.Remove(reservation);
             }
 
+            _bikesRepository.SetStatus(id, BikeStatus.Rented);
             bike = _bikesRepository.Associate(id, user);
             return ServiceActionResult.Success(bike);
         }
@@ -119,6 +120,7 @@ namespace BikesRentalServer.Services
             if (bike.User.Username != _userContext.Username)
                 return ServiceActionResult.InvalidState<Bike>("Bike not rented by calling user");
 
+            _bikesRepository.SetStatus(bikeId, BikeStatus.Available);
             bike = _bikesRepository.Associate(bikeId, station);
             return ServiceActionResult.Success(bike);
         }
@@ -128,13 +130,16 @@ namespace BikesRentalServer.Services
             var bike = _bikesRepository.Get(id);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
-            if (bike.Status is BikeStatus.Blocked)
-                return ServiceActionResult.InvalidState<Bike>("Bike is already blocked");
-            if (bike.User is not null)
-                return ServiceActionResult.InvalidState<Bike>("Bike is rented");
-
-            bike = _bikesRepository.SetStatus(id, BikeStatus.Blocked);
-            return ServiceActionResult.Success(bike);
+            switch (bike.Status)
+            {
+                case BikeStatus.Blocked:
+                    return ServiceActionResult.InvalidState<Bike>("Bike is already blocked");
+                case BikeStatus.Rented:
+                    return ServiceActionResult.InvalidState<Bike>("Bike is rented");
+                default:
+                    bike = _bikesRepository.SetStatus(id, BikeStatus.Blocked);
+                    return ServiceActionResult.Success(bike);
+            }
         }
 
         public ServiceActionResult<Bike> UnblockBike(string id)
@@ -142,10 +147,10 @@ namespace BikesRentalServer.Services
             var bike = _bikesRepository.Get(id);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
-            if (bike.Status == BikeStatus.Working)
+            if (bike.Status is BikeStatus.Available)
                 return ServiceActionResult.InvalidState<Bike>("Bike not blocked");
 
-            bike = _bikesRepository.SetStatus(id, BikeStatus.Working);
+            bike = _bikesRepository.SetStatus(id, BikeStatus.Available);
             return ServiceActionResult.Success(bike);
         }
 

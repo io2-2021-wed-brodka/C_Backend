@@ -15,7 +15,7 @@ namespace BikesRentalServer.Tests.BikesService
             var bike = new Bike
             {
                 Id = bikeId,
-                Status = BikeStatus.Working
+                Status = BikeStatus.Available
             };
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
 

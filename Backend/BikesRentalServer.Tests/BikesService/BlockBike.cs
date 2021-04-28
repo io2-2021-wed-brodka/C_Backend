@@ -23,7 +23,7 @@ namespace BikesRentalServer.Tests.BikesService
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Working
+                    Status = BikeStatus.Available
                 });
 
             var bikesService = GetBikesService();
@@ -45,7 +45,7 @@ namespace BikesRentalServer.Tests.BikesService
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Working
+                    Status = BikeStatus.Available
                 });
 
             var bikesService = GetBikesService();
@@ -98,7 +98,7 @@ namespace BikesRentalServer.Tests.BikesService
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Working,
+                    Status = BikeStatus.Rented,
                     User = new User
                     {
                         Id = 2,

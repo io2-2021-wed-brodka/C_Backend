@@ -28,28 +28,28 @@ namespace BikesRentalServer.Tests.StationsService
                 new Station
                 {
                     Id = 7,
-                    Status = StationStatus.Working,
+                    Status = StationStatus.Active,
                     Name = "Working station",
                     Bikes = new List<Bike>(),
                 },
                 new Station
                 {
                     Id = 8,
-                    Status = StationStatus.Working,
+                    Status = StationStatus.Active,
                     Name = "station",
                     Bikes = new List<Bike>(),
                 },
                 new Station
                 {
                     Id = 9,
-                    Status = StationStatus.Working,
+                    Status = StationStatus.Active,
                     Name = "station7",
                     Bikes = new List<Bike>(),
                 },
                 new Station
                 {
                     Id = 69,
-                    Status = StationStatus.Working,
+                    Status = StationStatus.Active,
                     Name = "station8",
                     Bikes = new List<Bike>(),
                 },

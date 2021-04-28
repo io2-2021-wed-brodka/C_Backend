@@ -28,7 +28,7 @@ namespace BikesRentalServer.Tests.BikesService
                 new Bike
                 {
                     Id = 2,
-                    Status = BikeStatus.Working,
+                    Status = BikeStatus.Available,
                 },
             });
 

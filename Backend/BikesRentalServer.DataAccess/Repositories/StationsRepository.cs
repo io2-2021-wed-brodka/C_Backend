@@ -57,7 +57,7 @@ namespace BikesRentalServer.DataAccess.Repositories
 
         public IEnumerable<Station> GetActive()
         {
-            return _dbContext.Stations.Where(s => s.Status == StationStatus.Working).Include(s => s.Bikes);
+            return _dbContext.Stations.Where(s => s.Status == StationStatus.Active).Include(s => s.Bikes);
         }
         
         public IEnumerable<Station> GetBlocked()

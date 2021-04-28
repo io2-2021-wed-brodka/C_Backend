@@ -14,7 +14,7 @@ namespace BikesRentalServer.Tests.StationsService
             var station = new Station
             {
                 Name = "Trailer Park",
-                Status = StationStatus.Working,
+                Status = StationStatus.Active,
                 Id = 23,
             };
             var stationBlocked = new Station
@@ -24,7 +24,7 @@ namespace BikesRentalServer.Tests.StationsService
                 Id = 23,
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(stationBlocked);
-            StationsRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<StationStatus>(s => s == StationStatus.Working))).Returns(station).Verifiable();
+            StationsRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<StationStatus>(s => s == StationStatus.Active))).Returns(station).Verifiable();
 
             var stationsService = GetStationsService();
             var result = stationsService.UnblockStation(station.Id.ToString());
@@ -32,7 +32,7 @@ namespace BikesRentalServer.Tests.StationsService
             result.Status.Should().Be(Status.Success);
             result.Object.Should().NotBeNull();
             result.Object.Name.Should().Be(station.Name);
-            result.Object.Status.Should().Be(StationStatus.Working);
+            result.Object.Status.Should().Be(StationStatus.Active);
             StationsRepository.Verify();
         }
 
@@ -58,7 +58,7 @@ namespace BikesRentalServer.Tests.StationsService
             var station = new Station
             {
                 Name = "Trailer Park",
-                Status = StationStatus.Working,
+                Status = StationStatus.Active,
                 Id = 23,
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);

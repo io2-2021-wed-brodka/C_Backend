@@ -5,7 +5,7 @@
     /// </summary>
     public class Bike
     {
-        public const BikeStatus DefaultBikeStatus = BikeStatus.Working;
+        public const BikeStatus DefaultBikeStatus = BikeStatus.Available;
         
         /// <summary>
         /// Bike's database ID.
@@ -35,7 +35,9 @@
 
     public enum BikeStatus
     {
-        Working,
+        Available,
+        Rented,
+        Reserved,
         Blocked,
     }
 }

@@ -13,11 +13,11 @@ namespace BikesRentalServer.Tests.BikesService
         {
             const int bikeId = 123;
 
-            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<BikeStatus>(s => s == BikeStatus.Working)))
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<BikeStatus>(s => s == BikeStatus.Available)))
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Working,
+                    Status = BikeStatus.Available,
                 })
                 .Verifiable();
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
@@ -34,7 +34,7 @@ namespace BikesRentalServer.Tests.BikesService
             BikesRepository.Verify();
             result.Object.Should().NotBeNull();
             result.Object.Id.Should().Be(bikeId);
-            result.Object.Status.Should().Be(BikeStatus.Working);
+            result.Object.Status.Should().Be(BikeStatus.Available);
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace BikesRentalServer.Tests.BikesService
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Working,
+                    Status = BikeStatus.Available,
                 });
 
             var bikesService = GetBikesService();
