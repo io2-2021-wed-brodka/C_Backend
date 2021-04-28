@@ -72,7 +72,7 @@ namespace BikesRentalServer.Tests.StationsServiceTests
         }
 
         [Fact]
-        public void GetAllBikesAtBlockedStationForUserShouldReturnInvalidState()
+        public void GetAllBikesAtBlockedStationForUserShouldReturnInvalidStateForUser()
         {
             var station = new Station
             {
@@ -83,7 +83,7 @@ namespace BikesRentalServer.Tests.StationsServiceTests
             };
             _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
-            var stationsService = GetStationsService();
+            var stationsService = GetStationsService("joker", UserRole.User);
 
             var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
 
