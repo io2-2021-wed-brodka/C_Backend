@@ -50,6 +50,39 @@ namespace SeleniumTests
             webDriver.Close();
         }
 
+        [Test]
+        public void VerifyUsersDisplay()
+        {
+            IWebDriver webDriver = new FirefoxDriver(firefoxOptions);
+            Login(webDriver);
+            var navbar = webDriver.FindElement(By.CssSelector("ul a:nth-child(3)"));
+            navbar.Click();
+            Assert.AreEqual(webDriver.Url, _url + "/users");
+            webDriver.Close();
+        }
+
+        [Test]
+        public void VerifyTechsDisplay()
+        {
+            IWebDriver webDriver = new FirefoxDriver(firefoxOptions);
+            Login(webDriver);
+            var navbar = webDriver.FindElement(By.CssSelector("ul a:nth-child(4)"));
+            navbar.Click();
+            Assert.AreEqual(webDriver.Url, _url + "/techs");
+            webDriver.Close();
+        }
+
+        [Test]
+        public void VerifyLogoutAsAdmin()
+        {
+            IWebDriver webDriver = new FirefoxDriver(firefoxOptions);
+            Login(webDriver);
+            var navbar = webDriver.FindElement(By.CssSelector("ul div:nth-child(5)"));
+            navbar.Click();
+            Assert.AreEqual(webDriver.Url, _url + "/login");
+            webDriver.Close();
+        }
+
 
     }
 }
