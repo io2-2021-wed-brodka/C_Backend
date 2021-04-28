@@ -1,27 +1,25 @@
 ﻿using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.BikesService;
 using FluentAssertions;
+using Moq;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.BikesServiceTests
+namespace BikesRentalServer.Tests.BikesService
 {
     public class GetRentedBikes : BikesServiceTestsBase
     {
-        public GetRentedBikes() : base()
-        {
-        }
-
         [Fact]
         public void GetRentedBikesShouldReturnEmptyIEnumerableWhenNoRentals()
         {
-            var noBikes = new List<Bike>();
-            BikesRepository.Setup(r => r.GetAll()).Returns(noBikes);
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>()))
+                .Returns(new User
+                {
+                    RentedBikes = new List<Bike>(),
+                });
 
             var bikesService = GetBikesService();
-
             var result = bikesService.GetRentedBikes();
 
             result.Status.Should().Be(Status.Success);
@@ -31,17 +29,16 @@ namespace BikesRentalServer.Tests.BikesServiceTests
         [Fact]
         public void GetRentedBikesShouldReturnOnlyRentedBikesOfGivenUser()
         {
-            var thisUser = new User
+            var user = new User
             {
                 Id = 1,
-                Username = "zdzislaw"
+                Username = "zdzislaw",
             };
             var otherUser = new User
             {
                 Id = 1,
-                Username = "Mietek"
+                Username = "Mietek",
             };
-
             var blockedBikes = new[]
             {
                 new Bike
@@ -55,7 +52,6 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                     Status = BikeStatus.Blocked,
                 },
             };
-
             var workingBikes = new[]
             {
                 new Bike
@@ -69,47 +65,47 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                     Status = BikeStatus.Working
                 },
             };
-
             var otherUsersBikes = new[]
             {
                 new Bike
                 {
                     Id = 6,
-                    Status = BikeStatus.Working, // Rented!!!
+                    Status = BikeStatus.Working,
                     User = otherUser,
                 },
                 new Bike
                 {
                     Id = 5,
-                    Status = BikeStatus.Working, // Rented !!!
+                    Status = BikeStatus.Working,
                     User = otherUser,
                 },
             };
-
-            var thisUserBikes = new[]
+            var thisUsersBikes = new[]
             {
                 new Bike
                 {
                     Id = 6,
-                    Status = BikeStatus.Working, // Rented !!!111
-                    User = thisUser,
+                    Status = BikeStatus.Working,
+                    User = user,
                 },
                 new Bike
                 {
                     Id = 5,
-                    Status = BikeStatus.Working,  // Rented !!!1111oneoneone
-                    User = thisUser,
+                    Status = BikeStatus.Working,
+                    User = user,
                 },
             };
-            BikesRepository.Setup(r => r.GetAll())
-                .Returns(blockedBikes.Concat(workingBikes).Concat(thisUserBikes).Concat(otherUsersBikes));
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>()))
+                .Returns(new User
+                {
+                    RentedBikes = thisUsersBikes.ToList(),
+                });
 
-            var bikesService = GetBikesService(thisUser.Username);
-
+            var bikesService = GetBikesService(user.Username);
             var result = bikesService.GetRentedBikes();
 
             result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(thisUserBikes);
+            result.Object.Should().BeEquivalentTo(thisUsersBikes);
         }
     }
 }
