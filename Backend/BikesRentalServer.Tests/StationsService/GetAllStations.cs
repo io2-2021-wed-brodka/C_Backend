@@ -4,21 +4,16 @@ using FluentAssertions;
 using System.Collections.Generic;
 using Xunit;
 
-namespace BikesRentalServer.Tests.StationsServiceTests
+namespace BikesRentalServer.Tests.StationsService
 {
     public class GetAllStations : StationsServiceTestsBase
     {
-        public GetAllStations() : base()
-        {
-        }
-
         [Fact]
         public void GetAllStationsShouldReturnEmptyIEnumerableIfNoStations()
         {
-            _stationsRepository.Setup(r => r.GetAll()).Returns(new List<Station>());
+            StationsRepository.Setup(r => r.GetAll()).Returns(new List<Station>());
 
             var stationsService = GetStationsService();
-
             var result = stationsService.GetAllStations();
 
             result.Status.Should().Be(Status.Success);
@@ -59,11 +54,9 @@ namespace BikesRentalServer.Tests.StationsServiceTests
                     Bikes = new List<Bike>(),
                 },
             };
-
-            _stationsRepository.Setup(r => r.GetAll()).Returns(workingStations);
+            StationsRepository.Setup(r => r.GetAll()).Returns(workingStations);
 
             var stationsService = GetStationsService();
-
             var result = stationsService.GetAllStations();
 
             result.Status.Should().Be(Status.Success);

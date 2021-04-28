@@ -1,22 +1,14 @@
-using BikesRentalServer.Authorization;
-using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
 using Moq;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.StationsServiceTests
+namespace BikesRentalServer.Tests.StationsService
 {
     public class RemoveStation : StationsServiceTestsBase
     {
-        public RemoveStation() : base()
-        {
-        }
-
         [Fact]
         public void RemoveStationShouldRemoveStation()
         {
@@ -28,16 +20,15 @@ namespace BikesRentalServer.Tests.StationsServiceTests
                 Bikes = new List<Bike>()
             };
 
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
-            _stationsRepository.Setup(r => r.Remove(It.Is<string>(id => id == station.Id.ToString())))
-                .Returns(station).Verifiable();
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
+            StationsRepository.Setup(r => r.Remove(It.Is<string>(id => id == station.Id.ToString()))).Returns(station).Verifiable();
+            
             var stationsService = GetStationsService();
-
             var result = stationsService.RemoveStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().NotBeNull();
-            _stationsRepository.Verify();
+            StationsRepository.Verify();
         }
 
         [Fact]
@@ -50,12 +41,10 @@ namespace BikesRentalServer.Tests.StationsServiceTests
                 Id = 23,
             };
 
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Station)null);
-            _stationsRepository.Setup(r => r.Remove(It.Is<string>(id => id == station.Id.ToString())))
-                .Returns(station).Verifiable();
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Station)null);
+            StationsRepository.Setup(r => r.Remove(It.Is<string>(id => id == station.Id.ToString()))).Returns(station).Verifiable();
 
             var stationsService = GetStationsService();
-
             var result = stationsService.RemoveStation("3");
 
             result.Status.Should().Be(Status.EntityNotFound);
@@ -73,10 +62,9 @@ namespace BikesRentalServer.Tests.StationsServiceTests
                 Bikes = new List<Bike>() { new Bike() }
             };
 
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
             var stationsService = GetStationsService();
-
             var result = stationsService.RemoveStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.InvalidState);

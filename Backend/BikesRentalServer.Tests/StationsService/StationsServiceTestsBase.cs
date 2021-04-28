@@ -1,34 +1,21 @@
-﻿using BikesRentalServer.Services.Abstract;
-using BikesRentalServer.Services;
-using BikesRentalServer.Repositories.Abstract;
-using Moq;
-using BikesRentalServer.Authorization;
+﻿using BikesRentalServer.Authorization;
 using BikesRentalServer.Models;
+using BikesRentalServer.Repositories.Abstract;
+using BikesRentalServer.Services.Abstract;
+using Moq;
 
-namespace BikesRentalServer.Tests.StationsServiceTests
+namespace BikesRentalServer.Tests.StationsService
 {
     public class StationsServiceTestsBase
     {
-        protected readonly Mock<IStationsRepository> _stationsRepository = new Mock<IStationsRepository>();
-
-        protected StationsServiceTestsBase()
-        {
-        }
-
-        protected IStationsService GetStationsService()
-        {
-            return GetStationsService("maklowitz");
-        }
-
-        protected IStationsService GetStationsService(string userName, UserRole role = UserRole.Admin)
+        protected Mock<IStationsRepository> StationsRepository { get; } = new Mock<IStationsRepository>();
+        
+        protected IStationsService GetStationsService(string userName = "maklowitz", UserRole role = UserRole.Admin)
         {
             var userContext = new UserContext();
             userContext.SetOnce(userName, role);
 
-            return new StationsService(
-                _stationsRepository.Object,
-                userContext
-                );
+            return new Services.StationsService(StationsRepository.Object, userContext);
         }
     }
 }

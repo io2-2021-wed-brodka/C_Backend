@@ -5,14 +5,10 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.StationsServiceTests
+namespace BikesRentalServer.Tests.StationsService
 {
     public class BlockStation : StationsServiceTestsBase
     {
-        public BlockStation()
-        {
-        }
-
         [Fact]
         public void BlockStationShouldReturnBlockedStation()
         {
@@ -32,18 +28,19 @@ namespace BikesRentalServer.Tests.StationsServiceTests
             {
                 Id = station.Id.ToString()
             };
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
-            _stationsRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<StationStatus>(s => s == StationStatus.Blocked)))
-                .Returns(stationBlocked).Verifiable();
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
+            StationsRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<StationStatus>(s => s == StationStatus.Blocked)))
+                .Returns(stationBlocked)
+                .Verifiable();
+            
             var stationsService = GetStationsService();
-
             var result = stationsService.BlockStation(blockStationRequest);
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().NotBeNull();
             result.Object.Name.Should().Be(station.Name);
             result.Object.Status.Should().Be(StationStatus.Blocked);
-            _stationsRepository.Verify();
+            StationsRepository.Verify();
         }
 
         [Fact]
@@ -55,12 +52,11 @@ namespace BikesRentalServer.Tests.StationsServiceTests
             };
             var blockStationRequest = new BlockStationRequest
             {
-                Id = station.Id.ToString()
+                Id = station.Id.ToString(),
             };
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Station)null);
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Station)null);
 
             var stationsService = GetStationsService();
-
             var result = stationsService.BlockStation(blockStationRequest);
 
             result.Status.Should().Be(Status.EntityNotFound);
@@ -76,15 +72,13 @@ namespace BikesRentalServer.Tests.StationsServiceTests
                 Status = StationStatus.Blocked,
                 Id = 23,
             };
-
             var blockStationRequest = new BlockStationRequest
             {
-                Id = station.Id.ToString()
+                Id = station.Id.ToString(),
             };
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
             var stationsService = GetStationsService();
-
             var result = stationsService.BlockStation(blockStationRequest);
 
             result.Status.Should().Be(Status.InvalidState);

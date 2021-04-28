@@ -5,14 +5,10 @@ using Moq;
 using System.Collections.Generic;
 using Xunit;
 
-namespace BikesRentalServer.Tests.StationsServiceTests
+namespace BikesRentalServer.Tests.StationsService
 {
     public class GetAllBikesAtStation : StationsServiceTestsBase
     {
-        public GetAllBikesAtStation() : base()
-        {
-        }
-
         [Fact]
         public void GetAllBikesAtStationShouldReturnEmptyIEnumerateIfNoBikesAtStation()
         {
@@ -21,12 +17,11 @@ namespace BikesRentalServer.Tests.StationsServiceTests
                 Name = "Szpital psychiatryczny",
                 Id = 2,
                 Bikes = new List<Bike>(),
-                Status = StationStatus.Working
+                Status = StationStatus.Working,
             };
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
             var stationsService = GetStationsService();
-
             var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.Success);
@@ -36,7 +31,7 @@ namespace BikesRentalServer.Tests.StationsServiceTests
         [Fact]
         public void GetAllBikesAtStationShouldReturnAllBikesAtStation()
         {
-            var bikes = new List<Bike>()
+            var bikes = new List<Bike>
             {
                 new Bike(),
                 new Bike(),
@@ -46,12 +41,11 @@ namespace BikesRentalServer.Tests.StationsServiceTests
             {
                 Name = "Szpital psychiatryczny",
                 Id = 2,
-                Bikes = bikes
+                Bikes = bikes,
             };
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
             var stationsService = GetStationsService();
-
             var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.Success);
@@ -61,10 +55,9 @@ namespace BikesRentalServer.Tests.StationsServiceTests
         [Fact]
         public void GetAllBikesAtNotExistingStationShouldReturnEntityNotFound()
         {
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Station)null);
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Station)null);
 
             var stationsService = GetStationsService();
-
             var result = stationsService.GetAllBikesAtStation("4");
 
             result.Status.Should().Be(Status.EntityNotFound);
@@ -79,12 +72,11 @@ namespace BikesRentalServer.Tests.StationsServiceTests
                 Name = "Szpital psychiatryczny",
                 Id = 2,
                 Bikes = new List<Bike>(),
-                Status = StationStatus.Blocked
+                Status = StationStatus.Blocked,
             };
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
-            var stationsService = GetStationsService();
-
+            var stationsService = GetStationsService("user", UserRole.User);
             var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.InvalidState);

@@ -5,14 +5,10 @@ using Moq;
 using System.Collections.Generic;
 using Xunit;
 
-namespace BikesRentalServer.Tests.StationsServiceTests
+namespace BikesRentalServer.Tests.StationsService
 {
     public class GetStation : StationsServiceTestsBase
     {
-        public GetStation() : base()
-        {
-        }
-
         [Fact]
         public void GetExistingStationShouldSucceed()
         {
@@ -23,10 +19,9 @@ namespace BikesRentalServer.Tests.StationsServiceTests
                 Bikes = new List<Bike>(),
                 Status = StationStatus.Working
             };
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
             var stationsService = GetStationsService();
-
             var result = stationsService.GetStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.Success);
@@ -36,10 +31,9 @@ namespace BikesRentalServer.Tests.StationsServiceTests
         [Fact]
         public void GetNotExistingStationShouldReturnEntityNotFound()
         {
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Station)null);
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Station)null);
 
             var stationsService = GetStationsService();
-
             var result = stationsService.GetStation("7");
 
             result.Status.Should().Be(Status.EntityNotFound);
