@@ -39,6 +39,16 @@ namespace SeleniumTests
             webDriver.Close();
         }
 
+        [Test]
+        public void VerifyBikesDisplay()
+        {
+            IWebDriver webDriver = new FirefoxDriver(firefoxOptions);
+            Login(webDriver);
+            var navbar = webDriver.FindElement(By.CssSelector("ul a:nth-child(2)"));
+            navbar.Click();
+            Assert.AreEqual(webDriver.Url, _url + "/bikes");
+            webDriver.Close();
+        }
 
 
     }
