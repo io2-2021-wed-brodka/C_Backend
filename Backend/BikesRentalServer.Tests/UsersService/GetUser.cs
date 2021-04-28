@@ -31,7 +31,6 @@ namespace BikesRentalServer.Tests.UsersServiceTests
 
             response.Status.Should().Be(Status.Success);
             response.Object.Username.Should().Be(username);
-            response.Object.PasswordHash.Should().Be(Toolbox.ComputeHash(password));
             _usersRepository.Verify();
         }
 
