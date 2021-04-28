@@ -74,8 +74,8 @@ namespace BikesRentalServer.Services
             if (user.Status is UserStatus.Active)
                 return ServiceActionResult.InvalidState<User>("User already unblocked");
 
-            _usersRepository.SetStatus(userId, UserStatus.Active);
-            return ServiceActionResult.Success(user);
+            var unblockedUser = _usersRepository.SetStatus(userId, UserStatus.Active);
+            return ServiceActionResult.Success(unblockedUser);
         }
 
         public ServiceActionResult<IEnumerable<User>> GetAllUsers()
