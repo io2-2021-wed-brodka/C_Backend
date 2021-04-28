@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BikesRentalServer", "BikesR
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BikesRentalServer.Tests", "BikesRentalServer.Tests\BikesRentalServer.Tests.csproj", "{9C294F3A-21CE-4C79-B428-B2B9B7930969}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeleniumTests", "SeleniumTests\SeleniumTests\SeleniumTests.csproj", "{A81FCC80-0F59-4FFC-BD3F-9EFCE851D1B3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{9C294F3A-21CE-4C79-B428-B2B9B7930969}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C294F3A-21CE-4C79-B428-B2B9B7930969}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C294F3A-21CE-4C79-B428-B2B9B7930969}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A81FCC80-0F59-4FFC-BD3F-9EFCE851D1B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A81FCC80-0F59-4FFC-BD3F-9EFCE851D1B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A81FCC80-0F59-4FFC-BD3F-9EFCE851D1B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A81FCC80-0F59-4FFC-BD3F-9EFCE851D1B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
