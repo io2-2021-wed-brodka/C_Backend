@@ -73,13 +73,13 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
 
   const onBlockStation = () => {
     blockStation(id)
-      .then(() => refresh())
+      .then(() => forceRefresh && forceRefresh())
       .catch(err => snackbar.open(err.message));
   };
 
   const onUnblockStation = () => {
     unblockStation(id)
-      .then(() => refresh())
+      .then(() => forceRefresh && forceRefresh())
       .catch(err => snackbar.open(err.message));
   };
 
