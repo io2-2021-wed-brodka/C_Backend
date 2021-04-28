@@ -1,4 +1,5 @@
-﻿using BikesRentalServer.Services;
+﻿using BikesRentalServer.Models;
+using BikesRentalServer.Services;
 using BikesRentalServer.Services.Abstract;
 using BikesRentalServer.WebApi.Authorization;
 using BikesRentalServer.WebApi.Authorization.Attributes;
@@ -25,7 +26,6 @@ namespace BikesRentalServer.WebApi.Controllers
         }
 
         [HttpGet]
-        [UserAuthorization]
         [TechAuthorization]
         [AdminAuthorization]
         public ActionResult<GetAllStationsResponse> GetAllStations()
@@ -37,12 +37,31 @@ namespace BikesRentalServer.WebApi.Controllers
                 {
                     Id = station.Id.ToString(),
                     Name = station.Name,
+                    Status = station.Status,
+                    ActiveBikesCount = station.Bikes.Count(b => b.Status is BikeStatus.Available),
                 }),
             });
         }
 
+        [HttpPost]
+        [AdminAuthorization]
+        public ActionResult<GetStationResponse> AddStation(AddStationRequest request)
+        {
+            var response = _stationsService.AddStation(request.Name);
+            return response.Status switch
+            {
+                Status.Success => Created($"/stations/{response.Object.Id}", new GetStationResponse
+                {
+                    Id = response.Object.Id.ToString(),
+                    Name = response.Object.Name,
+                    Status = response.Object.Status,
+                    ActiveBikesCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Available),
+                }),
+                Status.EntityNotFound or Status.InvalidState or _ => throw new InvalidOperationException("Invalid state"),
+            };
+        }
+
         [HttpGet("{id}")]
-        [UserAuthorization]
         [TechAuthorization]
         [AdminAuthorization]
         public ActionResult<GetStationResponse> GetStation(string id)
@@ -54,9 +73,25 @@ namespace BikesRentalServer.WebApi.Controllers
                 {
                     Id = response.Object.Id.ToString(),
                     Name = response.Object.Name,
+                    Status = response.Object.Status,
+                    ActiveBikesCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Available),
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState or _ => throw new InvalidOperationException("Invalid status"),
+            };
+        }
+
+        [HttpDelete("{id}")]
+        [AdminAuthorization]
+        public ActionResult<GetStationResponse> RemoveStation(string id)
+        {
+            var response = _stationsService.RemoveStation(id);
+            return response.Status switch
+            {
+                Status.Success => NoContent(),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
             };
         }
 
@@ -78,6 +113,8 @@ namespace BikesRentalServer.WebApi.Controllers
                         {
                             Id = bike.Station.Id.ToString(),
                             Name = bike.Station.Name,
+                            Status = bike.Station.Status,
+                            ActiveBikesCount = bike.Station.Bikes.Count(b => b.Status is BikeStatus.Available),
                         },
                         Status = bike.Status,
                     }),
@@ -97,13 +134,15 @@ namespace BikesRentalServer.WebApi.Controllers
             var response = _bikesService.GiveBikeBack(request.Id, id);
             return response.Status switch
             {
-                Status.Success => Ok(new GetBikeResponse
+                Status.Success => Created($"/bikes/{response.Object.Id}", new GetBikeResponse
                 {
                     Id = response.Object.Id.ToString(),
                     Station = new GetBikeResponse.StationDto
                     {
                         Id = response.Object.Station.Id.ToString(),
                         Name = response.Object.Station.Name,
+                        Status = response.Object.Station.Status,
+                        ActiveBikesCount = response.Object.Station.Bikes.Count(b => b.Status is BikeStatus.Available),
                     },
                     Status = response.Object.Status,
                 }),
@@ -113,71 +152,36 @@ namespace BikesRentalServer.WebApi.Controllers
             };
         }
 
-        [HttpDelete("{id}")]
-        [AdminAuthorization]
-        public ActionResult<GetStationResponse> RemoveStation(string id)
-        {
-            var response = _stationsService.RemoveStation(id);
-            return response.Status switch
-            {
-                Status.Success => Ok(new GetStationResponse
-                {
-                    Id = response.Object.Id.ToString(),
-                    Name = response.Object.Name,
-                }),
-                Status.EntityNotFound => NotFound(response.Message),
-                Status.InvalidState => UnprocessableEntity(response.Message),
-                _ => throw new InvalidOperationException("Invalid state"),
-            };
-        }
-
-        [HttpPost]
-        [AdminAuthorization]
-        public ActionResult<GetStationResponse> AddStation(AddStationRequest request)
-        {
-            var response = _stationsService.AddStation(request.Name);
-            return response.Status switch
-            {
-                Status.Success => Ok(new GetStationResponse
-                {
-                    Id = response.Object.Id.ToString(),
-                    Name = response.Object.Name,
-                }),
-                Status.EntityNotFound or Status.InvalidState or _ => throw new InvalidOperationException("Invalid state"),
-            };
-        }
-
-        [HttpGet("blocked")]
-        [TechAuthorization]
-        [AdminAuthorization]
-        public ActionResult<GetAllStationsResponse> GetBlockedStations()
-        {
-            var response = _stationsService.GetBlockedStations();
-            return new GetAllStationsResponse
-            {
-                Stations = response.Object.Select(station => new GetStationResponse
-                {
-                    Id = station.Id.ToString(),
-                    Name = station.Name,
-                }),
-            };
-        }
-
         [HttpGet("active")]
         [UserAuthorization]
         [TechAuthorization]
         [AdminAuthorization]
         public ActionResult<GetAllStationsResponse> GetActiveStations()
         {
-            var response = _stationsService.GetActiveStations();
-            return new GetAllStationsResponse
+            var response = new GetAllStationsResponse
             {
-                Stations = response.Object.Select(station => new GetStationResponse
+                Stations = _stationsService.GetActiveStations().Object.Select(station => new GetStationResponse
                 {
                     Id = station.Id.ToString(),
                     Name = station.Name,
                 }),
             };
+            return Ok(response);
+        }
+
+        [HttpGet("blocked")]
+        [AdminAuthorization]
+        public ActionResult<GetAllStationsResponse> GetBlockedStations()
+        {
+            var response = new GetAllStationsResponse
+            {
+                Stations = _stationsService.GetBlockedStations().Object.Select(station => new GetStationResponse
+                {
+                    Id = station.Id.ToString(),
+                    Name = station.Name,
+                }),
+            };
+            return Ok(response);
         }
 
         [HttpPost("blocked")]
@@ -187,7 +191,7 @@ namespace BikesRentalServer.WebApi.Controllers
             var response = _stationsService.BlockStation(request.Id);
             return response.Status switch
             {
-                Status.Success => Ok(new GetStationResponse
+                Status.Success => Created($"/bikes/{response.Object.Id}", new GetStationResponse
                 {
                     Id = response.Object.Id.ToString(),
                     Name = response.Object.Name,
@@ -205,11 +209,7 @@ namespace BikesRentalServer.WebApi.Controllers
             var response = _stationsService.UnblockStation(id);
             return response.Status switch
             {
-                Status.Success => Ok(new GetStationResponse
-                {
-                    Id = response.Object.Id.ToString(),
-                    Name = response.Object.Name,
-                }),
+                Status.Success => NoContent(),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
                 _ => throw new InvalidOperationException("Invalid state"),
