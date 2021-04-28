@@ -1,72 +1,67 @@
-﻿using BikesRentalServer.Authorization;
-using BikesRentalServer.DataAccess;
-using BikesRentalServer.Dtos.Requests;
+﻿using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
+using Moq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.StationsService
+namespace BikesRentalServer.Tests.StationsServiceTests
 {
-    public class BlockStation
+    public class BlockStation : StationsServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.StationsService _stationsService;
-
         public BlockStation()
         {
-            _dbContext = MockedDbFactory.GetContext();
-            _stationsService = new Services.StationsService(_dbContext, new UserContext());
         }
 
         [Fact]
         public void BlockStationShouldReturnBlockedStation()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Name = "DS Ustronie",
-                    Status = StationStatus.Working,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-
-            var result = _stationsService.BlockStation(new BlockStationRequest
+            var station = new Station
             {
-                Id = station.Id.ToString(),
-            });
+                Name = "Trailer Park",
+                Status = StationStatus.Working,
+                Id = 23,
+            };
+            var stationBlocked = new Station
+            {
+                Name = "Trailer Park",
+                Status = StationStatus.Blocked,
+                Id = 23,
+            };
+            var blockStationRequest = new BlockStationRequest
+            {
+                Id = station.Id.ToString()
+            };
+            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
+            _stationsRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<StationStatus>(s => s == StationStatus.Blocked)))
+                .Returns(stationBlocked).Verifiable();
+            var stationsService = GetStationsService();
+
+            var result = stationsService.BlockStation(blockStationRequest);
 
             result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(station);
-        }
-
-        [Fact]
-        public void BlockStationShouldChangeStationStatusToBlocked()
-        {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Name = "DS Ustronie",
-                    Status = StationStatus.Working,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-
-            var result = _stationsService.BlockStation(new BlockStationRequest
-            {
-                Id = station.Id.ToString(),
-            });
-
-            result.Status.Should().Be(Status.Success);
+            result.Object.Should().NotBeNull();
+            result.Object.Name.Should().Be(station.Name);
             result.Object.Status.Should().Be(StationStatus.Blocked);
+            _stationsRepository.Verify();
         }
 
         [Fact]
         public void BlockNotExistingStationShouldReturnEntityNotFound()
         {
-            var result = _stationsService.BlockStation(new BlockStationRequest
+            var station = new Station
             {
-                Id = "997",
-            });
+                Id = 23,
+            };
+            var blockStationRequest = new BlockStationRequest
+            {
+                Id = station.Id.ToString()
+            };
+            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Station)null);
+
+            var stationsService = GetStationsService();
+
+            var result = stationsService.BlockStation(blockStationRequest);
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
@@ -75,18 +70,22 @@ namespace BikesRentalServer.Tests.StationsService
         [Fact]
         public void BlockAlreadyBlockedStationShouldReturnInvalidState()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Name = "DS Ustronie",
-                    Status = StationStatus.Blocked,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-
-            var result = _stationsService.BlockStation(new BlockStationRequest
+            var station = new Station
             {
-                Id = station.Id.ToString(),
-            });
+                Name = "Trailer Park",
+                Status = StationStatus.Blocked,
+                Id = 23,
+            };
+
+            var blockStationRequest = new BlockStationRequest
+            {
+                Id = station.Id.ToString()
+            };
+            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
+
+            var stationsService = GetStationsService();
+
+            var result = stationsService.BlockStation(blockStationRequest);
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
