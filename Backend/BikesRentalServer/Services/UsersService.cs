@@ -3,6 +3,7 @@ using BikesRentalServer.Repositories.Abstract;
 using BikesRentalServer.Services.Abstract;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BikesRentalServer.Services
@@ -79,7 +80,7 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<IEnumerable<User>> GetAllUsers()
         {
-            var users = _usersRepository.GetAll();
+            var users = _usersRepository.GetAll().Where(user => user.Role == UserRole.User);
             return ServiceActionResult.Success(users);
         }
     }
