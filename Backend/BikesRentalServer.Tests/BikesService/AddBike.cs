@@ -5,74 +5,72 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.BikesServiceTests
+namespace BikesRentalServer.Tests.BikesService
 {
     public class AddBike : BikesServiceTestsBase
     {
-        public AddBike() : base()
-        {
-        }
-
         [Fact]
         public void AddBikeShouldAddBike()
         {
-            var stationId = 123;
-            var addBikeRequest = new AddBikeRequest
+            const int stationId = 123;
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(new Station
             {
-                StationId = stationId.ToString()
-            };
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(new Station
-            {
-                Id = stationId
+                Id = stationId,
             });
-            _bikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
+            BikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
             
             var bikesService = GetBikesService();
-
-            var result = bikesService.AddBike(addBikeRequest);
+            var result = bikesService.AddBike(new AddBikeRequest
+            {
+                StationId = stationId.ToString(),
+            });
 
             result.Status.Should().Be(Status.Success);
-            _bikesRepository.Verify();
+            BikesRepository.Verify();
         }
 
         [Fact]
         public void AddBikeShouldReturnCreatedBike()
         {
-            var stationId = 123;
-            var addBikeRequest = new AddBikeRequest
+            const int stationId = 123;
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(new Station
             {
-                StationId = stationId.ToString()
-            };
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(new Station
-            {
-                Id = stationId
+                Id = stationId,
             });
-            _bikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
+            BikesRepository.Setup(r => r.Add(It.IsAny<Bike>()))
+                .Returns(new Bike
+                {
+                    Station = new Station
+                    {
+                        Id = stationId,
+                    },
+                })
+                .Verifiable();
 
             var bikesService = GetBikesService();
-
-            var result = bikesService.AddBike(addBikeRequest);
+            var result = bikesService.AddBike(new AddBikeRequest
+            {
+                StationId = stationId.ToString(),
+            });
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().NotBeNull();
             result.Object.Station.Should().NotBeNull();
+            result.Object.Station.Id.Should().Be(stationId);
         }
 
         [Fact]
         public void AddBikeToNotExistingStationShouldReturnEntityNotFound()
         {
-            var stationId = 123;
-            var addBikeRequest = new AddBikeRequest
-            {
-                StationId = stationId.ToString()
-            };
-            _stationsRepository.Setup(r => r.Get(It.IsAny<string>()))
-                .Returns((Station)null);
-            _bikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
+            const int stationId = 123;
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Station)null);
+            BikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
 
             var bikesService = GetBikesService();
-
-            var result = bikesService.AddBike(addBikeRequest);
+            var result = bikesService.AddBike(new AddBikeRequest
+            {
+                StationId = stationId.ToString(),
+            });
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();

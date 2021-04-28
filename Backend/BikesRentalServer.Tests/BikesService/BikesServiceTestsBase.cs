@@ -1,40 +1,24 @@
-﻿using BikesRentalServer.Services.Abstract;
-using BikesRentalServer.Services;
-using BikesRentalServer.Repositories.Abstract;
-using Moq;
-using BikesRentalServer.Authorization;
+﻿using BikesRentalServer.Authorization;
 using BikesRentalServer.Models;
+using BikesRentalServer.Repositories.Abstract;
+using BikesRentalServer.Services.Abstract;
+using Moq;
 
-namespace BikesRentalServer.Tests.BikesServiceTests
+namespace BikesRentalServer.Tests.BikesService
 {
     public class BikesServiceTestsBase
     {
-        protected readonly Mock<IBikesRepository> _bikesRepository = new Mock<IBikesRepository>();
-        protected readonly Mock<IUsersRepository> _usersRepository = new Mock<IUsersRepository>();
-        protected readonly Mock<IStationsRepository> _stationsRepository = new Mock<IStationsRepository>();
-        protected readonly Mock<IReservationsRepository> _reservationsRepository = new Mock<IReservationsRepository>();
+        protected Mock<IBikesRepository> BikesRepository { get; } = new Mock<IBikesRepository>();
+        protected Mock<IUsersRepository> UsersRepository { get; } = new Mock<IUsersRepository>();
+        protected Mock<IStationsRepository> StationsRepository { get; } = new Mock<IStationsRepository>();
+        protected Mock<IReservationsRepository> ReservationsRepository { get; } = new Mock<IReservationsRepository>();
 
-        protected BikesServiceTestsBase()
-        {
-        }
-
-        protected IBikesService GetBikesService()
-        {
-            return GetBikesService("maklowitz");
-        }
-
-        protected IBikesService GetBikesService(string userName, UserRole role = UserRole.Admin)
+        protected IBikesService GetBikesService(string username = "maklovitz", UserRole role = UserRole.Admin)
         {
             var userContext = new UserContext();
-            userContext.SetOnce(userName, role);
+            userContext.SetOnce(username, role);
 
-            return new BikesService(
-                _bikesRepository.Object,
-                _stationsRepository.Object,
-                _usersRepository.Object,
-                _reservationsRepository.Object,
-                userContext
-                );
+            return new Services.BikesService(BikesRepository.Object, StationsRepository.Object, UsersRepository.Object, ReservationsRepository.Object, userContext);
         }
     }
 }
