@@ -3,6 +3,7 @@ using BikesRentalServer.Infrastructure;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BikesRentalServer.Services
 {
@@ -40,7 +41,12 @@ namespace BikesRentalServer.Services
             if (station.Status is StationStatus.Blocked && _userContext.Role is UserRole.User)
                 return ServiceActionResult.InvalidState<IEnumerable<Bike>>("User cannot get bikes from blocked station");
 
-            return ServiceActionResult.Success<IEnumerable<Bike>>(station.Bikes);
+            var bikes = station.Bikes;
+
+            if (_userContext.Role is UserRole.User)
+                bikes = bikes.Where(bike => bike.Status == BikeStatus.Available).ToList();
+
+            return ServiceActionResult.Success<IEnumerable<Bike>>(bikes);
         }
 
         public ServiceActionResult<Station> RemoveStation(string id)
