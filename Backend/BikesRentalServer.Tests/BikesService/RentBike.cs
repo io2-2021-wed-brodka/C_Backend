@@ -7,32 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-//var bike = _bikesRepository.Get(request.Id);
-//if (bike is null)
-//    return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
-//if (bike.Status is BikeStatus.Blocked)
-//    return ServiceActionResult.InvalidState<Bike>("Bike is blocked");
-//if (bike.User is not null)
-//    return ServiceActionResult.InvalidState<Bike>("Bike is already rented");
-//if (bike.Station.Status is StationStatus.Blocked)
-//    return ServiceActionResult.InvalidState<Bike>("Station is blocked");
-
-//var user = _usersRepository.GetByUsername(_userContext.Username);
-//if (user.RentedBikes.Count >= 4)
-//    return ServiceActionResult.InvalidState<Bike>("Rental limit exceeded");
-
-//var reservation = _reservationsRepository.GetActiveReservation(request.Id);
-//if (reservation is not null)
-//{
-//    if (reservation.User.Id != user.Id)
-//        return ServiceActionResult.InvalidState<Bike>("Bike is reserved by different user");
-
-//    _reservationsRepository.Remove(reservation);
-//}
-
-//bike = _bikesRepository.Associate(request.Id, user);
-//return ServiceActionResult.Success(bike);
-
 namespace BikesRentalServer.Tests.BikesServiceTests
 {
     public class RentBike : BikesServiceTestsBase
