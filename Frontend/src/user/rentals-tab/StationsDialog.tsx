@@ -22,7 +22,7 @@ type Props = {
 };
 
 const StationsDialog = ({ close, selectStation }: Props) => {
-  const stationsData = usePromise(useServices().getStations);
+  const stationsData = usePromise(useServices().getActiveStations);
 
   return (
     <div>

@@ -34,19 +34,19 @@ const RentalsTab = () => {
     });
   };
 
-  const bikeActions: BikeActionsForBike = bikeId => [
+  const bikeActions: BikeActionsForBike = ({ id }) => [
     {
       label: 'Report',
       type: 'default',
       onClick: () => {
-        alert(bikeId);
+        alert(id);
       },
     },
     {
       label: 'Return',
       type: 'secondary',
       onClick: () => {
-        setReturnedBikeId(bikeId);
+        setReturnedBikeId(id);
         setDialogIsOpen(true);
       },
     },
