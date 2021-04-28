@@ -21,6 +21,50 @@ namespace BikesRentalServer.WebApi.Controllers
         {
             _usersService = usersService;
         }
+
+        [HttpGet]
+        [AdminAuthorization]
+        public ActionResult<GetAllUsersResponse> GetAllUsers()
+        {
+            var response = new GetAllUsersResponse
+            {
+                Users = _usersService.GetAllUsers().Object
+                    .Select(user => new GetUserResponse
+                    {
+                        Id = user.Id.ToString(),
+                        Name = user.Username,
+                    }),
+            };
+            return Ok(response);
+        }
+
+        [HttpPost("blocked")]
+        [AdminAuthorization]
+        public ActionResult<string> Block(BlockUserRequest request)
+        {
+            var response = _usersService.BlockUser(request.Id);
+            return response.Status switch
+            {
+                Status.Success => Created($"/users/{response.Object.Id}", response.Object),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
+            };
+        }
+
+        [HttpDelete("blocked/{id}")]
+        [AdminAuthorization]
+        public ActionResult<string> Unblock(string id)
+        {
+            var response = _usersService.UnblockUser(id);
+            return response.Status switch
+            {
+                Status.Success => NoContent(),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException("Invalid state"),
+            };
+        }
         
         [HttpPost("/login")]
         public ActionResult<LogInResponse> LogIn(LogInRequest request)
@@ -56,52 +100,7 @@ namespace BikesRentalServer.WebApi.Controllers
         [HttpPost("/logout")]
         public ActionResult<string> Logout()
         {
-            return Ok("Logged out");
-        }
-
-        [HttpPost("blocked")]
-        [AdminAuthorization]
-        public ActionResult<string> Block(BlockUserRequest request)
-        {
-            var response = _usersService.BlockUser(request.Id);
-            return response.Status switch
-            {
-                Status.Success => Ok(response.Object),
-                Status.EntityNotFound => NotFound(response.Message),
-                Status.InvalidState => UnprocessableEntity(response.Message),
-                _ => throw new InvalidOperationException("Invalid state"),
-            };
-        }
-
-        [HttpDelete("blocked/{id}")]
-        [AdminAuthorization]
-        public ActionResult<string> Unblock(string id)
-        {
-            var response = _usersService.UnblockUser(id);
-            return response.Status switch
-            {
-                Status.Success => Ok(response.Object),
-                Status.EntityNotFound => NotFound(response.Message),
-                Status.InvalidState => UnprocessableEntity(response.Message),
-                _ => throw new InvalidOperationException("Invalid state"),
-            };
-        }
-
-        [HttpGet]
-        [AdminAuthorization]
-        public ActionResult<GetAllUsersResponse> GetAllUsers()
-        {
-            var response = new GetAllUsersResponse
-            {
-                Users = _usersService.GetAllUsers().Object
-                    .Select(user => new GetUserResponse
-                    {
-                        Id = user.Id.ToString(),
-                        Name = user.Username,
-                    }),
-            };
-
-            return Ok(response);
+            return NoContent();
         }
     }
 }
