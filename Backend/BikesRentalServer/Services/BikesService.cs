@@ -117,6 +117,8 @@ namespace BikesRentalServer.Services
             var bike = _bikesRepository.Get(bikeId);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
+            if (bike.User.Username != _userContext.Username)
+                return ServiceActionResult.InvalidState<Bike>("Bike not rented by calling user");
 
             bike = _bikesRepository.Associate(bikeId, station);
             return ServiceActionResult.Success(bike);
