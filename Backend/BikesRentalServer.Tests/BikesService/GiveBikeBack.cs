@@ -174,5 +174,31 @@ namespace BikesRentalServer.Tests.BikesService
             result.Object.Should().BeNull();
             BikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>()), Times.Never);
         }
+
+        [Fact]
+        public void GiveBikeBackToBlockedStationShouldReturnInvalidState()
+        {
+            const int bikeId = 123;
+            const int stationId = 2;
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Station
+                {
+                    Status = StationStatus.Blocked,
+                    Id = stationId,
+                });
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                });
+            BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), It.IsAny<User>())).Verifiable();
+
+            var bikesService = GetBikesService();
+            var result = bikesService.GiveBikeBack(bikeId.ToString(), stationId.ToString());
+
+            result.Status.Should().Be(Status.InvalidState);
+            result.Object.Should().BeNull();
+            BikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<User>()), Times.Never);
+        }
     }
 }

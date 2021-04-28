@@ -227,7 +227,10 @@ namespace BikesRentalServer.Tests.BikesService
                 {
                     Id = bikeId,
                     Status = BikeStatus.Working,
-                    User = user,
+                    Station = new Station
+                    {
+                        Id = 1,
+                    },
                 });
             BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>())).Verifiable();
 
@@ -345,6 +348,32 @@ namespace BikesRentalServer.Tests.BikesService
             result.Object.Should().BeNull();
             ReservationsRepository.Verify(r => r.Remove(It.IsAny<Reservation>()), Times.Never);
             BikesRepository.Verify(r => r.Associate(bikeId.ToString(), It.IsAny<User>()), Times.Never);
+        }
+
+        [Fact]
+        public void RentBikeFromBlockedStationShouldReturnInvalidState()
+        {
+            var bike = new Bike
+            {
+                Id = 123,
+                Station = new Station
+                {
+                    Id = 1,
+                    Status = StationStatus.Blocked,
+                },
+            };
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
+            BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), It.IsAny<User>())).Verifiable();
+
+            var bikesService = GetBikesService();
+            var result = bikesService.RentBike(new RentBikeRequest
+            {
+                Id = bike.Id.ToString(),
+            });
+
+            result.Status.Should().Be(Status.InvalidState);
+            result.Object.Should().BeNull();
+            BikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<User>()), Times.Never);
         }
     }
 }

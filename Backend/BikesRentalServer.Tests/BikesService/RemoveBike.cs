@@ -2,6 +2,7 @@
 using BikesRentalServer.Services;
 using FluentAssertions;
 using Moq;
+using System;
 using Xunit;
 
 namespace BikesRentalServer.Tests.BikesService
@@ -58,6 +59,28 @@ namespace BikesRentalServer.Tests.BikesService
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
+            BikesRepository.Verify(r => r.Remove(It.IsAny<Bike>()), Times.Never);
+        }
+
+        [Fact]
+        public void RemoveBlockedAndRentedBikeShouldThrowInvalidOperationException()
+        {
+            var bike = new Bike
+            {
+                Id = 123,
+                User = new User
+                {
+                    Username = "Adam",
+                },
+                Status = BikeStatus.Blocked,
+            };
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
+            BikesRepository.Setup(r => r.Remove(It.IsAny<Bike>())).Verifiable();
+            
+            var bikesService = GetBikesService();
+            Action action = () => bikesService.RemoveBike(bike.Id.ToString());
+
+            action.Should().Throw<InvalidOperationException>();
             BikesRepository.Verify(r => r.Remove(It.IsAny<Bike>()), Times.Never);
         }
     }

@@ -111,7 +111,12 @@ namespace BikesRentalServer.Tests.BikesService
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Blocked // Should be rented, but BikeStatus.Rented is missing ;(
+                    Status = BikeStatus.Working,
+                    User = new User
+                    {
+                        Id = 2,
+                        Username = "some guy",
+                    },
                 });
 
             var bikesService = GetBikesService();
