@@ -30,6 +30,7 @@ namespace BikesRentalServer.DataAccess.Repositories
         public Station Add(Station entity)
         {
             var station = _dbContext.Stations.Add(entity).Entity;
+            _dbContext.Entry(station).Collection(s => s.Bikes).Load();
             _dbContext.SaveChanges();
 
             return station;
