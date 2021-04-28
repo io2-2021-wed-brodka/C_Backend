@@ -3,6 +3,7 @@ using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BikesRentalServer.Services
@@ -73,13 +74,13 @@ namespace BikesRentalServer.Services
             if (user.Status is UserStatus.Active)
                 return ServiceActionResult.InvalidState<User>("User already unblocked");
 
-            _usersRepository.SetStatus(userId, UserStatus.Active);
-            return ServiceActionResult.Success(user);
+            var unblockedUser = _usersRepository.SetStatus(userId, UserStatus.Active);
+            return ServiceActionResult.Success(unblockedUser);
         }
 
         public ServiceActionResult<IEnumerable<User>> GetAllUsers()
         {
-            var users = _usersRepository.GetAll();
+            var users = _usersRepository.GetAll().Where(user => user.Role == UserRole.User);
             return ServiceActionResult.Success(users);
         }
     }

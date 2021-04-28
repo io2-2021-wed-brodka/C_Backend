@@ -1,88 +1,65 @@
-﻿using BikesRentalServer.DataAccess;
-using BikesRentalServer.Infrastructure;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
+using Moq;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
 namespace BikesRentalServer.Tests.BikesService
 {
-    public class GetRentedBikes
+    public class GetRentedBikes : BikesServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.BikesService _bikesService;
-        private readonly User _user;
-        
-        public GetRentedBikes()
-        {
-            _dbContext = MockedDbFactory.GetContext();
-            _user = _dbContext.Users.Add(new User
-                {
-                    Username = "test_user",
-                    Status = UserStatus.Active,
-                    Role = UserRole.Admin,
-                    Reservations = new List<Reservation>(),
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-            
-            var userContext = new UserContext();
-            userContext.SetOnce(_user.Username, _user.Role);
-            
-            _bikesService = new Services.BikesService(_dbContext, userContext);
-        }
-
         [Fact]
         public void GetRentedBikesShouldReturnEmptyIEnumerableWhenNoRentals()
         {
-            var result = _bikesService.GetRentedBikes();
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>()))
+                .Returns(new User
+                {
+                    RentedBikes = new List<Bike>(),
+                });
+
+            var bikesService = GetBikesService();
+            var result = bikesService.GetRentedBikes();
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEmpty();
         }
 
         [Fact]
-        public void GetRentedBikesShouldReturnAllRentedBikes()
+        public void GetRentedBikesShouldReturnOnlyRentedBikesOfGivenUser()
         {
-            var rentedBikes = new []
+            var user = new User
+            {
+                Id = 1,
+                Username = "zdzislaw",
+            };
+            var usersBikes = new[]
             {
                 new Bike
                 {
-                    Description = "one",
-                    User = _user,
+                    Id = 6,
+                    Status = BikeStatus.Working,
+                    User = user,
                 },
                 new Bike
                 {
-                    Description = "two",
-                    User = _user,
-                },
-                new Bike
-                {
-                    Description = "three",
-                    User = _user,
-                },
-                new Bike
-                {
-                    Description = "four",
-                    User = _user,
-                },
-                new Bike
-                {
-                    Description = "six",
-                    User = _user,
+                    Id = 5,
+                    Status = BikeStatus.Working,
+                    User = user,
                 },
             };
-            _dbContext.Bikes.AddRange(rentedBikes);
-            _dbContext.SaveChanges();
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>()))
+                .Returns(new User
+                {
+                    RentedBikes = usersBikes.ToList(),
+                });
 
-            var result = _bikesService.GetRentedBikes();
-            
+            var bikesService = GetBikesService(user.Username);
+            var result = bikesService.GetRentedBikes();
+
             result.Status.Should().Be(Status.Success);
-            result.Object.Count().Should().Be(rentedBikes.Length);
-            result.Object.Should().BeEquivalentTo(rentedBikes);
+            result.Object.Should().BeEquivalentTo(usersBikes);
         }
     }
 }

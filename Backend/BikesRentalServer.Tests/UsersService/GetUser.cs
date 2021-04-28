@@ -1,51 +1,51 @@
-﻿using BikesRentalServer.DataAccess;
-using BikesRentalServer.Models;
+﻿using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
+using Moq;
 using Xunit;
 
 namespace BikesRentalServer.Tests.UsersService
 {
-    public class GetUser
+    public class GetUser : UsersServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.UsersService _usersService;
-        
-        public GetUser()
-        {
-            _dbContext = MockedDbFactory.GetContext();
-            _usersService = new Services.UsersService(_dbContext);
-        }
-
         [Fact]
         public void GetExistingUserShouldSucceed()
         {
-            const string password = "Leć Adaś, leć!";
-            var user = _dbContext.Users.Add(new User
+            const string username = "test_user";
+            const string password = "theBestTESTp4ssWd";
+
+            UsersRepository.Setup(r => r.GetByUsernameAndPassword(It.Is<string>(u => u == username), It.Is<string>(u => u == password)))
+                .Returns(new User
                 {
-                    Role = UserRole.Tech,
-                    Status = UserStatus.Active,
-                    Username = "adam_malysz",
-                    PasswordHash = Toolbox.ComputeHash(password),
+                    Username = username,
+                    Id = 3,
                 })
-                .Entity;
-            _dbContext.Users.Add(user);
-            _dbContext.SaveChanges();
+                .Verifiable();
 
-            var result = _usersService.GetUserByUsernameAndPassword(user.Username, password);
+            var usersService = GetUsersService();
+            var response = usersService.GetUserByUsernameAndPassword(username, password);
 
-            result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(user);
+            response.Status.Should().Be(Status.Success);
+            response.Object.Username.Should().Be(username);
+            UsersRepository.Verify();
         }
 
         [Fact]
         public void GetNotExistingUserShouldReturnEntityNotFound()
         {
-            var result = _usersService.GetUserByUsernameAndPassword("user", "pass");
+            const string username = "test_user";
+            const string password = "theBestTESTp4ssWd";
 
-            result.Status.Should().Be(Status.EntityNotFound);
-            result.Object.Should().BeNull();
+            UsersRepository.Setup(r => r.GetByUsernameAndPassword(It.Is<string>(u => u == username), It.Is<string>(u => u == password)))
+                .Returns((User)null)
+                .Verifiable();
+
+            var usersService = GetUsersService();
+            var response = usersService.GetUserByUsernameAndPassword(username, password);
+
+            response.Status.Should().Be(Status.EntityNotFound);
+            response.Object.Should().BeNull();
+            UsersRepository.Verify();
         }
     }
 }

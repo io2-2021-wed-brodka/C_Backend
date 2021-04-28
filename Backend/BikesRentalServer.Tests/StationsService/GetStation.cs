@@ -1,37 +1,28 @@
-﻿using BikesRentalServer.DataAccess;
-using BikesRentalServer.Infrastructure;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
+using Moq;
+using System.Collections.Generic;
 using Xunit;
 
 namespace BikesRentalServer.Tests.StationsService
 {
-    public class GetStation
+    public class GetStation : StationsServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.StationsService _stationsService;
-        
-        public GetStation()
-        {
-            _dbContext = MockedDbFactory.GetContext();
-            _stationsService = new Services.StationsService(_dbContext, new UserContext());
-        }
-
         [Fact]
         public void GetExistingStationShouldSucceed()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Id = 3,
-                    Status = StationStatus.Blocked,
-                    Name = "Dom Adama",
-                })
-                .Entity;
-            _dbContext.SaveChanges();
+            var station = new Station
+            {
+                Name = "Palac Kultury",
+                Id = 2,
+                Bikes = new List<Bike>(),
+                Status = StationStatus.Working
+            };
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
-            var result = _stationsService.GetStation(station.Id.ToString());
+            var stationsService = GetStationsService();
+            var result = stationsService.GetStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEquivalentTo(station);
@@ -40,7 +31,10 @@ namespace BikesRentalServer.Tests.StationsService
         [Fact]
         public void GetNotExistingStationShouldReturnEntityNotFound()
         {
-            var result = _stationsService.GetStation("4");
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Station)null);
+
+            var stationsService = GetStationsService();
+            var result = stationsService.GetStation("7");
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
