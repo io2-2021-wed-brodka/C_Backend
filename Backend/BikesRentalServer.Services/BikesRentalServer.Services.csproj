@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BikesRentalServer.DataAccess\BikesRentalServer.DataAccess.csproj" />
+      <ProjectReference Include="..\BikesRentalServer\BikesRentalServer.csproj" />
+    </ItemGroup>
+
+</Project>

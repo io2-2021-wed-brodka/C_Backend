@@ -1,104 +1,87 @@
-﻿using BikesRentalServer.Authorization;
-using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
-using System.Linq;
+using Moq;
+using System;
 using Xunit;
 
 namespace BikesRentalServer.Tests.BikesService
 {
-    public class RemoveBike
+    public class RemoveBike : BikesServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.BikesService _bikesService;
-        
-        public RemoveBike()
-        {
-            _dbContext = MockedDbFactory.GetContext();
-            _bikesService = new Services.BikesService(_dbContext, new UserContext());
-        }
-
         [Fact]
-        public void RemoveBikeShouldDecrementBikeCount()
+        public void RemoveBikeShouldRemoveBike()
         {
-            var station = _dbContext.Stations.Add(new Station
+            const int bikeId = 1234;
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Bike
                 {
-                    Status = BikeStationStatus.Working,
-                    Name = "Al. Jerozolimskie",
-                })
-                .Entity;
-            var bike = _dbContext.Bikes.Add(new Bike
-                {
-                    Station = station,
+                    Id = bikeId,
                     Status = BikeStatus.Blocked,
-                })
-                .Entity;
-            _dbContext.SaveChanges();
+                });
+            BikesRepository.Setup(r => r.Remove(It.IsAny<Bike>())).Verifiable();
 
-            var initialBikeCount = _dbContext.Bikes.Count();
-            var result = _bikesService.RemoveBike(bike.Id.ToString());
+            var bikesService = GetBikesService();
+            var result = bikesService.RemoveBike(bikeId.ToString());
 
             result.Status.Should().Be(Status.Success);
-            _dbContext.Bikes.Count().Should().Be(initialBikeCount - 1);
-        }
-
-        [Fact]
-        public void RemoveBikeShouldReturnRemovedBike()
-        {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Status = BikeStationStatus.Working,
-                    Name = "Al. Jerozolimskie",
-                })
-                .Entity;
-            var bike = _dbContext.Bikes.Add(new Bike
-                {
-                    Station = station,
-                    Status = BikeStatus.Blocked,
-                    Description = "some things here",
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-            
-            var result = _bikesService.RemoveBike(bike.Id.ToString());
-
-            result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(bike);
+            BikesRepository.Verify();
         }
 
         [Fact]
         public void RemoveNotExistingBikeShouldReturnEntityNotFound()
         {
-            var result = _bikesService.RemoveBike("1");
+            const int bikeId = 1234;
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Bike)null);
+            BikesRepository.Setup(r => r.Remove(It.IsAny<Bike>())).Verifiable();
+
+            var bikesService = GetBikesService();
+            var result = bikesService.RemoveBike(bikeId.ToString());
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
+            BikesRepository.Verify(r => r.Remove(It.IsAny<Bike>()), Times.Never);
         }
 
         [Fact]
         public void RemoveNotBlockedBikeShouldReturnInvalidState()
         {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Status = BikeStationStatus.Working,
-                    Name = "Al. Jerozolimskie",
-                })
-                .Entity;
-            var bike = _dbContext.Bikes.Add(new Bike
-                {
-                    Station = station,
-                    Status = BikeStatus.Working,
-                    Description = "some things here",
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-            
-            var result = _bikesService.RemoveBike(bike.Id.ToString());
+            const int bikeId = 1234;
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(new Bike
+            {
+                Id = bikeId,
+                Status = BikeStatus.Available,
+            });
+            BikesRepository.Setup(r => r.Remove(It.IsAny<Bike>())).Verifiable();
+
+            var bikesService = GetBikesService();
+            var result = bikesService.RemoveBike(bikeId.ToString());
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
+            BikesRepository.Verify(r => r.Remove(It.IsAny<Bike>()), Times.Never);
+        }
+
+        [Fact]
+        public void RemoveBlockedAndRentedBikeShouldThrowInvalidOperationException()
+        {
+            var bike = new Bike
+            {
+                Id = 123,
+                User = new User
+                {
+                    Username = "Adam",
+                },
+                Status = BikeStatus.Blocked,
+            };
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
+            BikesRepository.Setup(r => r.Remove(It.IsAny<Bike>())).Verifiable();
+            
+            var bikesService = GetBikesService();
+            Action action = () => bikesService.RemoveBike(bike.Id.ToString());
+
+            action.Should().Throw<InvalidOperationException>();
+            BikesRepository.Verify(r => r.Remove(It.IsAny<Bike>()), Times.Never);
         }
     }
 }

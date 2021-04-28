@@ -1,30 +1,20 @@
-﻿using BikesRentalServer.Authorization;
-using BikesRentalServer.DataAccess;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace BikesRentalServer.Tests.StationsService
 {
-    public class GetActiveStations
+    public class GetActiveStations : StationsServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.StationsService _stationsService;
-
-        public GetActiveStations()
-        {
-            _dbContext = MockedDbFactory.GetContext();
-            _stationsService = new Services.StationsService(_dbContext, new UserContext());
-        }
-
         [Fact]
         public void GetActiveStationsShouldReturnEmptyIEnumerableIfNoStations()
         {
-            var result = _stationsService.GetActiveStations();
+            StationsRepository.Setup(r => r.GetActive()).Returns(new List<Station>());
+
+            var stationsService = GetStationsService();
+            var result = stationsService.GetActiveStations();
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEmpty();
@@ -33,79 +23,44 @@ namespace BikesRentalServer.Tests.StationsService
         [Fact]
         public void GetActiveStationsShouldReturnAllActiveStationsAndNoBlockedStations()
         {
-            var addedBlockedStations = new[]
-            {
-                new Station
-                {
-                    Id = 1,
-                    Status = BikeStationStatus.Blocked,
-                    Name = "First station",
-                    Bikes = new List<Bike>(),
-                },
-                new Station
-                {
-                    Id = 3,
-                    Status = BikeStationStatus.Blocked,
-                    Name = "Second station",
-                    Bikes = new List<Bike>(),
-                },
-                new Station
-                {
-                    Id = 4,
-                    Status = BikeStationStatus.Blocked,
-                    Name = "Third station",
-                    Bikes = new List<Bike>(),
-                },
-                new Station
-                {
-                    Id = 6,
-                    Status = BikeStationStatus.Blocked,
-                    Name = "Forth station",
-                    Bikes = new List<Bike>(),
-                },
-            };
-
-            var addedWorkingStations = new[]
+            var workingStations = new[]
             {
                 new Station
                 {
                     Id = 7,
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Active,
                     Name = "Working station",
                     Bikes = new List<Bike>(),
                 },
                 new Station
                 {
                     Id = 8,
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Active,
                     Name = "station",
                     Bikes = new List<Bike>(),
                 },
                 new Station
                 {
                     Id = 9,
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Active,
                     Name = "station7",
                     Bikes = new List<Bike>(),
                 },
                 new Station
                 {
                     Id = 69,
-                    Status = BikeStationStatus.Working,
+                    Status = StationStatus.Active,
                     Name = "station8",
                     Bikes = new List<Bike>(),
                 },
             };
+            StationsRepository.Setup(r => r.GetActive()).Returns(workingStations);
 
-            _dbContext.Stations.AddRange(addedBlockedStations);
-            _dbContext.Stations.AddRange(addedWorkingStations);
-            _dbContext.SaveChanges();
-
-            var result = _stationsService.GetActiveStations();
+            var stationsService = GetStationsService();
+            var result = stationsService.GetActiveStations();
 
             result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(addedWorkingStations);
-            result.Object.Where(s => s.Status == BikeStationStatus.Blocked).Should().BeEmpty();
+            result.Object.Should().BeEquivalentTo(workingStations);
         }
     }
 }

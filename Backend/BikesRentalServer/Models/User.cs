@@ -5,14 +5,15 @@ namespace BikesRentalServer.Models
     public class User
     {
         public int Id { get; set; }
-        public UserState State { get; set; }
+        public UserStatus Status { get; set; }
         public UserRole Role { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public List<Reservation> Reservations { get; set; }
+        public List<Bike> RentedBikes { get; set; }
     }
 
-    public enum UserState
+    public enum UserStatus
     {
         Active,
         Banned,

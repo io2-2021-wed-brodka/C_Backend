@@ -1,49 +1,51 @@
-﻿using BikesRentalServer.DataAccess;
-using BikesRentalServer.Models;
+﻿using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
+using Moq;
 using Xunit;
 
 namespace BikesRentalServer.Tests.UsersService
 {
-    public class AddUser
+    public class AddUser : UsersServiceTestsBase
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly Services.UsersService _usersService;
-        
-        public AddUser()
-        {
-            _dbContext = MockedDbFactory.GetContext();
-            _usersService = new Services.UsersService(_dbContext);
-        }
-
         [Fact]
         public void AddUserShouldSucceedAndReturnCreatedUser()
         {
             const string username = "test_user";
             const string password = "theBestTESTp4ssWd";
-            var response = _usersService.AddUser(username, password);
+            var expectedPassword = Toolbox.ComputeHash(password);
+            UsersRepository.Setup(r => r.Add(It.IsAny<User>()))
+                .Returns(new User
+                {
+                    Username = username,
+                    Id = 3,
+                    PasswordHash = expectedPassword,
+                })
+                .Verifiable();
+
+            var usersService = GetUsersService();
+            var response = usersService.AddUser(username, password);
 
             response.Status.Should().Be(Status.Success);
             response.Object.Username.Should().Be(username);
-            response.Object.PasswordHash.Should().Be(Toolbox.ComputeHash(password));
+            response.Object.PasswordHash.Should().Be(expectedPassword);
+            UsersRepository.Verify();
         }
 
         [Fact]
         public void AddUserWithTakenUsernameShouldReturnInvalidState()
         {
+            const string username = "test_user";
             const string password = "theBestTESTp4ssWd";
-            _dbContext.Users.Add(new User
-            {
-                Username = "test2",
-            });
-            _dbContext.SaveChanges();
-            
-            var response = _usersService.AddUser("test2", password);
+            UsersRepository.Setup(r => r.Add(It.IsAny<User>())).Verifiable();
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>())).Returns(new User());
+
+            var usersService = GetUsersService();
+            var response = usersService.AddUser(username, password);
 
             response.Status.Should().Be(Status.InvalidState);
             response.Object.Should().BeNull();
+            UsersRepository.Verify(r => r.Add(It.IsAny<User>()), Times.Never);
         }
     }
 }
