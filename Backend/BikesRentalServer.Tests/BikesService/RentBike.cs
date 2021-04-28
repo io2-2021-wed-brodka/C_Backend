@@ -1,169 +1,127 @@
 ﻿using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.BikesService;
 using FluentAssertions;
 using Moq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Xunit;
 
-//var bike = _bikesRepository.Get(request.Id);
-//if (bike is null)
-//    return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
-//if (bike.Status is BikeStatus.Blocked)
-//    return ServiceActionResult.InvalidState<Bike>("Bike is blocked");
-//if (bike.User is not null)
-//    return ServiceActionResult.InvalidState<Bike>("Bike is already rented");
-//if (bike.Station.Status is StationStatus.Blocked)
-//    return ServiceActionResult.InvalidState<Bike>("Station is blocked");
-
-//var user = _usersRepository.GetByUsername(_userContext.Username);
-//if (user.RentedBikes.Count >= 4)
-//    return ServiceActionResult.InvalidState<Bike>("Rental limit exceeded");
-
-//var reservation = _reservationsRepository.GetActiveReservation(request.Id);
-//if (reservation is not null)
-//{
-//    if (reservation.User.Id != user.Id)
-//        return ServiceActionResult.InvalidState<Bike>("Bike is reserved by different user");
-
-//    _reservationsRepository.Remove(reservation);
-//}
-
-//bike = _bikesRepository.Associate(request.Id, user);
-//return ServiceActionResult.Success(bike);
-
-namespace BikesRentalServer.Tests.BikesServiceTests
+namespace BikesRentalServer.Tests.BikesService
 {
     public class RentBike : BikesServiceTestsBase
     {
-        public RentBike() : base()
-        {
-        }
-        
         [Fact]
         public void RentBikeShouldSucceed()
         {
-            var bikeId = 123;
-            var stationId = 1;
-            var thisUser = new User
-            {
-                Id = 1,
-                Username = "zdzislaw"
-            };
-            var rentBikeRequest = new RentBikeRequest
-            {
-                Id = bikeId.ToString()
-            };
-            var station = new Station
-            {
-                Id = stationId,
-                Status = StationStatus.Working,
-            };
-
-            BikesRepository.Setup(r =>
-                r.SetStatus(It.IsAny<string>(), It.Is<BikeStatus>(s => s == BikeStatus.Working)) // Rented!!!
-            ).Verifiable();
-
-            UsersRepository.Setup(r =>
-                r.GetRentedBikes(It.IsAny<string>())
-            ).Returns(new List<Bike>());
-
+            const int bikeId = 123;
+            const string username = "zdzislaw";
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>()))
+                .Returns(new User
+                {
+                    RentedBikes = new List<Bike>(),
+                });
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
                     Status = BikeStatus.Working,
-                    Station = station,
+                    Station = new Station
+                    {
+                        Id = 1,
+                        Status = StationStatus.Working,
+                    },
+                });
+            BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), It.IsAny<User>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Working,
+                    User = new User
+                    {
+                        Username = username,
+                    },
                 });
 
-            var bikesService = GetBikesService(thisUser.Username);
-
-            var result = bikesService.RentBike(rentBikeRequest);
+            var bikesService = GetBikesService(username);
+            var result = bikesService.RentBike(new RentBikeRequest
+            {
+                Id = bikeId.ToString(),
+            });
 
             result.Status.Should().Be(Status.Success);
-            BikesRepository.Verify();
             result.Object.Should().NotBeNull();
             result.Object.Id.Should().Be(bikeId);
-            result.Object.Status.Should().Be(BikeStatus.Working); // Rented
+            result.Object.Status.Should().Be(BikeStatus.Working);
         }
 
         [Fact]
         public void RentBikeShouldAssignBikeToUser()
         {
-            var bikeId = 123;
-            var stationId = 1;
-            var thisUser = new User
+            const int bikeId = 123;
+            var user = new User
             {
                 Id = 1,
-                Username = "zdzislaw"
+                Username = "zdzislaw",
             };
-            var rentBikeRequest = new RentBikeRequest
-            {
-                Id = bikeId.ToString()
-            };
-            var station = new Station
-            {
-                Id = stationId,
-                Status = StationStatus.Working,
-            };
-
-            BikesRepository.Setup(r =>
-                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()) // Rented!!!
-            ).Verifiable();
-
-            UsersRepository.Setup(r =>
-                r.GetRentedBikes(It.IsAny<string>())
-            ).Returns(new List<Bike>());
-
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>()))
+                .Returns(new User
+                {
+                    RentedBikes = new List<Bike>(),
+                });
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
                     Status = BikeStatus.Working,
-                    Station = station,
+                    Station = new Station
+                    {
+                        Id = 1,
+                    },
                 });
+            BikesRepository.Setup(r => r.Associate(bikeId.ToString(), It.IsAny<User>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    User = user,
+                })
+                .Verifiable();
 
-            var bikesService = GetBikesService(thisUser.Username);
-
-            var result = bikesService.RentBike(rentBikeRequest);
+            var bikesService = GetBikesService(user.Username);
+            var result = bikesService.RentBike(new RentBikeRequest
+            {
+                Id = bikeId.ToString(),
+            });
 
             result.Status.Should().Be(Status.Success);
             BikesRepository.Verify();
             result.Object.Should().NotBeNull();
             result.Object.Id.Should().Be(bikeId);
-            result.Object.User.Should().BeEquivalentTo(thisUser);
+            result.Object.User.Should().BeEquivalentTo(user);
         }
 
         [Fact]
         public void RentNotExistingBikeShouldReturnEntityNotFound()
         {
-            var bikeId = 123;
             var thisUser = new User
             {
                 Id = 1,
-                Username = "zdzislaw"
-            };
-            var rentBikeRequest = new RentBikeRequest
-            {
-                Id = bikeId.ToString()
+                Username = "zdzislaw",
             };
 
-            BikesRepository.Setup(r =>
-                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()) // Rented!!!
-            ).Verifiable();
-
-            UsersRepository.Setup(r =>
-                r.GetRentedBikes(It.IsAny<string>())
-            ).Returns(new List<Bike>());
-
-            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
-                .Returns((Bike)null);
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>()))
+                .Returns(new User
+                {
+                    RentedBikes = new List<Bike>(),
+                });
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Bike)null);
 
             var bikesService = GetBikesService(thisUser.Username);
-
-            var result = bikesService.RentBike(rentBikeRequest);
+            var result = bikesService.RentBike(new RentBikeRequest
+            {
+                Id = "123",
+            });
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
@@ -173,50 +131,36 @@ namespace BikesRentalServer.Tests.BikesServiceTests
         [Fact]
         public void RentBlockedBikeShouldReturnInvalidState()
         {
-            var bikeId = 123;
-            var stationId = 1;
-            var thisUser = new User
+            const int bikeId = 123;
+            const int stationId = 1;
+            var user = new User
             {
                 Id = 1,
-                Username = "zdzislaw"
+                Username = "zdzislaw",
             };
-            var rentBikeRequest = new RentBikeRequest
-            {
-                Id = bikeId.ToString()
-            };
-            var station = new Station
-            {
-                Id = stationId,
-                Status = StationStatus.Working,
-            };
-
-            BikesRepository.Setup(r =>
-                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
-            ).Verifiable();
-
-            UsersRepository.Setup(r =>
-                r.GetRentedBikes(It.IsAny<string>())
-            ).Returns(new List<Bike>());
-
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>()))
+                .Returns(new User
+                {
+                    RentedBikes = new List<Bike>(),
+                });
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
                     Status = BikeStatus.Blocked,
-                    User = thisUser,
-                    Station = station
+                    Station = new Station
+                    {
+                        Id = stationId,
+                        Status = StationStatus.Working,
+                    },
                 });
+            BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), It.IsAny<User>())).Verifiable();
 
-            StationsRepository.Setup(r => r.Get(It.IsAny<string>()))
-                .Returns(new Station
-                {
-                    Id = stationId,
-                    Status = StationStatus.Working
-                });
-
-            var bikesService = GetBikesService(thisUser.Username);
-
-            var result = bikesService.RentBike(rentBikeRequest);
+            var bikesService = GetBikesService(user.Username);
+            var result = bikesService.RentBike(new RentBikeRequest
+            {
+                Id = bikeId.ToString(),
+            });
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
@@ -226,50 +170,39 @@ namespace BikesRentalServer.Tests.BikesServiceTests
         [Fact]
         public void RentAlreadyRentedBikeShouldReturnInvalidState()
         {
-            var bikeId = 123;
-            var stationId = 1;
-            var thisUser = new User
+            const int bikeId = 123;
+            var user = new User
             {
                 Id = 1,
-                Username = "zdzislaw"
+                Username = "zdzislaw",
             };
-            var rentBikeRequest = new RentBikeRequest
-            {
-                Id = bikeId.ToString()
-            };
-            var station = new Station
-            {
-                Id = stationId,
-                Status = StationStatus.Working,
-            };
-
-            BikesRepository.Setup(r =>
-                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
-            ).Verifiable();
-
-            UsersRepository.Setup(r =>
-                r.GetRentedBikes(It.IsAny<string>())
-            ).Returns(new List<Bike>());
-
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>()))
+                .Returns(new User
+                {
+                    RentedBikes = new List<Bike>(),
+                });
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Working, //Rented
-                    User = thisUser,
-                    Station = station
+                    User = new User
+                    {
+                        Id = 2,
+                        Username = "some other guy",
+                    },
                 });
-
             StationsRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Station
                 {
-                    Id = stationId,
+                    Id = 1,
                     Status = StationStatus.Working
                 });
 
-            var bikesService = GetBikesService(thisUser.Username);
-
-            var result = bikesService.RentBike(rentBikeRequest);
+            var bikesService = GetBikesService(user.Username);
+            var result = bikesService.RentBike(new RentBikeRequest
+            {
+                Id = bikeId.ToString(),
+            });
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
@@ -277,46 +210,33 @@ namespace BikesRentalServer.Tests.BikesServiceTests
         }
 
         [Fact]
-        public void RentingAboveFourthBikeShouldReturnInvalidState()
+        public void RentingBikeAboveLimitShouldReturnInvalidState()
         {
-            var bikeId = 123;
-            var stationId = 1;
-            var thisUser = new User
+            const int bikeId = 123;
+            var user = new User
             {
                 Id = 1,
-                Username = "zdzislaw"
+                Username = "zdzislaw",
             };
-            var rentBikeRequest = new RentBikeRequest
-            {
-                Id = bikeId.ToString()
-            };
-
-            BikesRepository.Setup(r =>
-                r.Associate(It.IsAny<string>(), It.IsAny<Station>())
-            ).Verifiable();
-
-            UsersRepository.Setup(r =>
-                r.GetRentedBikes(It.IsAny<string>())
-            ).Returns(Enumerable.Range(0, 4).Select(_ => new Bike()));
-
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>()))
+                .Returns(new User
+                {
+                    RentedBikes = Enumerable.Range(0, 4).Select(_ => new Bike()).ToList(),
+                });
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
                     Status = BikeStatus.Working,
-                    User = thisUser,
+                    User = user,
                 });
+            BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>())).Verifiable();
 
-            StationsRepository.Setup(r => r.Get(It.IsAny<string>()))
-                .Returns(new Station
-                {
-                    Id = stationId,
-                    Status = StationStatus.Working
-                });
-
-            var bikesService = GetBikesService(thisUser.Username);
-
-            var result = bikesService.RentBike(rentBikeRequest);
+            var bikesService = GetBikesService(user.Username);
+            var result = bikesService.RentBike(new RentBikeRequest
+            {
+                Id = bikeId.ToString(),
+            });
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
@@ -326,79 +246,72 @@ namespace BikesRentalServer.Tests.BikesServiceTests
         [Fact]
         public void RentBikeReservedByRequestingUserShouldSucceed()
         {
-            var bikeId = 123;
-            var stationId = 1;
-            var thisUser = new User
+            const int bikeId = 123;
+            const int stationId = 1;
+            var user = new User
             {
                 Id = 1,
-                Username = "zdzislaw"
-            };
-            var rentBikeRequest = new RentBikeRequest
-            {
-                Id = bikeId.ToString()
-            };
-            var station = new Station
-            {
-                Id = stationId,
-                Status = StationStatus.Working,
+                Username = "zdzislaw",
+                RentedBikes = new List<Bike>(),
             };
             var bike = new Bike
             {
                 Id = bikeId,
                 Status = BikeStatus.Working,
-                Station = station,
+                Station = new Station
+                {
+                    Id = stationId,
+                    Status = StationStatus.Working,
+                },
             };
 
-            BikesRepository.Setup(r =>
-                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
-            ).Verifiable();
-
-            UsersRepository.Setup(r =>
-                r.GetRentedBikes(It.IsAny<string>())
-            ).Returns(new List<Bike>());
-
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>())).Returns(user);
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
+            BikesRepository.Setup(r => r.Associate(bikeId.ToString(), It.IsAny<User>()))
+                .Returns(new Bike
+                {
+                    User = user,
+                    Id = bikeId,
+                })
+                .Verifiable();
             ReservationsRepository.Setup(r => r.GetActiveReservation(bikeId.ToString()))
                 .Returns(new Reservation
                 {
                     Bike = bike,
-                    User = thisUser,
+                    User = user,
                 });
-
             ReservationsRepository.Setup(r => r.Remove(It.IsAny<Reservation>())).Verifiable();
-
-            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
-                .Returns(bike);
-
-            var bikesService = GetBikesService(thisUser.Username);
-
-            var result = bikesService.RentBike(rentBikeRequest);
+            
+            var bikesService = GetBikesService(user.Username);
+            var result = bikesService.RentBike(new RentBikeRequest
+            {
+                Id = bikeId.ToString(),
+            });
 
             result.Status.Should().Be(Status.Success);
             BikesRepository.Verify();
             result.Object.Should().NotBeNull();
             result.Object.Id.Should().Be(bikeId);
-            result.Object.Status.Should().Be(BikeStatus.Working); // Rented
+            result.Object.Station.Should().BeNull();
+            result.Object.Status.Should().Be(BikeStatus.Working);
             ReservationsRepository.Verify();
         }
 
         [Fact]
         public void RentBikeReservedByAnotherUserShouldReturnInvalidState()
         {
-            var bikeId = 123;
-            var stationId = 1;
-            var thisUser = new User
+            const int bikeId = 123;
+            const int stationId = 1;
+            var user = new User
             {
                 Id = 1,
-                Username = "zdzislaw"
+                Username = "zdzislaw",
+                RentedBikes = new List<Bike>(),
             };
             var otherUser = new User
             {
                 Id = 3,
-                Username = "janusz"
-            };
-            var rentBikeRequest = new RentBikeRequest
-            {
-                Id = bikeId.ToString()
+                Username = "janusz",
             };
             var station = new Station
             {
@@ -412,34 +325,27 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                 Station = station,
             };
 
-            BikesRepository.Setup(r =>
-                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
-            ).Verifiable();
-
-            UsersRepository.Setup(r =>
-                r.GetRentedBikes(It.IsAny<string>())
-            ).Returns(new List<Bike>());
-
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>())).Returns(user);
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
+            BikesRepository.Setup(r => r.Associate(bikeId.ToString(), It.IsAny<User>())).Verifiable();
             ReservationsRepository.Setup(r => r.GetActiveReservation(bikeId.ToString()))
                 .Returns(new Reservation
                 {
                     Bike = bike,
                     User = otherUser,
                 });
-
             ReservationsRepository.Setup(r => r.Remove(It.IsAny<Reservation>())).Verifiable();
 
-            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
-                .Returns(bike);
-
-            var bikesService = GetBikesService(thisUser.Username);
-
-            var result = bikesService.RentBike(rentBikeRequest);
+            var bikesService = GetBikesService(user.Username);
+            var result = bikesService.RentBike(new RentBikeRequest
+            {
+                Id = bikeId.ToString(),
+            });
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
-            BikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
             ReservationsRepository.Verify(r => r.Remove(It.IsAny<Reservation>()), Times.Never);
+            BikesRepository.Verify(r => r.Associate(bikeId.ToString(), It.IsAny<User>()), Times.Never);
         }
     }
 }

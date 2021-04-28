@@ -1,31 +1,25 @@
 ﻿using BikesRentalServer.Dtos.Requests;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services;
-using BikesRentalServer.Tests.BikesService;
 using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.BikesServiceTests
+namespace BikesRentalServer.Tests.BikesService
 {
     public class BlockBike : BikesServiceTestsBase
     {
-        public BlockBike() : base()
-        {
-        }
-
         [Fact]
         public void BlockBikeShouldSucceed()
         {
-            var bikeId = 123;
-            var blockBikeRequest = new BlockBikeRequest
-            {
-                Id = bikeId.ToString()
-            };
-            BikesRepository.Setup(r => 
-                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
-            ).Verifiable();
-
+            const int bikeId = 123;
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Blocked,
+                })
+                .Verifiable();
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
@@ -34,8 +28,10 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                 });
 
             var bikesService = GetBikesService();
-
-            var result = bikesService.BlockBike(blockBikeRequest);
+            var result = bikesService.BlockBike(new BlockBikeRequest
+            {
+                Id = bikeId.ToString(),
+            });
 
             result.Status.Should().Be(Status.Success);
             BikesRepository.Verify();
@@ -47,15 +43,8 @@ namespace BikesRentalServer.Tests.BikesServiceTests
         [Fact]
         public void BlockBikeShouldChangeBikeStatusForBlocked()
         {
-            var bikeId = 123;
-            var blockBikeRequest = new BlockBikeRequest
-            {
-                Id = bikeId.ToString()
-            };
-            BikesRepository.Setup(r =>
-                r.SetStatus(It.Is<string>(id => id == bikeId.ToString()), It.Is<BikeStatus>(b => b == BikeStatus.Blocked))
-            ).Verifiable();
-
+            const int bikeId = 123;
+            BikesRepository.Setup(r => r.SetStatus(It.Is<string>(id => id == bikeId.ToString()), It.Is<BikeStatus>(b => b == BikeStatus.Blocked))).Verifiable();
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
@@ -64,8 +53,10 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                 });
 
             var bikesService = GetBikesService();
-
-            var result = bikesService.BlockBike(blockBikeRequest);
+            var result = bikesService.BlockBike(new BlockBikeRequest
+            {
+                Id = bikeId.ToString(),
+            });
 
             result.Status.Should().Be(Status.Success);
             BikesRepository.Verify();
@@ -74,21 +65,14 @@ namespace BikesRentalServer.Tests.BikesServiceTests
         [Fact]
         public void BlockNotExistingBikeShouldReturnEntityNotFound()
         {
-            var bikeId = 123;
-            var blockBikeRequest = new BlockBikeRequest
-            {
-                Id = bikeId.ToString()
-            };
-            BikesRepository.Setup(r =>
-                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
-            ).Verifiable();
-
-            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
-                .Returns((Bike)null);
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())).Verifiable();
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Bike)null);
 
             var bikesService = GetBikesService();
-
-            var result = bikesService.BlockBike(blockBikeRequest);
+            var result = bikesService.BlockBike(new BlockBikeRequest
+            {
+                Id = "123",
+            });
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
@@ -98,25 +82,20 @@ namespace BikesRentalServer.Tests.BikesServiceTests
         [Fact] 
         public void BlockAlreadyBlockedBikeShouldReturnInvalidState()
         {
-            var bikeId = 123;
-            var blockBikeRequest = new BlockBikeRequest
-            {
-                Id = bikeId.ToString()
-            };
-            BikesRepository.Setup(r =>
-                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
-            ).Verifiable();
-
+            const int bikeId = 123;
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())).Verifiable();
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
-                    Status = BikeStatus.Blocked
+                    Status = BikeStatus.Blocked,
                 });
 
             var bikesService = GetBikesService();
-
-            var result = bikesService.BlockBike(blockBikeRequest);
+            var result = bikesService.BlockBike(new BlockBikeRequest
+            {
+                Id = bikeId.ToString(),
+            });
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
@@ -126,15 +105,8 @@ namespace BikesRentalServer.Tests.BikesServiceTests
         [Fact] 
         public void BlockRentedBikeShouldReturnInvalidState()
         {
-            var bikeId = 123;
-            var blockBikeRequest = new BlockBikeRequest
-            {
-                Id = bikeId.ToString()
-            };
-            BikesRepository.Setup(r =>
-                r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())
-            ).Verifiable();
-
+            const int bikeId = 123;
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())).Verifiable();
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
@@ -143,8 +115,10 @@ namespace BikesRentalServer.Tests.BikesServiceTests
                 });
 
             var bikesService = GetBikesService();
-
-            var result = bikesService.BlockBike(blockBikeRequest);
+            var result = bikesService.BlockBike(new BlockBikeRequest
+            {
+                Id = bikeId.ToString(),
+            });
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
