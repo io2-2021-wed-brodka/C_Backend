@@ -3,7 +3,6 @@ using BikesRentalServer.DataAccess.Repositories;
 using BikesRentalServer.Models;
 using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
-using System;
 using System.Linq;
 using Xunit;
 
