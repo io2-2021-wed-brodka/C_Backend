@@ -37,9 +37,18 @@ namespace BikesRentalServer.WebApi.Authorization
                 return;
             }
 
-            var username = Encoding.UTF8.GetString(Convert.FromBase64String(token.ToString().Replace("Bearer ", "")));
-            var user = _dbContext.Users.SingleOrDefault(u => u.Username == username);
+            string username;
+            try
+            {
+                username = Encoding.UTF8.GetString(Convert.FromBase64String(token.ToString().Replace("Bearer ", "")));
+            }
+            catch (FormatException)
+            {
+                context.Result = new UnauthorizedObjectResult("Unauthorized");
+                return;
+            }
             
+            var user = _dbContext.Users.SingleOrDefault(u => u.Username == username);
             if (user is null || !roles.Contains(user.Role))
             {
                 context.Result = new UnauthorizedObjectResult("Unauthorized");
