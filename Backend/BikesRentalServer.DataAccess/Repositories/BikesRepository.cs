@@ -78,7 +78,7 @@ namespace BikesRentalServer.DataAccess.Repositories
         public Bike Associate(string id, User user)
         {
             var bike = Get(id);
-            if (bike is null)
+            if (bike is null || !_dbContext.Users.Contains(user))
                 return null;
 
             bike.Station = null;
@@ -91,7 +91,7 @@ namespace BikesRentalServer.DataAccess.Repositories
         public Bike Associate(string id, Station station)
         {
             var bike = Get(id);
-            if (bike is null)
+            if (bike is null || !_dbContext.Stations.Contains(station))
                 return null;
 
             bike.User = null;
