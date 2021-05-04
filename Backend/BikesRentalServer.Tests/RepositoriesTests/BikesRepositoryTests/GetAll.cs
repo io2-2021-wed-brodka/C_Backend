@@ -26,7 +26,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
                     Name = "station",
                 })
                 .Entity;
-            var bikes = new[]
+            var bikes = new []
             {
                 new Bike
                 {

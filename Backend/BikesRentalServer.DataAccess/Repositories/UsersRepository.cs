@@ -49,6 +49,9 @@ namespace BikesRentalServer.DataAccess.Repositories
 
         public User Remove(User entity)
         {
+            if (!_dbContext.Users.Contains(entity))
+                return null;
+            
             var user = _dbContext.Users.Remove(entity).Entity;
             _dbContext.SaveChanges();
 

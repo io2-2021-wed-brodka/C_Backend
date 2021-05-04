@@ -49,6 +49,9 @@ namespace BikesRentalServer.DataAccess.Repositories
 
         public Bike Remove(Bike entity)
         {
+            if (!_dbContext.Bikes.Contains(entity))
+                return null;
+            
             var bike = _dbContext.Bikes.Remove(entity).Entity;
             _dbContext.SaveChanges();
 

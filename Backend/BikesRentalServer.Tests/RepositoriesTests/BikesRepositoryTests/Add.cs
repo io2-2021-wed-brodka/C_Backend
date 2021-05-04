@@ -37,6 +37,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
                     Name = "Test",
                 })
                 .Entity;
+            _dbContext.SaveChanges();
 
             var result = _bikesRepository.Add(new Bike
             {
