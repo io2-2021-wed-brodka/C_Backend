@@ -5,7 +5,7 @@ using Moq;
 using System;
 using Xunit;
 
-namespace BikesRentalServer.Tests.BikesService
+namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
 {
     public class RemoveBike : BikesServiceTestsBase
     {

@@ -2,7 +2,7 @@
 using BikesRentalServer.Services.Abstract;
 using Moq;
 
-namespace BikesRentalServer.Tests.UsersService
+namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
 {
     public class UsersServiceTestsBase
     {

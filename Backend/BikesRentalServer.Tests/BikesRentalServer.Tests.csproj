@@ -29,8 +29,4 @@
     <ProjectReference Include="..\BikesRentalServer\BikesRentalServer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="StationsService" />
-  </ItemGroup>
-
 </Project>

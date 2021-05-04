@@ -4,7 +4,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.UsersService
+namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
 {
     public class GetUser : UsersServiceTestsBase
     {

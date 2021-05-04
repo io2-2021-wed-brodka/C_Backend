@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.BikesService
+namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
 {
     public class GetRentedBikes : BikesServiceTestsBase
     {

@@ -4,7 +4,7 @@ using FluentAssertions;
 using System.Collections.Generic;
 using Xunit;
 
-namespace BikesRentalServer.Tests.UsersService
+namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
 {
     public class GetAllUsers : UsersServiceTestsBase
     {

@@ -4,7 +4,7 @@ using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
 using Moq;
 
-namespace BikesRentalServer.Tests.StationsService
+namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
 {
     public class StationsServiceTestsBase
     {

@@ -3,7 +3,7 @@ using BikesRentalServer.Services;
 using FluentAssertions;
 using Xunit;
 
-namespace BikesRentalServer.Tests.UsersService
+namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
 {
     public class GenerateBearerToken : UsersServiceTestsBase
     {

@@ -5,7 +5,7 @@ using Moq;
 using System.Collections.Generic;
 using Xunit;
 
-namespace BikesRentalServer.Tests.StationsService
+namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
 {
     public class RemoveStation : StationsServiceTestsBase
     {

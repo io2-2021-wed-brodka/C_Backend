@@ -4,7 +4,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace BikesRentalServer.Tests.BikesService
+namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
 {
     public class BlockBike : BikesServiceTestsBase
     {
