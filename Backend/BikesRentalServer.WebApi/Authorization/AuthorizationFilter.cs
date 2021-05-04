@@ -42,7 +42,7 @@ namespace BikesRentalServer.WebApi.Authorization
             {
                 username = Encoding.UTF8.GetString(Convert.FromBase64String(token.ToString().Replace("Bearer ", "")));
             }
-            catch (FormatException _)
+            catch (FormatException)
             {
                 context.Result = new UnauthorizedObjectResult("Unauthorized");
                 return;
