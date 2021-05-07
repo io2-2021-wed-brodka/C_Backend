@@ -50,6 +50,9 @@ namespace BikesRentalServer.DataAccess.Repositories
 
         public Reservation Remove(Reservation entity)
         {
+            if (!_dbContext.Reservations.Contains(entity))
+                return null;
+            
             var reservation = _dbContext.Reservations.Remove(entity).Entity;
             _dbContext.SaveChanges();
 
