@@ -28,6 +28,8 @@ namespace BikesRentalServer.Services
             _userContext = userContext;
         }
 
+        #region Basics
+        
         public ServiceActionResult<IEnumerable<Bike>> GetAllBikes()
         {
             var bikes = _bikesRepository.GetAll();
@@ -69,6 +71,16 @@ namespace BikesRentalServer.Services
             bike = _bikesRepository.Remove(bike);
             return ServiceActionResult.Success(bike);
         }
+        
+        #endregion
+        
+        #region Renting
+
+        public ServiceActionResult<IEnumerable<Bike>> GetRentedBikes()
+        {
+            var user = _usersRepository.GetByUsername(_userContext.Username);
+            return ServiceActionResult.Success<IEnumerable<Bike>>(user.RentedBikes);
+        }
 
         public ServiceActionResult<Bike> RentBike(string id)
         {
@@ -100,12 +112,6 @@ namespace BikesRentalServer.Services
             return ServiceActionResult.Success(bike);
         }
 
-        public ServiceActionResult<IEnumerable<Bike>> GetRentedBikes()
-        {
-            var user = _usersRepository.GetByUsername(_userContext.Username);
-            return ServiceActionResult.Success<IEnumerable<Bike>>(user.RentedBikes);
-        }
-
         public ServiceActionResult<Bike> GiveBikeBack(string bikeId, string stationId)
         {
             var station = _stationsRepository.Get(stationId);
@@ -123,6 +129,16 @@ namespace BikesRentalServer.Services
             _bikesRepository.SetStatus(bikeId, BikeStatus.Available);
             bike = _bikesRepository.Associate(bikeId, station);
             return ServiceActionResult.Success(bike);
+        }
+        
+        #endregion
+        
+        #region Blocking
+
+        public ServiceActionResult<IEnumerable<Bike>> GetBlockedBikes()
+        {
+            var bikes = _bikesRepository.GetBlocked();
+            return ServiceActionResult.Success(bikes);
         }
 
         public ServiceActionResult<Bike> BlockBike(string id)
@@ -153,11 +169,17 @@ namespace BikesRentalServer.Services
             bike = _bikesRepository.SetStatus(id, BikeStatus.Available);
             return ServiceActionResult.Success(bike);
         }
+        
+        #endregion
+        
+        #region Reserving
 
-        public ServiceActionResult<IEnumerable<Bike>> GetBlockedBikes()
-        {
-            var bikes = _bikesRepository.GetBlocked();
-            return ServiceActionResult.Success(bikes);
-        }
+        public ServiceActionResult<IEnumerable<Bike>> GetReservedBikes() => throw new NotImplementedException();
+
+        public ServiceActionResult<Bike> ReserveBike(string id) => throw new NotImplementedException();
+
+        public ServiceActionResult<Bike> CancelBikeReservation(string id) => throw new NotImplementedException();
+
+        #endregion
     }
 }
