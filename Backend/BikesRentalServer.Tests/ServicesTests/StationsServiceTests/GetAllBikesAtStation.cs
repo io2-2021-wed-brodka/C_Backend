@@ -3,6 +3,7 @@ using BikesRentalServer.Services;
 using FluentAssertions;
 using Moq;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
@@ -29,13 +30,22 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
         }
 
         [Fact]
-        public void GetAllBikesAtStationShouldReturnAllBikesAtStation()
+        public void GetAllBikesAtStationForAdminShouldReturnAllBikesAtStation()
         {
             var bikes = new List<Bike>
             {
-                new Bike(),
-                new Bike(),
-                new Bike(),
+                new Bike
+                {
+                    Status = BikeStatus.Available,
+                },
+                new Bike
+                {
+                    Status = BikeStatus.Reserved,
+                },
+                new Bike
+                {
+                    Status = BikeStatus.Blocked,
+                },
             };
             var station = new Station
             {
@@ -45,11 +55,87 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
-            var stationsService = GetStationsService();
+            var stationsService = GetStationsService("maklovitz", UserRole.Admin);
             var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEquivalentTo(bikes);
+        }
+
+        [Fact]
+        public void GetAllBikesAtStationForTechShouldReturnAllBikesAtStation()
+        {
+            var bikes = new List<Bike>
+            {
+                new Bike
+                {
+                    Status = BikeStatus.Available,
+                },
+                new Bike
+                {
+                    Status = BikeStatus.Reserved,
+                },
+                new Bike
+                {
+                    Status = BikeStatus.Blocked,
+                },
+            };
+            var station = new Station
+            {
+                Name = "Szpital psychiatryczny",
+                Id = 2,
+                Bikes = bikes,
+            };
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
+
+            var stationsService = GetStationsService("maklovitz", UserRole.Tech);
+            var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Should().BeEquivalentTo(bikes);
+        }
+
+        [Fact]
+        public void GetAllBikesAtStationForUserShouldReturnAllAvailableBikesAtStation()
+        {
+            var availableBikes = new []
+            {
+                new Bike
+                {
+                    Status = BikeStatus.Available,
+                },
+                new Bike
+                {
+                    Status = BikeStatus.Available,
+                },
+                new Bike
+                {
+                    Status = BikeStatus.Available,
+                },
+            };
+            var station = new Station
+            {
+                Name = "Szpital psychiatryczny",
+                Id = 2,
+                Bikes = availableBikes.Concat(new []
+                {
+                    new Bike
+                    {
+                        Status = BikeStatus.Blocked,
+                    },
+                    new Bike
+                    {
+                        Status = BikeStatus.Reserved,
+                    },
+                }).ToList(),
+            };
+            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
+
+            var stationsService = GetStationsService("maklovitz", UserRole.User);
+            var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
+
+            result.Status.Should().Be(Status.Success);
+            result.Object.Should().BeEquivalentTo(availableBikes);
         }
 
         [Fact]
@@ -65,7 +151,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
         }
 
         [Fact]
-        public void GetAllBikesAtBlockedStationForUserShouldReturnInvalidStateForUser()
+        public void GetAllBikesAtBlockedStationForUserShouldReturnInvalidState()
         {
             var station = new Station
             {
