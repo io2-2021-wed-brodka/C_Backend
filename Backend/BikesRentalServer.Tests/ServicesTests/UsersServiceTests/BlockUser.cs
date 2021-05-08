@@ -32,7 +32,7 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
                 .Returns(new User
                 {
                     Id = 34,
-                    Status = UserStatus.Banned,
+                    Status = UserStatus.Blocked,
                 });
 
             var usersService = GetUsersService();
@@ -47,11 +47,11 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
         {
             const string userId = "2";
             ReservationsRepository.Setup(r => r.GetAll()).Returns(new List<Reservation>());
-            UsersRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<UserStatus>(s => s == UserStatus.Banned)))
+            UsersRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<UserStatus>(s => s == UserStatus.Blocked)))
                 .Returns(new User
                 {
                     Id = 2,
-                    Status = UserStatus.Banned,
+                    Status = UserStatus.Blocked,
                     Reservations = new List<Reservation>(),
                 })
                 .Verifiable();
@@ -68,7 +68,7 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
 
             response.Status.Should().Be(Status.Success);
             response.Object.Should().NotBeNull();
-            response.Object.Status.Should().Be(UserStatus.Banned);
+            response.Object.Status.Should().Be(UserStatus.Blocked);
             UsersRepository.Verify();
         }
     }

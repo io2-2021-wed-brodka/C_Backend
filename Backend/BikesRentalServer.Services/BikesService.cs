@@ -189,7 +189,7 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.InvalidState<Bike>("Station is blocked");
 
             var user = _usersRepository.GetByUsername(_userContext.Username);
-            if (user.Status is UserStatus.Banned)
+            if (user.Status is UserStatus.Blocked)
                 return ServiceActionResult.InvalidState<Bike>("User is blocked");
 
             _reservationsRepository.Add(new Reservation

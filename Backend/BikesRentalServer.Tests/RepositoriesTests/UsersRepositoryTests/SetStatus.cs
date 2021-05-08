@@ -29,9 +29,9 @@ namespace BikesRentalServer.Tests.RepositoriesTests.UsersRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            _usersRepository.SetStatus(user.Id.ToString(), UserStatus.Banned);
+            _usersRepository.SetStatus(user.Id.ToString(), UserStatus.Blocked);
 
-            user.Status.Should().Be(UserStatus.Banned);
+            user.Status.Should().Be(UserStatus.Blocked);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.UsersRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            var result = _usersRepository.SetStatus(user.Id.ToString(), UserStatus.Banned);
+            var result = _usersRepository.SetStatus(user.Id.ToString(), UserStatus.Blocked);
 
             result.Should().BeEquivalentTo(user);
         }

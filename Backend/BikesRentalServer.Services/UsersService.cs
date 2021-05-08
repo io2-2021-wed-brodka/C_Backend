@@ -66,10 +66,10 @@ namespace BikesRentalServer.Services
             var user = _usersRepository.Get(userId);
             if (user is null)
                 return ServiceActionResult.EntityNotFound<User>("User doesn't exist");
-            if (user.Status is UserStatus.Banned)
+            if (user.Status is UserStatus.Blocked)
                 return ServiceActionResult.InvalidState<User>("User already blocked");
 
-            user = _usersRepository.SetStatus(userId, UserStatus.Banned);
+            user = _usersRepository.SetStatus(userId, UserStatus.Blocked);
             foreach (var reservation in user.Reservations)
                 _reservationsRepository.Remove(reservation);
 
