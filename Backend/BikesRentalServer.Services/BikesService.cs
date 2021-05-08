@@ -185,6 +185,8 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
             if (bike.Status is BikeStatus.Blocked)
                 return ServiceActionResult.InvalidState<Bike>("Bike is blocked");
+            if (bike.Status is BikeStatus.Reserved)
+                return ServiceActionResult.InvalidState<Bike>("Bike is reserved");
             if (bike.User is not null)
                 return ServiceActionResult.InvalidState<Bike>("Bike is rented");
             if (bike.Station.Status is StationStatus.Blocked)
