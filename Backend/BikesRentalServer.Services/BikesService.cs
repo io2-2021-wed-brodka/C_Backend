@@ -95,6 +95,8 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.InvalidState<Bike>("Station is blocked");
 
             var user = _usersRepository.GetByUsername(_userContext.Username);
+            if (user.Status is UserStatus.Blocked)
+                return ServiceActionResult.UserBlocked<Bike>("User is blocked");
             if (user.RentedBikes.Count >= 4)
                 return ServiceActionResult.InvalidState<Bike>("Rental limit exceeded");
 
@@ -190,7 +192,7 @@ namespace BikesRentalServer.Services
 
             var user = _usersRepository.GetByUsername(_userContext.Username);
             if (user.Status is UserStatus.Blocked)
-                return ServiceActionResult.InvalidState<Bike>("User is blocked");
+                return ServiceActionResult.UserBlocked<Bike>("User is blocked");
 
             _reservationsRepository.Add(new Reservation
             {
