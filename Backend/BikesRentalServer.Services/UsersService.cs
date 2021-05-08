@@ -18,6 +18,23 @@ namespace BikesRentalServer.Services
             _usersRepository = usersRepository;
             _reservationsRepository = reservationsRepository;
         }
+        
+        #region Basics
+
+        public ServiceActionResult<IEnumerable<User>> GetAllUsers()
+        {
+            var users = _usersRepository.GetAll().Where(user => user.Role == UserRole.User);
+            return ServiceActionResult.Success(users);
+        }
+        
+        public ServiceActionResult<User> GetUserByUsernameAndPassword(string username, string password)
+        {
+            var user = _usersRepository.GetByUsernameAndPassword(username, password);
+            if (user is null)
+                return ServiceActionResult.EntityNotFound<User>("User not found");
+            
+            return ServiceActionResult.Success(user);
+        }
 
         public ServiceActionResult<User> AddUser(string username, string password)
         {
@@ -33,21 +50,16 @@ namespace BikesRentalServer.Services
             });
             return ServiceActionResult.Success(user);
         }
-        
-        public ServiceActionResult<User> GetUserByUsernameAndPassword(string username, string password)
-        {
-            var user = _usersRepository.GetByUsernameAndPassword(username, password);
-            if (user is null)
-                return ServiceActionResult.EntityNotFound<User>("User not found");
-            
-            return ServiceActionResult.Success(user);
-        }
 
         public ServiceActionResult<string> GenerateBearerToken(User user)
         {
             var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(user.Username));
             return ServiceActionResult.Success(token);
         }
+        
+        #endregion
+        
+        #region Blocking
 
         public ServiceActionResult<User> BlockUser(string userId)
         {
@@ -77,11 +89,7 @@ namespace BikesRentalServer.Services
             var unblockedUser = _usersRepository.SetStatus(userId, UserStatus.Active);
             return ServiceActionResult.Success(unblockedUser);
         }
-
-        public ServiceActionResult<IEnumerable<User>> GetAllUsers()
-        {
-            var users = _usersRepository.GetAll().Where(user => user.Role == UserRole.User);
-            return ServiceActionResult.Success(users);
-        }
+        
+        #endregion
     }
 }

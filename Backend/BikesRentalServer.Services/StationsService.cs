@@ -18,6 +18,8 @@ namespace BikesRentalServer.Services
             _userContext = userContext;
         }
 
+        #region Basics
+        
         public ServiceActionResult<IEnumerable<Station>> GetAllStations()
         {
             var stations = _stationsRepository.GetAll();
@@ -47,6 +49,16 @@ namespace BikesRentalServer.Services
 
             return ServiceActionResult.Success<IEnumerable<Bike>>(bikes);
         }
+  
+        public ServiceActionResult<Station> AddStation(string name)
+        {
+            var station = _stationsRepository.Add(new Station
+            {
+                Name = name,
+                Status = StationStatus.Active,
+            });
+            return ServiceActionResult.Success(station);
+        }
 
         public ServiceActionResult<Station> RemoveStation(string id)
         {
@@ -59,16 +71,10 @@ namespace BikesRentalServer.Services
             station = _stationsRepository.Remove(id);
             return ServiceActionResult.Success(station);
         }
-  
-        public ServiceActionResult<Station> AddStation(string name)
-        {
-            var station = _stationsRepository.Add(new Station
-            {
-                Name = name,
-                Status = StationStatus.Active,
-            });
-            return ServiceActionResult.Success(station);
-        }
+        
+        #endregion
+        
+        #region Blocking
 
         public ServiceActionResult<IEnumerable<Station>> GetBlockedStations()
         {
@@ -105,5 +111,7 @@ namespace BikesRentalServer.Services
             station = _stationsRepository.SetStatus(id, StationStatus.Active);
             return ServiceActionResult.Success(station);
         }
+        
+        #endregion
     }
 }
