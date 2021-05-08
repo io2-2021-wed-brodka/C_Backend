@@ -176,7 +176,31 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<IEnumerable<Bike>> GetReservedBikes() => throw new NotImplementedException();
 
-        public ServiceActionResult<Bike> ReserveBike(string id) => throw new NotImplementedException();
+        public ServiceActionResult<Bike> ReserveBike(string id)
+        {
+            var bike = _bikesRepository.Get(id);
+            if (bike is null)
+                return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
+            if (bike.Status is BikeStatus.Blocked)
+                return ServiceActionResult.InvalidState<Bike>("Bike is blocked");
+            if (bike.User is not null)
+                return ServiceActionResult.InvalidState<Bike>("Bike is rented");
+            if (bike.Station.Status is StationStatus.Blocked)
+                return ServiceActionResult.InvalidState<Bike>("Station is blocked");
+
+            var user = _usersRepository.GetByUsername(_userContext.Username);
+            if (user.Status is UserStatus.Banned)
+                return ServiceActionResult.InvalidState<Bike>("User is blocked");
+
+            _reservationsRepository.Add(new Reservation
+            {
+                User = user,
+                Bike = bike,
+                ReservationDate = DateTime.Now,
+                ExpirationDate = DateTime.Now.AddMinutes(30),
+            });
+            return ServiceActionResult.Success(bike);
+        }
 
         public ServiceActionResult<Bike> CancelBikeReservation(string id) => throw new NotImplementedException();
 
