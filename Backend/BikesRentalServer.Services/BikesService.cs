@@ -178,32 +178,32 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<IEnumerable<Bike>> GetReservedBikes() => throw new NotImplementedException();
 
-        public ServiceActionResult<Bike> ReserveBike(string id)
+        public ServiceActionResult<Reservation> ReserveBike(string id)
         {
             var bike = _bikesRepository.Get(id);
             if (bike is null)
-                return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
+                return ServiceActionResult.EntityNotFound<Reservation>("Bike not found");
             if (bike.Status is BikeStatus.Blocked)
-                return ServiceActionResult.InvalidState<Bike>("Bike is blocked");
+                return ServiceActionResult.InvalidState<Reservation>("Bike is blocked");
             if (bike.Status is BikeStatus.Reserved)
-                return ServiceActionResult.InvalidState<Bike>("Bike is reserved");
+                return ServiceActionResult.InvalidState<Reservation>("Bike is reserved");
             if (bike.User is not null)
-                return ServiceActionResult.InvalidState<Bike>("Bike is rented");
+                return ServiceActionResult.InvalidState<Reservation>("Bike is rented");
             if (bike.Station.Status is StationStatus.Blocked)
-                return ServiceActionResult.InvalidState<Bike>("Station is blocked");
+                return ServiceActionResult.InvalidState<Reservation>("Station is blocked");
 
             var user = _usersRepository.GetByUsername(_userContext.Username);
             if (user.Status is UserStatus.Blocked)
-                return ServiceActionResult.UserBlocked<Bike>("User is blocked");
+                return ServiceActionResult.UserBlocked<Reservation>("User is blocked");
 
-            _reservationsRepository.Add(new Reservation
+            var reservation = _reservationsRepository.Add(new Reservation
             {
                 User = user,
                 Bike = bike,
                 ReservationDate = DateTime.Now,
                 ExpirationDate = DateTime.Now.AddMinutes(30),
             });
-            return ServiceActionResult.Success(bike);
+            return ServiceActionResult.Success(reservation);
         }
 
         public ServiceActionResult<Bike> CancelBikeReservation(string id) => throw new NotImplementedException();

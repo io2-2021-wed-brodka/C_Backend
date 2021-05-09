@@ -33,7 +33,7 @@ namespace BikesRentalServer.Services.Abstract
         #region Reserving
 
         ServiceActionResult<IEnumerable<Bike>> GetReservedBikes();
-        ServiceActionResult<Bike> ReserveBike(string id);
+        ServiceActionResult<Reservation> ReserveBike(string id);
         ServiceActionResult<Bike> CancelBikeReservation(string bikeId);
 
         #endregion
