@@ -19,6 +19,7 @@
         public static ServiceActionResult<T> Success<T>(T result) => new ServiceActionResult<T>(null, result, Status.Success);
         public static ServiceActionResult<T> EntityNotFound<T>(string message) => new ServiceActionResult<T>(message, default, Status.EntityNotFound);
         public static ServiceActionResult<T> InvalidState<T>(string message) => new ServiceActionResult<T>(message, default, Status.InvalidState);
+        public static ServiceActionResult<T> UserBlocked<T>(string message) => new ServiceActionResult<T>(message, default, Status.UserBlocked);
     }
 
     public enum Status
@@ -26,5 +27,6 @@
         Success,
         EntityNotFound,
         InvalidState,
+        UserBlocked,
     }
 }

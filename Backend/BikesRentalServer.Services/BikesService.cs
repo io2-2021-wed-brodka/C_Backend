@@ -28,6 +28,8 @@ namespace BikesRentalServer.Services
             _userContext = userContext;
         }
 
+        #region Basics
+        
         public ServiceActionResult<IEnumerable<Bike>> GetAllBikes()
         {
             var bikes = _bikesRepository.GetAll();
@@ -69,6 +71,16 @@ namespace BikesRentalServer.Services
             bike = _bikesRepository.Remove(bike);
             return ServiceActionResult.Success(bike);
         }
+        
+        #endregion
+        
+        #region Renting
+
+        public ServiceActionResult<IEnumerable<Bike>> GetRentedBikes()
+        {
+            var user = _usersRepository.GetByUsername(_userContext.Username);
+            return ServiceActionResult.Success<IEnumerable<Bike>>(user.RentedBikes);
+        }
 
         public ServiceActionResult<Bike> RentBike(string id)
         {
@@ -83,6 +95,8 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.InvalidState<Bike>("Station is blocked");
 
             var user = _usersRepository.GetByUsername(_userContext.Username);
+            if (user.Status is UserStatus.Blocked)
+                return ServiceActionResult.UserBlocked<Bike>("User is blocked");
             if (user.RentedBikes.Count >= 4)
                 return ServiceActionResult.InvalidState<Bike>("Rental limit exceeded");
 
@@ -98,12 +112,6 @@ namespace BikesRentalServer.Services
             _bikesRepository.SetStatus(id, BikeStatus.Rented);
             bike = _bikesRepository.Associate(id, user);
             return ServiceActionResult.Success(bike);
-        }
-
-        public ServiceActionResult<IEnumerable<Bike>> GetRentedBikes()
-        {
-            var user = _usersRepository.GetByUsername(_userContext.Username);
-            return ServiceActionResult.Success<IEnumerable<Bike>>(user.RentedBikes);
         }
 
         public ServiceActionResult<Bike> GiveBikeBack(string bikeId, string stationId)
@@ -123,6 +131,16 @@ namespace BikesRentalServer.Services
             _bikesRepository.SetStatus(bikeId, BikeStatus.Available);
             bike = _bikesRepository.Associate(bikeId, station);
             return ServiceActionResult.Success(bike);
+        }
+        
+        #endregion
+        
+        #region Blocking
+
+        public ServiceActionResult<IEnumerable<Bike>> GetBlockedBikes()
+        {
+            var bikes = _bikesRepository.GetBlocked();
+            return ServiceActionResult.Success(bikes);
         }
 
         public ServiceActionResult<Bike> BlockBike(string id)
@@ -153,11 +171,43 @@ namespace BikesRentalServer.Services
             bike = _bikesRepository.SetStatus(id, BikeStatus.Available);
             return ServiceActionResult.Success(bike);
         }
+        
+        #endregion
+        
+        #region Reserving
 
-        public ServiceActionResult<IEnumerable<Bike>> GetBlockedBikes()
+        public ServiceActionResult<IEnumerable<Bike>> GetReservedBikes() => throw new NotImplementedException();
+
+        public ServiceActionResult<Reservation> ReserveBike(string id)
         {
-            var bikes = _bikesRepository.GetBlocked();
-            return ServiceActionResult.Success(bikes);
+            var bike = _bikesRepository.Get(id);
+            if (bike is null)
+                return ServiceActionResult.EntityNotFound<Reservation>("Bike not found");
+            if (bike.Status is BikeStatus.Blocked)
+                return ServiceActionResult.InvalidState<Reservation>("Bike is blocked");
+            if (bike.Status is BikeStatus.Reserved)
+                return ServiceActionResult.InvalidState<Reservation>("Bike is reserved");
+            if (bike.User is not null)
+                return ServiceActionResult.InvalidState<Reservation>("Bike is rented");
+            if (bike.Station.Status is StationStatus.Blocked)
+                return ServiceActionResult.InvalidState<Reservation>("Station is blocked");
+
+            var user = _usersRepository.GetByUsername(_userContext.Username);
+            if (user.Status is UserStatus.Blocked)
+                return ServiceActionResult.UserBlocked<Reservation>("User is blocked");
+
+            var reservation = _reservationsRepository.Add(new Reservation
+            {
+                User = user,
+                Bike = bike,
+                ReservationDate = DateTime.Now,
+                ExpirationDate = DateTime.Now.AddMinutes(30),
+            });
+            return ServiceActionResult.Success(reservation);
         }
+
+        public ServiceActionResult<Bike> CancelBikeReservation(string id) => throw new NotImplementedException();
+
+        #endregion
     }
 }

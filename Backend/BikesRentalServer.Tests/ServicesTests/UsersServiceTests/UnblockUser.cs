@@ -54,7 +54,7 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
                 .Returns(new User
                 {
                     Id = 2,
-                    Status = UserStatus.Banned,
+                    Status = UserStatus.Blocked,
                 });
 
             var usersService = GetUsersService();

@@ -31,7 +31,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.UsersRepositoryTests
         public void AddShouldReturnAddedUser()
         {
             const string username = "worst user ever";
-            const UserStatus status = UserStatus.Banned;
+            const UserStatus status = UserStatus.Blocked;
 
             var result = _usersRepository.Add(new User
             {

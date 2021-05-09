@@ -16,7 +16,7 @@ namespace BikesRentalServer.Models
     public enum UserStatus
     {
         Active,
-        Banned,
+        Blocked,
     }
 
     public enum UserRole

@@ -48,7 +48,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 Status.Success => Created($"/users/{response.Object.Id}", response.Object),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
-                _ => throw new InvalidOperationException("Invalid state"),
+                Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
         }
 
@@ -62,7 +62,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 Status.Success => NoContent(),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
-                _ => throw new InvalidOperationException("Invalid state"),
+                Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
         }
         
@@ -78,7 +78,7 @@ namespace BikesRentalServer.WebApi.Controllers
                     Token = _usersService.GenerateBearerToken(response.Object).Object,
                 }),
                 Status.EntityNotFound => Unauthorized("Bad credentials"),
-                Status.InvalidState or _ => throw new InvalidOperationException("Invalid state"),
+                Status.InvalidState or Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
         }
 
@@ -93,7 +93,7 @@ namespace BikesRentalServer.WebApi.Controllers
                     Token = _usersService.GenerateBearerToken(response.Object).Object,
                 }),
                 Status.InvalidState => Conflict("Conflicting registration data"),
-                Status.EntityNotFound or _ => throw new InvalidOperationException("Invalid state"),
+                Status.EntityNotFound or Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
         }
 

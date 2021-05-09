@@ -14,7 +14,6 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
         {
             const string userId = "2";
             UsersRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((User)null);
-            ReservationsRepository.Setup(r => r.GetAll()).Returns(new List<Reservation>());
 
             var usersService = GetUsersService();
             var response = usersService.BlockUser(userId);
@@ -26,17 +25,16 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
         [Fact]
         public void BlockAlreadyBlockedUserShouldReturnInvalidState()
         {
-            const string userId = "2";
-            ReservationsRepository.Setup(r => r.GetAll()).Returns(new List<Reservation>());
+            const int userId = 2;
             UsersRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new User
                 {
-                    Id = 34,
-                    Status = UserStatus.Banned,
+                    Id = userId,
+                    Status = UserStatus.Blocked,
                 });
 
             var usersService = GetUsersService();
-            var response = usersService.BlockUser(userId);
+            var response = usersService.BlockUser(userId.ToString());
 
             response.Status.Should().Be(Status.InvalidState);
             response.Object.Should().BeNull();
@@ -45,13 +43,12 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
         [Fact]
         public void BlockUserShouldSetUserStateToBanned()
         {
-            const string userId = "2";
-            ReservationsRepository.Setup(r => r.GetAll()).Returns(new List<Reservation>());
-            UsersRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<UserStatus>(s => s == UserStatus.Banned)))
+            const int userId = 2;
+            UsersRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<UserStatus>(s => s == UserStatus.Blocked)))
                 .Returns(new User
                 {
-                    Id = 2,
-                    Status = UserStatus.Banned,
+                    Id = userId,
+                    Status = UserStatus.Blocked,
                     Reservations = new List<Reservation>(),
                 })
                 .Verifiable();
@@ -64,12 +61,48 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
                 });
 
             var usersService = GetUsersService();
-            var response = usersService.BlockUser(userId);
+            var response = usersService.BlockUser(userId.ToString());
 
             response.Status.Should().Be(Status.Success);
             response.Object.Should().NotBeNull();
-            response.Object.Status.Should().Be(UserStatus.Banned);
+            response.Object.Status.Should().Be(UserStatus.Blocked);
             UsersRepository.Verify();
+        }
+
+        [Fact]
+        public void BlockUserShouldRemoveAllReservationsOfBlockedUser()
+        {
+            const int userId = 2;
+            var reservations = new List<Reservation>
+            {
+                new Reservation(),
+                new Reservation(),
+                new Reservation(),
+                new Reservation(),
+            };
+            UsersRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<UserStatus>(s => s == UserStatus.Blocked)))
+                .Returns(new User
+                {
+                    Id = userId,
+                    Status = UserStatus.Blocked,
+                    Reservations = new List<Reservation>(),
+                });
+            UsersRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new User
+                {
+                    Id = userId,
+                    Status = UserStatus.Active,
+                    Reservations = reservations,
+                });
+            ReservationsRepository.Setup(r => r.Remove(It.IsAny<Reservation>())).Returns(new Reservation()).Verifiable();
+
+            var usersService = GetUsersService();
+            var response = usersService.BlockUser(userId.ToString());
+
+            response.Status.Should().Be(Status.Success);
+            response.Object.Should().NotBeNull();
+            response.Object.Reservations.Should().BeEmpty();
+            ReservationsRepository.Verify(r => r.Remove(It.IsAny<Reservation>()), Times.Exactly(reservations.Count));
         }
     }
 }

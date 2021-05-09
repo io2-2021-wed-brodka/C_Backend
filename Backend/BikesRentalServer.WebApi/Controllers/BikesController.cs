@@ -5,6 +5,7 @@ using BikesRentalServer.WebApi.Authorization;
 using BikesRentalServer.WebApi.Authorization.Attributes;
 using BikesRentalServer.WebApi.Dtos.Requests;
 using BikesRentalServer.WebApi.Dtos.Responses;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -73,7 +74,7 @@ namespace BikesRentalServer.WebApi.Controllers
                     },
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
-                Status.InvalidState or _ => throw new InvalidOperationException("Invalid state"),
+                Status.InvalidState or Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
         }
 
@@ -104,7 +105,7 @@ namespace BikesRentalServer.WebApi.Controllers
                     },
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
-                Status.InvalidState or _ => throw new InvalidOperationException("Invalid state"),
+                Status.InvalidState or Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
         }
 
@@ -118,7 +119,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 Status.Success => NoContent(),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
-                _ => throw new InvalidOperationException("Invalid state"),
+                Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
         }
 
@@ -165,6 +166,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
+                Status.UserBlocked => Forbid(),
                 _ => throw new InvalidOperationException("Invalid state"),
             };
         }
@@ -214,7 +216,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
-                _ => throw new InvalidOperationException("Invalid state"),
+                Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
         }
 
@@ -229,7 +231,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 Status.Success => NoContent(),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
-                _ => throw new InvalidOperationException("Invalid state"),
+                Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
         }
     }

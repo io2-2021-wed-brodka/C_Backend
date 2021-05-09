@@ -349,5 +349,34 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             result.Object.Should().BeNull();
             BikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<User>()), Times.Never);
         }
+
+        [Fact]
+        public void RentBikeByBlockedUserShouldReturnUserBlocked()
+        {
+            const int bikeId = 2;
+            var user = new User
+            {
+                Status = UserStatus.Blocked,
+            };
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>())).Returns(user).Verifiable();
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Available,
+                    Station = new Station
+                    {
+                        Status = StationStatus.Active,
+                    },
+                });
+            BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), user)).Verifiable();
+
+            var bikesService = GetBikesService();
+            var result = bikesService.RentBike(bikeId.ToString());
+
+            result.Status.Should().Be(Status.UserBlocked);
+            result.Object.Should().BeNull();
+            BikesRepository.Verify(r => r.Associate(It.IsAny<string>(), user), Times.Never);
+        }
     }
 }
