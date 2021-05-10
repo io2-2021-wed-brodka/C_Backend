@@ -39,18 +39,14 @@ const StationsTab = () => {
       </Button>
       <Button
         variant="contained"
-        color={
-          stationFilter == StationFilterType.Active ? 'secondary' : 'primary'
-        }
+        color={stationFilter == StationFilterType.Active ? 'secondary' : 'primary'}
         onClick={() => SetStationFilter(StationFilterType.Active)}
       >
         Active
       </Button>
       <Button
         variant="contained"
-        color={
-          stationFilter == StationFilterType.Blocked ? 'secondary' : 'primary'
-        }
+        color={stationFilter == StationFilterType.Blocked ? 'secondary' : 'primary'}
         onClick={() => SetStationFilter(StationFilterType.Blocked)}
       >
         Blocked
@@ -60,14 +56,8 @@ const StationsTab = () => {
       <DataLoader data={data}>
         {stations =>
           stations
-            .filter(
-              station =>
-                station.status == stationFilter ||
-                stationFilter == StationFilterType.All,
-            )
-            .map(station => (
-              <Station key={station.id} forceRefresh={refresh} {...station} />
-            ))
+            .filter(station => station.status == stationFilter || stationFilter == StationFilterType.All)
+            .map(station => <Station key={station.id} forceRefresh={refresh} {...station} />)
         }
       </DataLoader>
       <SnackBar {...snackbar.props} />

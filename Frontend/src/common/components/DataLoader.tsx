@@ -8,10 +8,7 @@ type Props<T> = {
   children: (results: T) => React.ReactNode;
 };
 
-const DataLoader = <T,>({
-  data: { loading, error, results },
-  children,
-}: Props<T>) => {
+const DataLoader = <T,>({ data: { loading, error, results }, children }: Props<T>) => {
   return (
     <>
       {loading && <Spinner />}

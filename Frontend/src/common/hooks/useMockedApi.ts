@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 import { DataSource } from './usePromise';
 
-const useMockedApi = <T>(
-  expectedResult?: T,
-  expectedError?: string,
-): DataSource<T> => {
+const useMockedApi = <T>(expectedResult?: T, expectedError?: string): DataSource<T> => {
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);

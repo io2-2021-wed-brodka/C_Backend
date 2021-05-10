@@ -1,15 +1,7 @@
 import React from 'react';
 import { useServices } from './../../common/services';
 import DataLoader from '../../common/components/DataLoader';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  List,
-  ListItem,
-  ListItemText,
-} from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogTitle, List, ListItem, ListItemText } from '@material-ui/core';
 
 import usePromise from '../../common/hooks/usePromise';
 import { Station } from './../../common/api/models/station';
@@ -32,11 +24,7 @@ const StationsDialog = ({ close, selectStation }: Props) => {
           {stations => (
             <List>
               {stations.map(station => (
-                <ListItem
-                  button
-                  key={station.name}
-                  onClick={() => selectStation(station)}
-                >
+                <ListItem button key={station.name} onClick={() => selectStation(station)}>
                   <>
                     <ListItemIconSansPadding>
                       <RoomIcon />

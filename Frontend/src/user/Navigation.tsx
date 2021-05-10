@@ -46,21 +46,9 @@ const Navigation = ({ pathname }: Props) => {
 
   return (
     <Paper className={classes.root} elevation={0} square>
-      <Tabs
-        value={pathname}
-        onChange={handleTabChange}
-        indicatorColor="primary"
-        textColor="primary"
-        centered
-      >
+      <Tabs value={pathname} onChange={handleTabChange} indicatorColor="primary" textColor="primary" centered>
         {tabs.map(({ name, url }) => (
-          <Tab
-            label={name}
-            key={name}
-            component={Link}
-            to={url}
-            value={url}
-          ></Tab>
+          <Tab label={name} key={name} component={Link} to={url} value={url}></Tab>
         ))}
       </Tabs>
     </Paper>

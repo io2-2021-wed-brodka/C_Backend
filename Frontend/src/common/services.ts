@@ -22,11 +22,7 @@ import { mockedBikesByStations } from './mocks/bikes';
 import { mockedRentedBikes } from './mocks/rentals';
 import { delay } from './mocks/mockedApiResponse';
 import { BearerToken } from './api/models/bearer-token';
-import {
-  signInAndSaveToken,
-  saveTokenInLocalStorage,
-  signUpAndSaveToken,
-} from './authentication/token-functions';
+import { signInAndSaveToken, saveTokenInLocalStorage, signUpAndSaveToken } from './authentication/token-functions';
 
 type AllServices = {
   signIn: (login: string, password: string) => Promise<BearerToken>;
