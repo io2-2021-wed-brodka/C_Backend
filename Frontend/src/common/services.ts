@@ -16,7 +16,7 @@ import {
   unblockStation,
 } from './api/endpoints';
 import { Bike, BikeStatus } from './api/models/bike';
-import { Station } from './api/models/station';
+import { Station, StationStatus } from './api/models/station';
 import { mockedStations } from './mocks/stations';
 import { mockedBikesByStations } from './mocks/bikes';
 import { mockedRentedBikes } from './mocks/rentals';
@@ -81,11 +81,11 @@ export const mockedServices: AllServices = {
   getRentedBikes: () => delay(mockedRentedBikes),
   returnBike: bikeId => delay<Bike>({ id: bikeId, status: BikeStatus.Available }),
   rentBike: bikeId => delay<Bike>({ id: bikeId, status: BikeStatus.Rented }),
-  addStation: name => delay<Station>({ id: '1', status: 'active', name }),
+  addStation: name => delay<Station>({ id: '1', status: StationStatus.Active, name }),
   addBike: () => delay<Bike>({ id: '1', status: BikeStatus.Available }),
   removeBike: () => delay<void>(undefined),
   removeStation: () => delay<void>(undefined),
-  blockStation: id => delay<Station>({ id, status: 'active', name: '' }),
+  blockStation: id => delay<Station>({ id, status: StationStatus.Active, name: '' }),
   blockBike: id => delay<Bike>({ id, status: BikeStatus.Blocked }),
   unblockBike: () => delay<void>(undefined),
   unblockStation: () => delay<void>(undefined),
