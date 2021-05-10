@@ -6,6 +6,7 @@ import usePromise from '../../common/hooks/usePromise';
 import SnackBar from '../../common/components/SnackBar';
 import { useSnackbar } from '../../common/hooks/useSnackbar';
 import useRefresh from '../../common/hooks/useRefresh';
+import { BikeStatus } from '../../common/api/models/bike';
 
 type Props = {
   stationId: string;
@@ -23,10 +24,10 @@ const StationBikesList = ({ stationId, refresh }: Props) => {
 
   const bikeActions: BikeActionsForBike = ({ id, status }) => [
     {
-      label: status == 'blocked' ? 'Unblock' : 'Block',
+      label: status === BikeStatus.Blocked ? 'Unblock' : 'Block',
       type: 'secondary',
       onClick: () => {
-        (status == 'blocked' ? unblockBike(id) : blockBike(id))
+        (status === BikeStatus.Blocked ? unblockBike(id) : blockBike(id))
           .then(() => internalRefresh())
           .catch(err => snackbar.open(err.message));
       },

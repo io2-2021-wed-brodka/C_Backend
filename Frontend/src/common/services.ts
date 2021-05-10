@@ -15,7 +15,7 @@ import {
   unblockBike,
   unblockStation,
 } from './api/endpoints';
-import { Bike } from './api/models/bike';
+import { Bike, BikeStatus } from './api/models/bike';
 import { Station } from './api/models/station';
 import { mockedStations } from './mocks/stations';
 import { mockedBikesByStations } from './mocks/bikes';
@@ -79,14 +79,14 @@ export const mockedServices: AllServices = {
   getAllStations: () => delay(mockedStations),
   getBikesOnStation: stationId => delay(mockedBikesByStations[stationId]),
   getRentedBikes: () => delay(mockedRentedBikes),
-  returnBike: bikeId => delay<Bike>({ id: bikeId, status: 'available' }),
-  rentBike: bikeId => delay<Bike>({ id: bikeId, status: 'rented' }),
+  returnBike: bikeId => delay<Bike>({ id: bikeId, status: BikeStatus.Available }),
+  rentBike: bikeId => delay<Bike>({ id: bikeId, status: BikeStatus.Rented }),
   addStation: name => delay<Station>({ id: '1', status: 'active', name }),
-  addBike: () => delay<Bike>({ id: '1', status: 'available' }),
+  addBike: () => delay<Bike>({ id: '1', status: BikeStatus.Available }),
   removeBike: () => delay<void>(undefined),
   removeStation: () => delay<void>(undefined),
   blockStation: id => delay<Station>({ id, status: 'active', name: '' }),
-  blockBike: id => delay<Bike>({ id, status: 'blocked' }),
+  blockBike: id => delay<Bike>({ id, status: BikeStatus.Blocked }),
   unblockBike: () => delay<void>(undefined),
   unblockStation: () => delay<void>(undefined),
 };
