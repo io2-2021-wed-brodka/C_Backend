@@ -36,6 +36,11 @@ export const getBikesByStation = (stationId: string) =>
     `${API}/stations/${stationId}/bikes`,
   ).then(res => res.bikes);
 
+export const getReservedBikes = () =>
+  apiWithAuthConnection<BikesResponse>(`${API}/bikes/reserved`).then(
+    res => res.bikes,
+  );
+
 export const getRentedBikes = () =>
   apiWithAuthConnection<BikesResponse>(`${API}/bikes/rented`).then(
     res => res.bikes,
@@ -50,6 +55,18 @@ export const returnBike = (stationId: string, bikeId: string) =>
 export const rentBike = (bikeId: string) =>
   apiWithAuthConnection<Bike>(`${API}/bikes/rented`, {
     method: 'POST',
+    data: { id: bikeId },
+  });
+
+export const reserveBike = (bikeId: string) =>
+  apiWithAuthConnection<Bike>(`${API}/bikes/reserved`, {
+    method: 'POST',
+    data: { id: bikeId },
+  });
+
+export const cancelBikeReservation = (bikeId: string) =>
+  apiWithAuthConnection<Bike>(`${API}/bikes/reserved`, {
+    method: 'DELETE',
     data: { id: bikeId },
   });
 

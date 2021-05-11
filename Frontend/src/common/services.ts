@@ -5,12 +5,15 @@ import {
   blockBike,
   blockStation,
   getBikesByStation,
+  getReservedBikes,
   getRentedBikes,
   getActiveStations,
   getAllStations,
   removeBike,
   removeStation,
   rentBike,
+  reserveBike,
+  cancelBikeReservation,
   returnBike,
   unblockBike,
   unblockStation,
@@ -19,6 +22,7 @@ import { Bike } from './api/models/bike';
 import { Station } from './api/models/station';
 import { mockedStations } from './mocks/stations';
 import { mockedBikesByStations } from './mocks/bikes';
+import { mockedReservedBikes } from './mocks/bikes';
 import { mockedRentedBikes } from './mocks/rentals';
 import { delay } from './mocks/mockedApiResponse';
 import { BearerToken } from './api/models/bearer-token';
@@ -34,9 +38,12 @@ type AllServices = {
   getActiveStations: () => Promise<Station[]>;
   getAllStations: () => Promise<Station[]>;
   getBikesOnStation: (stationId: string) => Promise<Bike[]>;
+  getReservedBikes: () => Promise<Bike[]>;
   getRentedBikes: () => Promise<Bike[]>;
   returnBike: (stationId: string, bikeId: string) => Promise<Bike>;
   rentBike: (bikeId: string) => Promise<Bike>;
+  reserveBike: (bikeId: string) => Promise<Bike>;
+  cancelBikeReservation: (bikeId: string) => Promise<Bike>;
   addStation: (name: string) => Promise<Station>;
   addBike: (stationId: string) => Promise<Bike>;
   removeBike: (bikeId: string) => Promise<void>;
@@ -53,9 +60,12 @@ export const services: AllServices = {
   getActiveStations: getActiveStations,
   getAllStations: getAllStations,
   getBikesOnStation: getBikesByStation,
+  getReservedBikes: getReservedBikes,
   getRentedBikes: getRentedBikes,
   returnBike: returnBike,
   rentBike: rentBike,
+  reserveBike: reserveBike,
+  cancelBikeReservation: cancelBikeReservation,
   addStation: addStation,
   addBike: addBike,
   removeBike: removeBike,
@@ -82,9 +92,13 @@ export const mockedServices: AllServices = {
   getActiveStations: () => delay(mockedStations),
   getAllStations: () => delay(mockedStations),
   getBikesOnStation: stationId => delay(mockedBikesByStations[stationId]),
+  getReservedBikes: () => delay(mockedReservedBikes),
   getRentedBikes: () => delay(mockedRentedBikes),
   returnBike: bikeId => delay<Bike>({ id: bikeId, status: 'available' }),
   rentBike: bikeId => delay<Bike>({ id: bikeId, status: 'rented' }),
+  reserveBike: bikeId => delay<Bike>({ id: bikeId, status: 'reserved' }),
+  cancelBikeReservation: bikeId =>
+    delay<Bike>({ id: bikeId, status: 'available' }),
   addStation: name => delay<Station>({ id: '1', status: 'active', name }),
   addBike: () => delay<Bike>({ id: '1', status: 'available' }),
   removeBike: () => delay<void>(undefined),
