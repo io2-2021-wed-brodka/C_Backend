@@ -23,9 +23,10 @@ import { mockedRentedBikes } from './mocks/rentals';
 import { delay } from './mocks/mockedApiResponse';
 import { BearerToken } from './api/models/bearer-token';
 import { signInAndSaveToken, saveTokenInLocalStorage, signUpAndSaveToken } from './authentication/token-functions';
+import { User, UserRole } from './api/models/user';
 
 type AllServices = {
-  signIn: (login: string, password: string) => Promise<BearerToken>;
+  signIn: (login: string, password: string) => Promise<User>;
   signUp: (login: string, password: string) => Promise<BearerToken>;
   getActiveStations: () => Promise<Station[]>;
   getAllStations: () => Promise<Station[]>;
@@ -64,9 +65,9 @@ export const services: AllServices = {
 
 export const mockedServices: AllServices = {
   signIn: login => {
-    return delay({ token: login }).then(bearerToken => {
-      saveTokenInLocalStorage(bearerToken);
-      return bearerToken;
+    return delay({ token: login, role: UserRole.User }).then(user => {
+      saveTokenInLocalStorage({ token: user.token });
+      return user;
     });
   },
   signUp: login => {
