@@ -233,5 +233,35 @@ namespace BikesRentalServer.WebApi.Controllers
                 Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
         }
+
+        [HttpPost("reserved")]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetReservedBikeResponse> ReserveBike(ReserveBikeRequest request)
+        {
+            var response = _bikesService.ReserveBike(request.Id);
+            return response.Status switch
+            {
+                Status.Success => Created($"/reserved/{response.Object.Bike.Id}", new GetReservedBikeResponse
+                {
+                    Id = response.Object.Bike.Id.ToString(),
+                    Station = new GetStationResponse
+                    {
+                        Id = response.Object.Bike.Station.Id.ToString(),
+                        Name = response.Object.Bike.Station.Name,
+                        Status = response.Object.Bike.Station.Status,
+                        ActiveBikesCount = response.Object.Bike.Station.Bikes.Count(b => b.Status is BikeStatus.Available),
+                    },
+                    ReservedAt = response.Object.ReservationDate,
+                    ReservedTill = response.Object.ExpirationDate,
+                }),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                Status.UserBlocked => Forbid(),
+                _ => throw new InvalidOperationException("Invalid state"),
+            };
+        }
+        
     }
 }
