@@ -14,6 +14,7 @@ import { useServices } from '../services';
 import { useHistory } from 'react-router-dom';
 import { useSnackbar } from '../hooks/useSnackbar';
 import { SnackBar } from './SnackBar';
+import { UserRole } from '../api/models/user';
 
 const Copyright = () => {
   return (
@@ -57,7 +58,8 @@ const LoginPage = () => {
     e.preventDefault();
 
     signIn(login, password)
-      .then(() => {
+      .then(user => {
+        if (process.env.REACT_APP_FOR === 'admin' && user.role !== UserRole.Admin) throw new Error('Unauthorized');
         history.push('/');
       })
       .catch(err => {
