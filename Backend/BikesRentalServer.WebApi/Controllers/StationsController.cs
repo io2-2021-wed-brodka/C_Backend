@@ -109,7 +109,7 @@ namespace BikesRentalServer.WebApi.Controllers
                     Bikes = response.Object.Select(bike => new GetBikeResponse
                     {
                         Id = bike.Id.ToString(),
-                        Station = bike.Station is null ? null : new GetBikeResponse.StationDto
+                        Station = bike.Station is null ? null : new GetStationResponse
                         {
                             Id = bike.Station.Id.ToString(),
                             Name = bike.Station.Name,
@@ -137,7 +137,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 Status.Success => Created($"/bikes/{response.Object.Id}", new GetBikeResponse
                 {
                     Id = response.Object.Id.ToString(),
-                    Station = new GetBikeResponse.StationDto
+                    Station = new GetStationResponse
                     {
                         Id = response.Object.Station.Id.ToString(),
                         Name = response.Object.Station.Name,
