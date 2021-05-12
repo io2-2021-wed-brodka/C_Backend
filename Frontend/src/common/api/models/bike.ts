@@ -1,8 +1,8 @@
 export enum BikeStatus {
-  Available = 'Available',
-  Blocked = 'Blocked',
-  Rented = 'Rented',
-  Reserved = 'Reserved',
+  Available = 'available',
+  Blocked = 'blocked',
+  Rented = 'rented',
+  Reserved = 'reserved',
 }
 
 export interface Bike {

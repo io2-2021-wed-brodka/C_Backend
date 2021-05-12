@@ -1,6 +1,6 @@
 export enum StationStatus {
-  Active = 'Active',
-  Blocked = 'Blocked',
+  Active = 'active',
+  Blocked = 'blocked',
 }
 
 export interface Station {

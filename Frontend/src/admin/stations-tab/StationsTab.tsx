@@ -10,14 +10,8 @@ import SnackBar from '../../common/components/SnackBar';
 import { Button } from '@material-ui/core';
 import { StationStatus } from '../../common/api/models/station';
 
-// enum StationFilterType {
-//   All = 'all',
-//   Blocked = 'blocked',
-//   Active = 'active',
-// }
-
 enum StationStatusExtension {
-  All = 'All',
+  All = 'all',
 }
 
 type StationFilterType = StationStatus | StationStatusExtension;
