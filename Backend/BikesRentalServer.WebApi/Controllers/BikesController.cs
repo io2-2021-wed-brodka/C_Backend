@@ -275,9 +275,8 @@ namespace BikesRentalServer.WebApi.Controllers
                 Status.Success => NoContent(),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
-                _ => throw new InvalidOperationException($"Unexpected result: {response.Status} - {response.Message}"),
+                Status.EntityNotFound or _ => throw new InvalidOperationException($"Unexpected result: {response.Status} - {response.Message}"),
             };
         }
-
     }
 }
