@@ -6,5 +6,6 @@ export enum StationStatus {
 export interface Station {
   id: string;
   name: string;
+  activeBikesCount: number;
   status: StationStatus;
 }
