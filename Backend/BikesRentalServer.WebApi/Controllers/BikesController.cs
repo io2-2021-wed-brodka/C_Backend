@@ -262,6 +262,22 @@ namespace BikesRentalServer.WebApi.Controllers
                 _ => throw new InvalidOperationException("Invalid state"),
             };
         }
-        
+
+        [HttpDelete("reserved/{id}")]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetBikeResponse> CancelReservation(string bikeId)
+        {
+            var response = _bikesService.CancelBikeReservation(bikeId);
+            return response.Status switch
+            {
+                Status.Success => NoContent(),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException($"Unexpected result: {response.Status} - {response.Message}"),
+            };
+        }
+
     }
 }
