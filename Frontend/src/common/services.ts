@@ -15,6 +15,7 @@ import {
   unblockBike,
   unblockStation,
   getReservedBikes,
+  removeReservation,
 } from './api/endpoints';
 import { Bike } from './api/models/bike';
 import { Station } from './api/models/station';
@@ -44,6 +45,7 @@ type AllServices = {
   addStation: (name: string) => Promise<Station>;
   addBike: (stationId: string) => Promise<Bike>;
   removeBike: (bikeId: string) => Promise<void>;
+  removeReservation: (bikeId: string) => Promise<void>;
   removeStation: (stationId: string) => Promise<void>;
   blockStation: (id: string) => Promise<Station>;
   blockBike: (id: string) => Promise<Bike>;
@@ -64,6 +66,7 @@ export const services: AllServices = {
   addStation: addStation,
   addBike: addBike,
   removeBike: removeBike,
+  removeReservation: removeReservation,
   removeStation: removeStation,
   blockStation: blockStation,
   blockBike: blockBike,
@@ -94,6 +97,7 @@ export const mockedServices: AllServices = {
   addStation: name => delay<Station>({ id: '1', status: 'active', name }),
   addBike: () => delay<Bike>({ id: '1', status: 'available' }),
   removeBike: () => delay<void>(undefined),
+  removeReservation: () => delay<void>(undefined),
   removeStation: () => delay<void>(undefined),
   blockStation: id => delay<Station>({ id, status: 'active', name: '' }),
   blockBike: id => delay<Bike>({ id, status: 'blocked' }),

@@ -14,6 +14,7 @@ const ReservationsTab = () => {
   const [refreshBikesState, refreshBikes] = useRefresh();
   const data = usePromise(useServices().getReservedBikes, [refreshBikesState]);
   const rentBike = useServices().rentBike;
+  const removeReservation = useServices().removeReservation;
   const snackbar = useSnackbar();
 
   const bikeActions: BikeActionsForBike = ({ id }) => [
@@ -21,7 +22,12 @@ const ReservationsTab = () => {
       label: 'Drop',
       type: 'default',
       onClick: () => {
-        alert(id);
+        removeReservation(id)
+          .then(() => {
+            snackbar.open(`Removed reservation of bike #${id}!`);
+            refreshBikes();
+          })
+          .catch(e => snackbar.open(e.message));
       },
     },
     {

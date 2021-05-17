@@ -77,6 +77,11 @@ export const removeBike = (bikeId: string) =>
     method: 'DELETE',
   });
 
+export const removeReservation = (bikeId: string) =>
+  apiWithAuthConnection<void>(`${API}/bikes/reserved/${bikeId}`, {
+    method: 'DELETE',
+  });
+
 export const removeStation = (stationId: string) =>
   apiWithAuthConnection<void>(`${API}/stations/${stationId}`, {
     method: 'DELETE',
