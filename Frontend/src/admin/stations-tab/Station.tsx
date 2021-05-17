@@ -16,6 +16,7 @@ import { useServices } from '../../common/services';
 import useRefresh from '../../common/hooks/useRefresh';
 import SnackBar from '../../common/components/SnackBar';
 import { useSnackbar } from '../../common/hooks/useSnackbar';
+import { StationStatus } from '../../common/api/models/station';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = {
   name: string;
   id: string;
-  status: 'active' | 'blocked';
+  status: StationStatus;
   forceRefresh?: () => void;
 };
 
@@ -99,7 +100,7 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
               >
                 Add bike
               </Button>{' '}
-              {status == 'active' && (
+              {status === StationStatus.Active && (
                 <Button
                   variant="contained"
                   color={'default'}
@@ -108,7 +109,7 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
                   Block
                 </Button>
               )}
-              {status == 'blocked' && (
+              {status === StationStatus.Blocked && (
                 <Button
                   variant="contained"
                   color={'default'}
