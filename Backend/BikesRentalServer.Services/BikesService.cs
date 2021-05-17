@@ -196,6 +196,7 @@ namespace BikesRentalServer.Services
             if (user.Status is UserStatus.Blocked)
                 return ServiceActionResult.UserBlocked<Reservation>("User is blocked");
 
+            bike = _bikesRepository.SetStatus(id, BikeStatus.Reserved);
             var reservation = _reservationsRepository.Add(new Reservation
             {
                 User = user,
@@ -216,6 +217,7 @@ namespace BikesRentalServer.Services
             if (reservation is null)
                 return ServiceActionResult.InvalidState<Bike>("Bike is not reserved");
 
+            _bikesRepository.SetStatus(bikeId, BikeStatus.Available);
             _reservationsRepository.Remove(reservation);
             return ServiceActionResult.Success(reservation.Bike);
         }
