@@ -94,12 +94,14 @@ export const mockedServices: AllServices = {
   getReservedBikes: () => delay(mockedReservedBikes),
   returnBike: bikeId => delay<Bike>({ id: bikeId, status: 'available' }),
   rentBike: bikeId => delay<Bike>({ id: bikeId, status: 'rented' }),
-  addStation: name => delay<Station>({ id: '1', status: 'active', name }),
+  addStation: name =>
+    delay<Station>({ id: '1', status: 'active', activeBikesCount: 0, name }),
   addBike: () => delay<Bike>({ id: '1', status: 'available' }),
   removeBike: () => delay<void>(undefined),
   removeReservation: () => delay<void>(undefined),
   removeStation: () => delay<void>(undefined),
-  blockStation: id => delay<Station>({ id, status: 'active', name: '' }),
+  blockStation: id =>
+    delay<Station>({ id, status: 'active', activeBikesCount: 0, name: '' }),
   blockBike: id => delay<Bike>({ id, status: 'blocked' }),
   unblockBike: () => delay<void>(undefined),
   unblockStation: () => delay<void>(undefined),

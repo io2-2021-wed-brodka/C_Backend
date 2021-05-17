@@ -45,7 +45,12 @@ export const getRentedBikes = () =>
 
 export const getReservedBikes = () =>
   apiWithAuthConnection<ReservedBikesResponse>(`${API}/bikes/reserved`).then(
-    res => res.bikes,
+    res =>
+      res.bikes.map(bike => ({
+        ...bike,
+        reservedTill: new Date((bike.reservedTill as unknown) as string),
+        reservedAt: new Date((bike.reservedAt as unknown) as string),
+      })),
   );
 
 export const returnBike = (stationId: string, bikeId: string) =>
