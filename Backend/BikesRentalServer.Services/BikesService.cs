@@ -209,15 +209,14 @@ namespace BikesRentalServer.Services
         public ServiceActionResult<Bike> CancelBikeReservation(string bikeId)
         {
             var bike = _bikesRepository.Get(bikeId);
-            if(bike is null)
+            if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
 
             var reservation = _reservationsRepository.GetActiveReservation(bikeId);
-            if(reservation is null)
+            if (reservation is null)
                 return ServiceActionResult.InvalidState<Bike>("Bike is not reserved");
 
             _reservationsRepository.Remove(reservation);
-
             return ServiceActionResult.Success(reservation.Bike);
         }
 

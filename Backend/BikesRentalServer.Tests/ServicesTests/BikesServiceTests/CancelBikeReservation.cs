@@ -18,8 +18,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                 Status = BikeStatus.Available,
             };
 
-            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
-                .Returns(bike);
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
             ReservationsRepository.Setup(r => r.GetActiveReservation(It.IsAny<string>()))
                 .Returns(new Reservation
                 {
@@ -37,11 +36,10 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
         }
 
         [Fact]
-        public void CancelBikeReservationOfNotExistingBikeShouldReturnEntityNotFound()
+        public void CancelReservationOfNotExistingBikeShouldReturnEntityNotFound()
         {
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Bike)null);
-            ReservationsRepository.Setup(r => r.GetActiveReservation(It.IsAny<string>()))
-                .Returns((Reservation)null);
+            ReservationsRepository.Setup(r => r.GetActiveReservation(It.IsAny<string>())).Returns((Reservation)null);
             ReservationsRepository.Setup(r => r.Remove(It.IsAny<Reservation>())).Verifiable();
 
             var bikesService = GetBikesService();
@@ -53,7 +51,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
         }
 
         [Fact]
-        public void CancelBikeReservationOfNotReservedBikeShouldReturnInvalidState()
+        public void CancelReservationOfNotReservedBikeShouldReturnInvalidState()
         {
             const int bikeId = 123;
             var bike = new Bike
@@ -62,10 +60,8 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                 Status = BikeStatus.Available,
             };
 
-            BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
-                .Returns(bike);
-            ReservationsRepository.Setup(r => r.GetActiveReservation(It.IsAny<string>()))
-                .Returns((Reservation)null);
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
+            ReservationsRepository.Setup(r => r.GetActiveReservation(It.IsAny<string>())).Returns((Reservation)null);
             ReservationsRepository.Setup(r => r.Remove(It.IsAny<Reservation>())).Verifiable();
 
             var bikesService = GetBikesService();
