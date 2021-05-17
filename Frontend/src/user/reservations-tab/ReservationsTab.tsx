@@ -9,6 +9,7 @@ import usePromise from '../../common/hooks/usePromise';
 import useRefresh from '../../common/hooks/useRefresh';
 import { useSnackbar } from '../../common/hooks/useSnackbar';
 import SnackBar from '../../common/components/SnackBar';
+import { BikeStatus } from '../../common/api/models/bike';
 
 const ReservationsTab = () => {
   const [refreshBikesState, refreshBikes] = useRefresh();
@@ -50,7 +51,10 @@ const ReservationsTab = () => {
         <DataLoader data={data}>
           {bikes => (
             <BikesList
-              bikes={bikes.map(({ id }) => ({ id, status: 'reserved' }))}
+              bikes={bikes.map(({ id }) => ({
+                id,
+                status: BikeStatus.Reserved,
+              }))}
               bikeActions={bikeActions}
             />
           )}

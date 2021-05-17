@@ -1,4 +1,5 @@
 import { ReservedBike } from '../api/models/reservedBike';
+import { StationStatus } from '../api/models/station';
 
 export const mockedReservedBikes: ReservedBike[] = [
   {
@@ -6,7 +7,7 @@ export const mockedReservedBikes: ReservedBike[] = [
     station: {
       id: '1',
       name: 'Górczewska 100',
-      status: 'active',
+      status: StationStatus.Active,
       activeBikesCount: 3,
     },
     reservedAt: new Date(2020, 3, 10, 21, 37, 42),
@@ -17,7 +18,7 @@ export const mockedReservedBikes: ReservedBike[] = [
     station: {
       id: '2',
       name: 'Rondo Daszyńskiego',
-      status: 'active',
+      status: StationStatus.Active,
       activeBikesCount: 3,
     },
     reservedAt: new Date(2020, 3, 10, 21, 37, 42),
@@ -28,7 +29,7 @@ export const mockedReservedBikes: ReservedBike[] = [
     station: {
       id: '2',
       name: 'Rondo Daszyńskiego',
-      status: 'active',
+      status: StationStatus.Active,
       activeBikesCount: 3,
     },
     reservedAt: new Date(2020, 3, 10, 21, 37, 42),
