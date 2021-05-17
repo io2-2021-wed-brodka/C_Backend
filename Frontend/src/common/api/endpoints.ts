@@ -51,8 +51,8 @@ export const getReservedBikes = () =>
     res =>
       res.bikes.map(bike => ({
         ...bike,
-        reservedTill: new Date((bike.reservedTill as unknown) as string),
-        reservedAt: new Date((bike.reservedAt as unknown) as string),
+        reservedTill: new Date(bike.reservedTill),
+        reservedAt: new Date(bike.reservedAt),
       })),
   );
 
