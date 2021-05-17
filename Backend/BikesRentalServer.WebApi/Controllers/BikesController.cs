@@ -5,7 +5,6 @@ using BikesRentalServer.WebApi.Authorization;
 using BikesRentalServer.WebApi.Authorization.Attributes;
 using BikesRentalServer.WebApi.Dtos.Requests;
 using BikesRentalServer.WebApi.Dtos.Responses;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -35,14 +34,14 @@ namespace BikesRentalServer.WebApi.Controllers
                     .Select(bike => new GetBikeResponse
                     {
                         Id = bike.Id.ToString(),
-                        Station = bike.Station is null ? null : new GetBikeResponse.StationDto 
+                        Station = bike.Station is null ? null : new GetStationResponse 
                         {
                             Id = bike.Station.Id.ToString(),
                             Name = bike.Station.Name,
                             Status = bike.Station.Status,
                             ActiveBikesCount = bike.Station.Bikes.Count(b => b.Status is BikeStatus.Available),
                         },
-                        User = bike.User is null ? null : new GetBikeResponse.UserDto
+                        User = bike.User is null ? null : new GetUserResponse
                         {
                             Id = bike.User.Id.ToString(),
                             Name = bike.User.Username,
@@ -65,7 +64,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 {
                     Id = response.Object.Id.ToString(),
                     Status = response.Object.Status,
-                    Station = new GetBikeResponse.StationDto
+                    Station = new GetStationResponse
                     {
                         Id = response.Object.Station.Id.ToString(),
                         Name = response.Object.Station.Name,
@@ -91,14 +90,14 @@ namespace BikesRentalServer.WebApi.Controllers
                 {
                     Id = response.Object.Id.ToString(),
                     Status = response.Object.Status,
-                    Station = response.Object.Station is null ? null : new GetBikeResponse.StationDto
+                    Station = response.Object.Station is null ? null : new GetStationResponse
                     {
                         Id = response.Object.Station.Id.ToString(),
                         Name = response.Object.Station.Name,
                         Status = response.Object.Station.Status,
                         ActiveBikesCount = response.Object.Station.Bikes.Count(b => b.Status is BikeStatus.Available),
                     },
-                    User = response.Object.User is null ? null : new GetBikeResponse.UserDto
+                    User = response.Object.User is null ? null : new GetUserResponse
                     {
                         Id = response.Object.User.Id.ToString(),
                         Name = response.Object.User.Username,
@@ -134,7 +133,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 Bikes = _bikesService.GetRentedBikes().Object.Select(bike => new GetBikeResponse
                 {
                     Id = bike.Id.ToString(),
-                    User = new GetBikeResponse.UserDto
+                    User = new GetUserResponse
                     {
                         Id = bike.User.Id.ToString(),
                         Name = bike.User.Username,
@@ -158,7 +157,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 {
                     Id = response.Object.Id.ToString(),
                     Status = response.Object.Status,
-                    User = new GetBikeResponse.UserDto
+                    User = new GetUserResponse
                     {
                         Id = response.Object.User.Id.ToString(),
                         Name = response.Object.User.Username,
@@ -181,7 +180,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 Bikes = _bikesService.GetBlockedBikes().Object.Select(bike => new GetBikeResponse
                 {
                     Id = bike.Id.ToString(),
-                    Station = new GetBikeResponse.StationDto
+                    Station = new GetStationResponse
                     {
                         Id = bike.Station.Id.ToString(),
                         Name = bike.Station.Name,
@@ -206,7 +205,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 {
                     Id = response.Object.Id.ToString(),
                     Status = response.Object.Status,
-                    Station = new GetBikeResponse.StationDto
+                    Station = new GetStationResponse
                     {
                         Id = response.Object.Station.Id.ToString(),
                         Name = response.Object.Station.Name,
@@ -234,5 +233,35 @@ namespace BikesRentalServer.WebApi.Controllers
                 Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
         }
+
+        [HttpPost("reserved")]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetReservedBikeResponse> ReserveBike(ReserveBikeRequest request)
+        {
+            var response = _bikesService.ReserveBike(request.Id);
+            return response.Status switch
+            {
+                Status.Success => Created($"/reserved/{response.Object.Bike.Id}", new GetReservedBikeResponse
+                {
+                    Id = response.Object.Bike.Id.ToString(),
+                    Station = new GetStationResponse
+                    {
+                        Id = response.Object.Bike.Station.Id.ToString(),
+                        Name = response.Object.Bike.Station.Name,
+                        Status = response.Object.Bike.Station.Status,
+                        ActiveBikesCount = response.Object.Bike.Station.Bikes.Count(b => b.Status is BikeStatus.Available),
+                    },
+                    ReservedAt = response.Object.ReservationDate,
+                    ReservedTill = response.Object.ExpirationDate,
+                }),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                Status.UserBlocked => Forbid(),
+                _ => throw new InvalidOperationException("Invalid state"),
+            };
+        }
+        
     }
 }
