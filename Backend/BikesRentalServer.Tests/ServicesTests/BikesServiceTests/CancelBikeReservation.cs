@@ -36,6 +36,31 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
         }
 
         [Fact]
+        public void CancelBikeReservationShouldSetBikeStatusToAvailable()
+        {
+            const int bikeId = 123;
+            var bike = new Bike
+            {
+                Id = bikeId,
+                Status = BikeStatus.Reserved,
+            };
+
+            BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
+            ReservationsRepository.Setup(r => r.GetActiveReservation(It.IsAny<string>()))
+                .Returns(new Reservation
+                {
+                    Bike = bike,
+                });
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), BikeStatus.Available)).Verifiable();
+
+            var bikesService = GetBikesService();
+            var result = bikesService.CancelBikeReservation(bikeId.ToString());
+
+            result.Status.Should().Be(Status.Success);
+            BikesRepository.Verify();
+        }
+        
+        [Fact]
         public void CancelReservationOfNotExistingBikeShouldReturnEntityNotFound()
         {
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Bike)null);
