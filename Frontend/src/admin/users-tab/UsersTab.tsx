@@ -6,15 +6,15 @@ import useRefresh from '../../common/hooks/useRefresh';
 import { useSnackbar } from '../../common/hooks/useSnackbar';
 import SnackBar from '../../common/components/SnackBar';
 import {
-  Button,
   List,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
+  Paper,
   Typography,
 } from '@material-ui/core';
 import ListItemIconSansPadding from '../../common/components/ListItemIconSansPadding';
-import PeopleIcon from '@material-ui/icons/People';
+import PersonIcon from '@material-ui/icons/Person';
 
 const UsersTab = () => {
   const [refreshState] = useRefresh();
@@ -23,40 +23,34 @@ const UsersTab = () => {
 
   return (
     <>
-      <DataLoader data={data}>
-        {users =>
-          !!users.length && (
-            <List dense={true}>
-              {users.map(user => (
-                <ListItem key={user.id}>
-                  <ListItemIconSansPadding>
-                    <PeopleIcon />
-                  </ListItemIconSansPadding>
-                  <ListItemText
-                    primary={
-                      <Typography variant="h6">{`#${user.id} - ${user.name}`}</Typography>
-                    }
-                  />
-                  <ListItemSecondaryAction>
-                    {[].map(({ onClick, label, type }) => (
-                      <Button
-                        variant="contained"
-                        color={type}
-                        onClick={onClick}
-                        key={label}
-                        className={''}
-                      >
-                        {label}
-                      </Button>
-                    ))}
-                  </ListItemSecondaryAction>
-                </ListItem>
-              ))}
-            </List>
-          )
-        }
-      </DataLoader>
-      <SnackBar {...snackbar.props} />
+      <Typography variant="h4">Users</Typography>
+
+      <Paper>
+        <DataLoader data={data}>
+          {users =>
+            !!users.length && (
+              <List dense={true}>
+                {users.map(user => (
+                  <ListItem key={user.id}>
+                    <ListItemIconSansPadding>
+                      <PersonIcon />
+                    </ListItemIconSansPadding>
+                    <ListItemText
+                      primary={
+                        <Typography variant="h6">{`${user.name}`}</Typography>
+                      }
+                    />
+                    <ListItemSecondaryAction>
+                      Buttons to block/unblock go here
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+              </List>
+            )
+          }
+        </DataLoader>
+        <SnackBar {...snackbar.props} />
+      </Paper>
     </>
   );
 };
