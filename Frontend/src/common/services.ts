@@ -14,6 +14,7 @@ import {
   returnBike,
   unblockBike,
   unblockStation,
+  getReservedBikes,
 } from './api/endpoints';
 import { Bike } from './api/models/bike';
 import { Station } from './api/models/station';
@@ -27,6 +28,8 @@ import {
   saveTokenInLocalStorage,
   signUpAndSaveToken,
 } from './authentication/token-functions';
+import { ReservedBike } from './api/models/reservedBike';
+import { mockedReservedBikes } from './mocks/reservedBikes';
 
 type AllServices = {
   signIn: (login: string, password: string) => Promise<BearerToken>;
@@ -35,6 +38,7 @@ type AllServices = {
   getAllStations: () => Promise<Station[]>;
   getBikesOnStation: (stationId: string) => Promise<Bike[]>;
   getRentedBikes: () => Promise<Bike[]>;
+  getReservedBikes: () => Promise<ReservedBike[]>;
   returnBike: (stationId: string, bikeId: string) => Promise<Bike>;
   rentBike: (bikeId: string) => Promise<Bike>;
   addStation: (name: string) => Promise<Station>;
@@ -54,6 +58,7 @@ export const services: AllServices = {
   getAllStations: getAllStations,
   getBikesOnStation: getBikesByStation,
   getRentedBikes: getRentedBikes,
+  getReservedBikes: getReservedBikes,
   returnBike: returnBike,
   rentBike: rentBike,
   addStation: addStation,
@@ -83,6 +88,7 @@ export const mockedServices: AllServices = {
   getAllStations: () => delay(mockedStations),
   getBikesOnStation: stationId => delay(mockedBikesByStations[stationId]),
   getRentedBikes: () => delay(mockedRentedBikes),
+  getReservedBikes: () => delay(mockedReservedBikes),
   returnBike: bikeId => delay<Bike>({ id: bikeId, status: 'available' }),
   rentBike: bikeId => delay<Bike>({ id: bikeId, status: 'rented' }),
   addStation: name => delay<Station>({ id: '1', status: 'active', name }),
