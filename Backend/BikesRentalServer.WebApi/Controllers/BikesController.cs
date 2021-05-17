@@ -267,7 +267,7 @@ namespace BikesRentalServer.WebApi.Controllers
         [UserAuthorization]
         [TechAuthorization]
         [AdminAuthorization]
-        public ActionResult<GetBikeResponse> CancelReservation(string id)
+        public IActionResult CancelReservation(string id)
         {
             var response = _bikesService.CancelBikeReservation(id);
             return response.Status switch
@@ -275,7 +275,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 Status.Success => NoContent(),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
-                _ => throw new InvalidOperationException($"Unexpected result: {response.Status} - {response.Message}"),
+                Status.UserBlocked or _ => throw new InvalidOperationException($"Unexpected result: {response.Status} - {response.Message}"),
             };
         }
 
