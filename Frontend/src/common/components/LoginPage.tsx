@@ -14,6 +14,8 @@ import { useServices } from '../services';
 import { useHistory } from 'react-router-dom';
 import { useSnackbar } from '../hooks/useSnackbar';
 import { SnackBar } from './SnackBar';
+import { UserRole } from '../api/models/login-response';
+import { isUserApp, isAdminApp } from '../environment';
 
 const Copyright = () => {
   return (
@@ -57,12 +59,14 @@ const LoginPage = () => {
     e.preventDefault();
 
     signIn(login, password)
-      .then(() => {
+      .then(user => {
+        if (isAdminApp() && user.role !== UserRole.Admin)
+          throw new Error('Unauthorized');
         history.push('/');
       })
       .catch(err => {
         snackbar.open(err.message);
-        process.env.REACT_APP_FOR === 'user' && history.push('/easteregg');
+        isUserApp() && history.push('/easteregg');
       });
   };
 
@@ -112,7 +116,7 @@ const LoginPage = () => {
           </Button>
           <Grid container>
             <Grid item>
-              {process.env.REACT_APP_FOR === 'user' && (
+              {isUserApp() && (
                 <Link href="/signup" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>

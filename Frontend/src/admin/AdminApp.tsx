@@ -14,6 +14,7 @@ import Layout from './Layout';
 import StationsTab from './stations-tab/StationsTab';
 
 import './AdminApp.css';
+import UsersTab from './users-tab/UsersTab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,6 +49,7 @@ const AdminApp = () => {
                   {!getTokenFromLocalStorage() && <Redirect to={'/login'} />}
                   <Layout>
                     <Route path="/stations" component={StationsTab} />
+                    <Route path="/users" component={UsersTab} />
                   </Layout>
                 </>
               )}

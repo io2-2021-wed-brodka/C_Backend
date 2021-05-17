@@ -1,4 +1,11 @@
+export enum BikeStatus {
+  Available = 'available',
+  Blocked = 'blocked',
+  Rented = 'rented',
+  Reserved = 'reserved',
+}
+
 export interface Bike {
   id: string;
-  status: 'blocked' | 'available' | 'rented' | 'reserved';
+  status: BikeStatus;
 }
