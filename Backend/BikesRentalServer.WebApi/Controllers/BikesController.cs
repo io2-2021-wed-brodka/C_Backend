@@ -267,9 +267,9 @@ namespace BikesRentalServer.WebApi.Controllers
         [UserAuthorization]
         [TechAuthorization]
         [AdminAuthorization]
-        public ActionResult<GetBikeResponse> CancelReservation(string bikeId)
+        public ActionResult<GetBikeResponse> CancelReservation(string id)
         {
-            var response = _bikesService.CancelBikeReservation(bikeId);
+            var response = _bikesService.CancelBikeReservation(id);
             return response.Status switch
             {
                 Status.Success => NoContent(),
