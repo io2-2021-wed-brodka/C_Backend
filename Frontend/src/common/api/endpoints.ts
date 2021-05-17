@@ -3,11 +3,13 @@ import { Bike } from './models/bike';
 import apiConnection from './api-connection';
 import { BearerToken } from './models/bearer-token';
 import { apiWithAuthConnection } from '../authentication/api-with-authentication';
+import { User } from './models/user';
 
 const API = 'http://localhost:5000';
 
 export type StationsResponse = { stations: Station[] };
 export type BikesResponse = { bikes: Bike[] };
+export type UsersResponse = { users: User[] };
 
 export const signIn = (login: string, password: string) =>
   apiConnection<BearerToken>(`${API}/login`, {
@@ -96,3 +98,6 @@ export const unblockStation = (stationId: string) =>
   apiWithAuthConnection<void>(`${API}/stations/blocked/${stationId}`, {
     method: 'DELETE',
   });
+
+export const getUsers = () =>
+  apiWithAuthConnection<UsersResponse>(`${API}/users`).then(res => res.users);
