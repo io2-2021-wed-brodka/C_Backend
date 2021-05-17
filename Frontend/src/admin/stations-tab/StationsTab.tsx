@@ -8,19 +8,23 @@ import useRefresh from './../../common/hooks/useRefresh';
 import { useSnackbar } from './../../common/hooks/useSnackbar';
 import SnackBar from '../../common/components/SnackBar';
 import { Button } from '@material-ui/core';
+import { StationStatus } from '../../common/api/models/station';
 
-enum StationFilterType {
+enum StationStatusExtension {
   All = 'all',
-  Blocked = 'blocked',
-  Active = 'active',
 }
+
+type StationFilterType = StationStatus | StationStatusExtension;
+const stationFilterType = { ...StationStatus, ...StationStatusExtension };
 
 const StationsTab = () => {
   const [refreshState, refresh] = useRefresh();
   const data = usePromise(useServices().getAllStations, [refreshState]);
   const addStation = useServices().addStation;
   const snackbar = useSnackbar();
-  const [stationFilter, SetStationFilter] = useState(StationFilterType.All);
+  const [stationFilter, setStationFilter] = useState<StationFilterType>(
+    stationFilterType.All,
+  );
 
   const onAddStation = (name: string) => {
     addStation(name)
@@ -32,26 +36,26 @@ const StationsTab = () => {
     <>
       <Button
         variant="contained"
-        color={stationFilter == StationFilterType.All ? 'secondary' : 'primary'}
-        onClick={() => SetStationFilter(StationFilterType.All)}
+        color={stationFilter == stationFilterType.All ? 'secondary' : 'primary'}
+        onClick={() => setStationFilter(stationFilterType.All)}
       >
         All
       </Button>
       <Button
         variant="contained"
         color={
-          stationFilter == StationFilterType.Active ? 'secondary' : 'primary'
+          stationFilter == stationFilterType.Active ? 'secondary' : 'primary'
         }
-        onClick={() => SetStationFilter(StationFilterType.Active)}
+        onClick={() => setStationFilter(stationFilterType.Active)}
       >
         Active
       </Button>
       <Button
         variant="contained"
         color={
-          stationFilter == StationFilterType.Blocked ? 'secondary' : 'primary'
+          stationFilter == stationFilterType.Blocked ? 'secondary' : 'primary'
         }
-        onClick={() => SetStationFilter(StationFilterType.Blocked)}
+        onClick={() => setStationFilter(stationFilterType.Blocked)}
       >
         Blocked
       </Button>
@@ -63,7 +67,7 @@ const StationsTab = () => {
             .filter(
               station =>
                 station.status == stationFilter ||
-                stationFilter == StationFilterType.All,
+                stationFilter == stationFilterType.All,
             )
             .map(station => (
               <Station key={station.id} forceRefresh={refresh} {...station} />

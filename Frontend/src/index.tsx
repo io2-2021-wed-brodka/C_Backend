@@ -4,10 +4,11 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import UserApp from './user/UserApp';
 import AdminApp from './admin/AdminApp';
+import { isUserApp } from './common/environment';
 
 ReactDOM.render(
   <React.StrictMode>
-    {process.env.REACT_APP_FOR === 'user' ? <UserApp /> : <AdminApp />}
+    {isUserApp() ? <UserApp /> : <AdminApp />}
   </React.StrictMode>,
   document.getElementById('root'),
 );

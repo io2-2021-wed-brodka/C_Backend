@@ -3,6 +3,7 @@ import { Bike } from './models/bike';
 import apiConnection from './api-connection';
 import { BearerToken } from './models/bearer-token';
 import { apiWithAuthConnection } from '../authentication/api-with-authentication';
+import { LoginResponse } from './models/login-response';
 import { User } from './models/user';
 
 const API = 'http://localhost:5000';
@@ -12,7 +13,7 @@ export type BikesResponse = { bikes: Bike[] };
 export type UsersResponse = { users: User[] };
 
 export const signIn = (login: string, password: string) =>
-  apiConnection<BearerToken>(`${API}/login`, {
+  apiConnection<LoginResponse>(`${API}/login`, {
     method: 'POST',
     data: { login, password },
   });

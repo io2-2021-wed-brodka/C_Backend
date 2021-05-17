@@ -21,9 +21,9 @@ export const getTokenFromLocalStorage = () => {
 };
 
 export const signInAndSaveToken = (login: string, password: string) => {
-  return signIn(login, password).then(bearerToken => {
-    saveTokenInLocalStorage(bearerToken);
-    return bearerToken;
+  return signIn(login, password).then(user => {
+    saveTokenInLocalStorage({ token: user.token });
+    return user;
   });
 };
 

@@ -16,8 +16,8 @@ import {
   unblockStation,
   getUsers,
 } from './api/endpoints';
-import { Bike } from './api/models/bike';
-import { Station } from './api/models/station';
+import { Bike, BikeStatus } from './api/models/bike';
+import { Station, StationStatus } from './api/models/station';
 import { mockedStations } from './mocks/stations';
 import { mockedBikesByStations } from './mocks/bikes';
 import { mockedRentedBikes } from './mocks/rentals';
@@ -28,11 +28,12 @@ import {
   saveTokenInLocalStorage,
   signUpAndSaveToken,
 } from './authentication/token-functions';
+import { LoginResponse, UserRole } from './api/models/login-response';
 import { User } from './api/models/user';
 import { mockedUsers } from './mocks/users';
 
 type AllServices = {
-  signIn: (login: string, password: string) => Promise<BearerToken>;
+  signIn: (login: string, password: string) => Promise<LoginResponse>;
   signUp: (login: string, password: string) => Promise<BearerToken>;
   getActiveStations: () => Promise<Station[]>;
   getAllStations: () => Promise<Station[]>;
@@ -73,9 +74,9 @@ export const services: AllServices = {
 
 export const mockedServices: AllServices = {
   signIn: login => {
-    return delay({ token: login }).then(bearerToken => {
-      saveTokenInLocalStorage(bearerToken);
-      return bearerToken;
+    return delay({ token: login, role: UserRole.User }).then(user => {
+      saveTokenInLocalStorage({ token: user.token });
+      return user;
     });
   },
   signUp: login => {
@@ -88,14 +89,17 @@ export const mockedServices: AllServices = {
   getAllStations: () => delay(mockedStations),
   getBikesOnStation: stationId => delay(mockedBikesByStations[stationId]),
   getRentedBikes: () => delay(mockedRentedBikes),
-  returnBike: bikeId => delay<Bike>({ id: bikeId, status: 'available' }),
-  rentBike: bikeId => delay<Bike>({ id: bikeId, status: 'rented' }),
-  addStation: name => delay<Station>({ id: '1', status: 'active', name }),
-  addBike: () => delay<Bike>({ id: '1', status: 'available' }),
+  returnBike: bikeId =>
+    delay<Bike>({ id: bikeId, status: BikeStatus.Available }),
+  rentBike: bikeId => delay<Bike>({ id: bikeId, status: BikeStatus.Rented }),
+  addStation: name =>
+    delay<Station>({ id: '1', status: StationStatus.Active, name }),
+  addBike: () => delay<Bike>({ id: '1', status: BikeStatus.Available }),
   removeBike: () => delay<void>(undefined),
   removeStation: () => delay<void>(undefined),
-  blockStation: id => delay<Station>({ id, status: 'active', name: '' }),
-  blockBike: id => delay<Bike>({ id, status: 'blocked' }),
+  blockStation: id =>
+    delay<Station>({ id, status: StationStatus.Active, name: '' }),
+  blockBike: id => delay<Bike>({ id, status: BikeStatus.Blocked }),
   unblockBike: () => delay<void>(undefined),
   unblockStation: () => delay<void>(undefined),
   getUsers: () => delay(mockedUsers),
