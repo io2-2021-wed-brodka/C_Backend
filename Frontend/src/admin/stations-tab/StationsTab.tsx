@@ -22,7 +22,7 @@ const StationsTab = () => {
   const data = usePromise(useServices().getAllStations, [refreshState]);
   const addStation = useServices().addStation;
   const snackbar = useSnackbar();
-  const [stationFilter, SetStationFilter] = useState<StationFilterType>(
+  const [stationFilter, setStationFilter] = useState<StationFilterType>(
     stationFilterType.All,
   );
 
@@ -37,7 +37,7 @@ const StationsTab = () => {
       <Button
         variant="contained"
         color={stationFilter == stationFilterType.All ? 'secondary' : 'primary'}
-        onClick={() => SetStationFilter(stationFilterType.All)}
+        onClick={() => setStationFilter(stationFilterType.All)}
       >
         All
       </Button>
@@ -46,7 +46,7 @@ const StationsTab = () => {
         color={
           stationFilter == stationFilterType.Active ? 'secondary' : 'primary'
         }
-        onClick={() => SetStationFilter(stationFilterType.Active)}
+        onClick={() => setStationFilter(stationFilterType.Active)}
       >
         Active
       </Button>
@@ -55,7 +55,7 @@ const StationsTab = () => {
         color={
           stationFilter == stationFilterType.Blocked ? 'secondary' : 'primary'
         }
-        onClick={() => SetStationFilter(stationFilterType.Blocked)}
+        onClick={() => setStationFilter(stationFilterType.Blocked)}
       >
         Blocked
       </Button>
