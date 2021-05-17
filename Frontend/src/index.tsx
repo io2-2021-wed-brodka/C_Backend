@@ -6,7 +6,9 @@ import UserApp from './user/UserApp';
 import AdminApp from './admin/AdminApp';
 
 ReactDOM.render(
-  <React.StrictMode>{process.env.REACT_APP_FOR === 'user' ? <UserApp /> : <AdminApp />}</React.StrictMode>,
+  <React.StrictMode>
+    {process.env.REACT_APP_FOR === 'user' ? <UserApp /> : <AdminApp />}
+  </React.StrictMode>,
   document.getElementById('root'),
 );
 

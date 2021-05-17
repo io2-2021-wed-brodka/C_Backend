@@ -22,7 +22,11 @@ import { mockedBikesByStations } from './mocks/bikes';
 import { mockedRentedBikes } from './mocks/rentals';
 import { delay } from './mocks/mockedApiResponse';
 import { BearerToken } from './api/models/bearer-token';
-import { signInAndSaveToken, saveTokenInLocalStorage, signUpAndSaveToken } from './authentication/token-functions';
+import {
+  signInAndSaveToken,
+  saveTokenInLocalStorage,
+  signUpAndSaveToken,
+} from './authentication/token-functions';
 import { User, UserRole } from './api/models/user';
 
 type AllServices = {
@@ -80,13 +84,16 @@ export const mockedServices: AllServices = {
   getAllStations: () => delay(mockedStations),
   getBikesOnStation: stationId => delay(mockedBikesByStations[stationId]),
   getRentedBikes: () => delay(mockedRentedBikes),
-  returnBike: bikeId => delay<Bike>({ id: bikeId, status: BikeStatus.Available }),
+  returnBike: bikeId =>
+    delay<Bike>({ id: bikeId, status: BikeStatus.Available }),
   rentBike: bikeId => delay<Bike>({ id: bikeId, status: BikeStatus.Rented }),
-  addStation: name => delay<Station>({ id: '1', status: StationStatus.Active, name }),
+  addStation: name =>
+    delay<Station>({ id: '1', status: StationStatus.Active, name }),
   addBike: () => delay<Bike>({ id: '1', status: BikeStatus.Available }),
   removeBike: () => delay<void>(undefined),
   removeStation: () => delay<void>(undefined),
-  blockStation: id => delay<Station>({ id, status: StationStatus.Active, name: '' }),
+  blockStation: id =>
+    delay<Station>({ id, status: StationStatus.Active, name: '' }),
   blockBike: id => delay<Bike>({ id, status: BikeStatus.Blocked }),
   unblockBike: () => delay<void>(undefined),
   unblockStation: () => delay<void>(undefined),

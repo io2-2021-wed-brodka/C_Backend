@@ -1,5 +1,10 @@
 import React from 'react';
-import { createStyles, makeStyles, Theme, ThemeProvider } from '@material-ui/core';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  ThemeProvider,
+} from '@material-ui/core';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { services, ServicesContext } from '../common/services';
 import LoginPage from '../common/components/LoginPage';

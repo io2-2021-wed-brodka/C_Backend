@@ -59,7 +59,11 @@ const LoginPage = () => {
 
     signIn(login, password)
       .then(user => {
-        if (process.env.REACT_APP_FOR === 'admin' && user.role !== UserRole.Admin) throw new Error('Unauthorized');
+        if (
+          process.env.REACT_APP_FOR === 'admin' &&
+          user.role !== UserRole.Admin
+        )
+          throw new Error('Unauthorized');
         history.push('/');
       })
       .catch(err => {
@@ -103,7 +107,13 @@ const LoginPage = () => {
             autoComplete="current-password"
             onChange={e => setPassword(e.target.value)}
           />
-          <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
             Sign In
           </Button>
           <Grid container>

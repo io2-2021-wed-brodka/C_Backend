@@ -23,15 +23,24 @@ export const signUp = (login: string, password: string) =>
   });
 
 export const getActiveStations = () =>
-  apiWithAuthConnection<StationsResponse>(`${API}/stations/active`).then(res => res.stations);
+  apiWithAuthConnection<StationsResponse>(`${API}/stations/active`).then(
+    res => res.stations,
+  );
 
 export const getAllStations = () =>
-  apiWithAuthConnection<StationsResponse>(`${API}/stations`).then(res => res.stations);
+  apiWithAuthConnection<StationsResponse>(`${API}/stations`).then(
+    res => res.stations,
+  );
 
 export const getBikesByStation = (stationId: string) =>
-  apiWithAuthConnection<BikesResponse>(`${API}/stations/${stationId}/bikes`).then(res => res.bikes);
+  apiWithAuthConnection<BikesResponse>(
+    `${API}/stations/${stationId}/bikes`,
+  ).then(res => res.bikes);
 
-export const getRentedBikes = () => apiWithAuthConnection<BikesResponse>(`${API}/bikes/rented`).then(res => res.bikes);
+export const getRentedBikes = () =>
+  apiWithAuthConnection<BikesResponse>(`${API}/bikes/rented`).then(
+    res => res.bikes,
+  );
 
 export const returnBike = (stationId: string, bikeId: string) =>
   apiWithAuthConnection<Bike>(`${API}/stations/${stationId}/bikes`, {

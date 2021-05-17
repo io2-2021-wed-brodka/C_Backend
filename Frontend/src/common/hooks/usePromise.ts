@@ -6,7 +6,10 @@ export type DataSource<T> = {
   results: T | null;
 };
 
-const usePromise = <T>(promise: () => Promise<T>, dependencies: unknown[] = []): DataSource<T> => {
+const usePromise = <T>(
+  promise: () => Promise<T>,
+  dependencies: unknown[] = [],
+): DataSource<T> => {
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);

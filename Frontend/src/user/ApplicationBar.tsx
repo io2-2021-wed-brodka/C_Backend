@@ -1,6 +1,15 @@
 import React from 'react';
 import './UserApp.css';
-import { createStyles, IconButton, makeStyles, Menu, MenuItem, Theme, Toolbar, Typography } from '@material-ui/core';
+import {
+  createStyles,
+  IconButton,
+  makeStyles,
+  Menu,
+  MenuItem,
+  Theme,
+  Toolbar,
+  Typography,
+} from '@material-ui/core';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import { clearTokenFromLocalStorage } from './../common/authentication/token-functions';
@@ -38,7 +47,12 @@ const ApplicationBar = () => {
 
   return (
     <Toolbar>
-      <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+      <IconButton
+        edge="start"
+        className={classes.menuButton}
+        color="inherit"
+        aria-label="menu"
+      >
         <DirectionsBikeIcon />
       </IconButton>
       <Typography variant="h6" className={classes.title}>
@@ -48,7 +62,12 @@ const ApplicationBar = () => {
         <IconButton onClick={handleMenu} color="inherit">
           <AccountCircle />
         </IconButton>
-        <Menu id="menu-appbar" anchorEl={anchorEl} open={open} onClose={handleClose}>
+        <Menu
+          id="menu-appbar"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+        >
           <MenuItem onClick={logout}>Logout</MenuItem>
         </Menu>
       </div>

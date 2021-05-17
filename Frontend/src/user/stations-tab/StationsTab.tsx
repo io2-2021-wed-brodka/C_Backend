@@ -9,7 +9,9 @@ const StationsTab = () => {
 
   return (
     <DataLoader data={data}>
-      {stations => stations.map(station => <Station key={station.id} {...station} />)}
+      {stations =>
+        stations.map(station => <Station key={station.id} {...station} />)
+      }
     </DataLoader>
   );
 };

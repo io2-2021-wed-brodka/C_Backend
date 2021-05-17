@@ -22,7 +22,9 @@ const StationsTab = () => {
   const data = usePromise(useServices().getAllStations, [refreshState]);
   const addStation = useServices().addStation;
   const snackbar = useSnackbar();
-  const [stationFilter, SetStationFilter] = useState<StationFilterType>(stationFilterType.All);
+  const [stationFilter, SetStationFilter] = useState<StationFilterType>(
+    stationFilterType.All,
+  );
 
   const onAddStation = (name: string) => {
     addStation(name)
@@ -41,14 +43,18 @@ const StationsTab = () => {
       </Button>
       <Button
         variant="contained"
-        color={stationFilter == stationFilterType.Active ? 'secondary' : 'primary'}
+        color={
+          stationFilter == stationFilterType.Active ? 'secondary' : 'primary'
+        }
         onClick={() => SetStationFilter(stationFilterType.Active)}
       >
         Active
       </Button>
       <Button
         variant="contained"
-        color={stationFilter == stationFilterType.Blocked ? 'secondary' : 'primary'}
+        color={
+          stationFilter == stationFilterType.Blocked ? 'secondary' : 'primary'
+        }
         onClick={() => SetStationFilter(stationFilterType.Blocked)}
       >
         Blocked
@@ -58,8 +64,14 @@ const StationsTab = () => {
       <DataLoader data={data}>
         {stations =>
           stations
-            .filter(station => station.status == stationFilter || stationFilter == stationFilterType.All)
-            .map(station => <Station key={station.id} forceRefresh={refresh} {...station} />)
+            .filter(
+              station =>
+                station.status == stationFilter ||
+                stationFilter == stationFilterType.All,
+            )
+            .map(station => (
+              <Station key={station.id} forceRefresh={refresh} {...station} />
+            ))
         }
       </DataLoader>
       <SnackBar {...snackbar.props} />

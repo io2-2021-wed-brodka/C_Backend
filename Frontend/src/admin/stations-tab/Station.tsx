@@ -93,25 +93,44 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
         {hasBeenOpened && (
           <div className={classes.div}>
             <div className={classes.stationButtonsDiv}>
-              <Button variant="contained" color={'secondary'} onClick={onAddBike}>
+              <Button
+                variant="contained"
+                color={'secondary'}
+                onClick={onAddBike}
+              >
                 Add bike
               </Button>{' '}
               {status === StationStatus.Active && (
-                <Button variant="contained" color={'default'} onClick={onBlockStation}>
+                <Button
+                  variant="contained"
+                  color={'default'}
+                  onClick={onBlockStation}
+                >
                   Block
                 </Button>
               )}
               {status === StationStatus.Blocked && (
-                <Button variant="contained" color={'default'} onClick={onUnblockStation}>
+                <Button
+                  variant="contained"
+                  color={'default'}
+                  onClick={onUnblockStation}
+                >
                   Unblock
                 </Button>
               )}{' '}
-              <Button variant="contained" color={'primary'} onClick={onRemoveStation}>
+              <Button
+                variant="contained"
+                color={'primary'}
+                onClick={onRemoveStation}
+              >
                 Remove
               </Button>
             </div>
             <Divider />
-            <StationBikesList stationId={id} refresh={refreshState}></StationBikesList>
+            <StationBikesList
+              stationId={id}
+              refresh={refreshState}
+            ></StationBikesList>
           </div>
         )}
       </AccordionDetails>

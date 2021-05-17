@@ -54,10 +54,18 @@ const BikesList = ({ bikes, bikeActions }: Props) => {
               <ListItemIconSansPadding>
                 <DirectionsBikeIcon />
               </ListItemIconSansPadding>
-              <ListItemText primary={<Typography variant="h6">{`#${bike.id}`}</Typography>} />
+              <ListItemText
+                primary={<Typography variant="h6">{`#${bike.id}`}</Typography>}
+              />
               <ListItemSecondaryAction>
                 {bikeActions(bike).map(({ onClick, label, type }) => (
-                  <Button variant="contained" color={type} onClick={onClick} key={label} className={classes.button}>
+                  <Button
+                    variant="contained"
+                    color={type}
+                    onClick={onClick}
+                    key={label}
+                    className={classes.button}
+                  >
                     {label}
                   </Button>
                 ))}

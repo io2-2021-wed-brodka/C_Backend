@@ -1,5 +1,12 @@
 import React from 'react';
-import { AppBar, Container, createStyles, makeStyles, Theme, ThemeProvider } from '@material-ui/core';
+import {
+  AppBar,
+  Container,
+  createStyles,
+  makeStyles,
+  Theme,
+  ThemeProvider,
+} from '@material-ui/core';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import ApplicationBar from './ApplicationBar';
 import Navigation from './Navigation';
