@@ -14,6 +14,7 @@ import {
   returnBike,
   unblockBike,
   unblockStation,
+  getUsers,
 } from './api/endpoints';
 import { Bike, BikeStatus } from './api/models/bike';
 import { Station, StationStatus } from './api/models/station';
@@ -27,10 +28,12 @@ import {
   saveTokenInLocalStorage,
   signUpAndSaveToken,
 } from './authentication/token-functions';
-import { User, UserRole } from './api/models/user';
+import { LoginResponse, UserRole } from './api/models/login-response';
+import { User } from './api/models/user';
+import { mockedUsers } from './mocks/users';
 
 type AllServices = {
-  signIn: (login: string, password: string) => Promise<User>;
+  signIn: (login: string, password: string) => Promise<LoginResponse>;
   signUp: (login: string, password: string) => Promise<BearerToken>;
   getActiveStations: () => Promise<Station[]>;
   getAllStations: () => Promise<Station[]>;
@@ -46,6 +49,7 @@ type AllServices = {
   blockBike: (id: string) => Promise<Bike>;
   unblockBike: (id: string) => Promise<void>;
   unblockStation: (id: string) => Promise<void>;
+  getUsers: () => Promise<User[]>;
 };
 
 export const services: AllServices = {
@@ -65,6 +69,7 @@ export const services: AllServices = {
   blockBike: blockBike,
   unblockBike: unblockBike,
   unblockStation: unblockStation,
+  getUsers: getUsers,
 };
 
 export const mockedServices: AllServices = {
@@ -97,6 +102,7 @@ export const mockedServices: AllServices = {
   blockBike: id => delay<Bike>({ id, status: BikeStatus.Blocked }),
   unblockBike: () => delay<void>(undefined),
   unblockStation: () => delay<void>(undefined),
+  getUsers: () => delay(mockedUsers),
 };
 
 export const ServicesContext = createContext(services);

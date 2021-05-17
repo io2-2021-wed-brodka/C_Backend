@@ -14,7 +14,7 @@ import { useServices } from '../services';
 import { useHistory } from 'react-router-dom';
 import { useSnackbar } from '../hooks/useSnackbar';
 import { SnackBar } from './SnackBar';
-import { UserRole } from '../api/models/user';
+import { UserRole } from '../api/models/login-response';
 import { isUserApp, isAdminApp } from '../environment';
 
 const Copyright = () => {
