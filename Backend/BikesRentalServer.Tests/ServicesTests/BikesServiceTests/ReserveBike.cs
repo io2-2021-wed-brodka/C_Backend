@@ -44,6 +44,16 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                     },
                 });
             UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>())).Returns(user);
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), BikeStatus.Reserved))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Reserved,
+                    Station = new Station
+                    {
+                        Status = StationStatus.Active,
+                    },
+                });
             ReservationsRepository.Setup(r => r.Add(It.IsAny<Reservation>())).Returns(reservation).Verifiable();
 
             var bikesService = GetBikesService();
@@ -53,7 +63,61 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             result.Object.Should().Be(reservation);
             ReservationsRepository.Verify();
         }
-        
+
+        [Fact]
+        public void ReserveBikeShouldSetBikeStatusToReserved()
+        {
+            const int bikeId = 2;
+            var user = new User
+            {
+                Status = UserStatus.Active,
+                Username = "maciek",
+            };
+            var reservation = new Reservation
+            {
+                Bike = new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Reserved,
+                    Station = new Station
+                    {
+                        Status = StationStatus.Active,
+                    },
+                },
+                User = user,
+                ReservationDate = DateTime.Now,
+                ExpirationDate = DateTime.Now.AddMinutes(30),
+            };
+            BikesRepository.Setup(r => r.Get(bikeId.ToString()))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Available,
+                    Station = new Station
+                    {
+                        Status = StationStatus.Active,
+                    },
+                });
+            UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>())).Returns(user);
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), BikeStatus.Reserved))
+                .Returns(new Bike
+                {
+                    Id = bikeId,
+                    Status = BikeStatus.Reserved,
+                    Station = new Station
+                    {
+                        Status = StationStatus.Active,
+                    },
+                })
+                .Verifiable();
+
+            var bikesService = GetBikesService();
+            var result = bikesService.ReserveBike(bikeId.ToString());
+
+            result.Status.Should().Be(Status.Success);
+            BikesRepository.Verify();
+        }
+
         [Fact]
         public void ReserveNotExistingBikeShouldReturnEntityNotFound()
         {
