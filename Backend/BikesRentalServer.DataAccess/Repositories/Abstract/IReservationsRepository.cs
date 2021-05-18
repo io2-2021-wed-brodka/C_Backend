@@ -6,6 +6,6 @@ namespace BikesRentalServer.DataAccess.Repositories.Abstract
     public interface IReservationsRepository : IRepository<Reservation>
     {
         Reservation GetActiveReservation(string bikeId);
-        List<Reservation> GetActiveReservationsForUser(string userId);
+        List<Reservation> GetActiveReservations(string userId);
     }
 }

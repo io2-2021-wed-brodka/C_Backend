@@ -183,7 +183,7 @@ namespace BikesRentalServer.Services
             if (user.Status is UserStatus.Blocked)
                 return ServiceActionResult.UserBlocked<IEnumerable<Bike>>("User is blocked");
 
-            var reservations = _reservationsRepository.GetActiveReservationsForUser(user.Id.ToString());
+            var reservations = _reservationsRepository.GetActiveReservations(user.Id.ToString());
             var reservedBikes = reservations.Select(reservation => reservation.Bike);
             return ServiceActionResult.Success(reservedBikes);
         }
