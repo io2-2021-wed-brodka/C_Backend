@@ -201,7 +201,7 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.InvalidState<Reservation>("Bike is rented");
             if (bike.Station.Status is StationStatus.Blocked)
                 return ServiceActionResult.InvalidState<Reservation>("Station is blocked");
-            if(_reservationsRepository.GetActiveReservation(id) != null)
+            if (_reservationsRepository.GetActiveReservation(id) is not null)
                 return ServiceActionResult.InvalidState<Reservation>("Reservation for bike exists");
 
             var user = _usersRepository.GetByUsername(_userContext.Username);
