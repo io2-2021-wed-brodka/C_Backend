@@ -65,5 +65,12 @@ namespace BikesRentalServer.DataAccess.Repositories
                 return null;
             return _dbContext.Reservations.Include(r => r.Bike).Include(r => r.User).SingleOrDefault(r => r.Bike.Id == iid && r.ExpirationDate > DateTime.Now);
         }
+
+        public List<Reservation> GetActiveReservationsForUser(string userId)
+        {
+            if (!int.TryParse(userId, out var iid))
+                return null;
+            return _dbContext.Reservations.Include(r => r.Bike).Include(r => r.User).Where(r => r.User.Id == iid && r.ExpirationDate > DateTime.Now).ToList();
+        }
     }
 }
