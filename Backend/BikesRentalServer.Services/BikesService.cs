@@ -183,9 +183,8 @@ namespace BikesRentalServer.Services
             if (user.Status is UserStatus.Blocked)
                 return ServiceActionResult.UserBlocked<IEnumerable<Bike>>("User is blocked");
 
-            var userReservations = _reservationsRepository.GetAll().Where(reservation => reservation.User == user).ToList();
+            var userReservations = _reservationsRepository.GetAll().Where(reservation => reservation.User == user);
             var reservedBikes = userReservations.Select(reservation => reservation.Bike);
-            var reservedBikesViewable = userReservations.Select(reservation => reservation.Bike).ToList();
             return ServiceActionResult.Success(reservedBikes);
         }
 
@@ -202,6 +201,8 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.InvalidState<Reservation>("Bike is rented");
             if (bike.Station.Status is StationStatus.Blocked)
                 return ServiceActionResult.InvalidState<Reservation>("Station is blocked");
+            if(_reservationsRepository.GetActiveReservation(id) != null)
+                return ServiceActionResult.InvalidState<Reservation>("Reservation for bike exists");
 
             var user = _usersRepository.GetByUsername(_userContext.Username);
             if (user.Status is UserStatus.Blocked)
