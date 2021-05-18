@@ -18,6 +18,7 @@ import LoginPage from '../common/components/LoginPage';
 import { getTokenFromLocalStorage } from '../common/authentication/token-functions';
 import pinkTheme from '../common/theme';
 import RegistrationPage from './registration/RegistrationPage';
+import ReservationsTab from './reservations-tab/ReservationsTab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -76,6 +77,7 @@ const UserApp = () => {
                     <Container maxWidth="md" className={classes.container}>
                       <Route path="/stations" component={StationsTab} />
                       <Route path="/rentals" component={RentalsTab} />
+                      <Route path="/reservations" component={ReservationsTab} />
                     </Container>
                   </>
                 )}

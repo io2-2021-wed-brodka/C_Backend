@@ -18,67 +18,38 @@ const StationBikesList = ({ stationId }: Props) => {
   const getBikesOnStation = useServices().getBikesOnStation;
   const rentBike = useServices().rentBike;
   const reserveBike = useServices().reserveBike;
-  const cancelBikeReservation = useServices().cancelBikeReservation;
   const snackbar = useSnackbar();
   const data = usePromise(() => getBikesOnStation(stationId), [
     stationId,
     refreshBikesState,
   ]);
 
-  const bikeActions: BikeActionsForBike = ({ id, status }) =>
-    status == 'available'
-      ? [
-          {
-            label: 'Reserve',
-            type: 'secondary',
-            onClick: () => {
-              reserveBike(id)
-                .then(() => {
-                  refreshBikes();
-                  snackbar.open(`Reserved bike #${id}`);
-                })
-                .catch(err => snackbar.open(err.message));
-            },
-          },
-          {
-            label: 'Rent',
-            type: 'primary',
-            onClick: () => {
-              rentBike(id)
-                .then(() => {
-                  refreshBikes();
-                  snackbar.open(`Rented bike #${id}`);
-                })
-                .catch(err => snackbar.open(err.message));
-            },
-          },
-        ]
-      : [
-          {
-            label: 'Cancel reservation',
-            type: 'secondary',
-            onClick: () => {
-              cancelBikeReservation(id)
-                .then(() => {
-                  refreshBikes();
-                  snackbar.open(`Cancelled reservation for bike #${id}`);
-                })
-                .catch(err => snackbar.open(err.message));
-            },
-          },
-          {
-            label: 'Rent',
-            type: 'primary',
-            onClick: () => {
-              rentBike(id)
-                .then(() => {
-                  refreshBikes();
-                  snackbar.open(`Rented bike #${id}`);
-                })
-                .catch(err => snackbar.open(err.message));
-            },
-          },
-        ];
+  const bikeActions: BikeActionsForBike = ({ id }) => [
+    {
+      label: 'Reserve',
+      type: 'secondary',
+      onClick: () => {
+        reserveBike(id)
+          .then(() => {
+            refreshBikes();
+            snackbar.open(`Reserved bike #${id}`);
+          })
+          .catch(err => snackbar.open(err.message));
+      },
+    },
+    {
+      label: 'Rent',
+      type: 'primary',
+      onClick: () => {
+        rentBike(id)
+          .then(() => {
+            refreshBikes();
+            snackbar.open(`Rented bike #${id}`);
+          })
+          .catch(err => snackbar.open(err.message));
+      },
+    },
+  ];
 
   return (
     <>

@@ -3,14 +3,19 @@ import { Bike } from './models/bike';
 import apiConnection from './api-connection';
 import { BearerToken } from './models/bearer-token';
 import { apiWithAuthConnection } from '../authentication/api-with-authentication';
+import { ReservedBike } from './models/reservedBike';
+import { LoginResponse } from './models/login-response';
+import { User } from './models/user';
 
 const API = 'http://localhost:5000';
 
 export type StationsResponse = { stations: Station[] };
 export type BikesResponse = { bikes: Bike[] };
+export type ReservedBikesResponse = { bikes: ReservedBike[] };
+export type UsersResponse = { users: User[] };
 
 export const signIn = (login: string, password: string) =>
-  apiConnection<BearerToken>(`${API}/login`, {
+  apiConnection<LoginResponse>(`${API}/login`, {
     method: 'POST',
     data: { login, password },
   });
@@ -36,14 +41,19 @@ export const getBikesByStation = (stationId: string) =>
     `${API}/stations/${stationId}/bikes`,
   ).then(res => res.bikes);
 
-export const getReservedBikes = () =>
-  apiWithAuthConnection<BikesResponse>(`${API}/bikes/reserved`).then(
-    res => res.bikes,
-  );
-
 export const getRentedBikes = () =>
   apiWithAuthConnection<BikesResponse>(`${API}/bikes/rented`).then(
     res => res.bikes,
+  );
+
+export const getReservedBikes = () =>
+  apiWithAuthConnection<ReservedBikesResponse>(`${API}/bikes/reserved`).then(
+    res =>
+      res.bikes.map(bike => ({
+        ...bike,
+        reservedTill: new Date(bike.reservedTill),
+        reservedAt: new Date(bike.reservedAt),
+      })),
   );
 
 export const returnBike = (stationId: string, bikeId: string) =>
@@ -59,14 +69,8 @@ export const rentBike = (bikeId: string) =>
   });
 
 export const reserveBike = (bikeId: string) =>
-  apiWithAuthConnection<Bike>(`${API}/bikes/reserved`, {
+  apiWithAuthConnection<ReservedBike>(`${API}/bikes/reserved`, {
     method: 'POST',
-    data: { id: bikeId },
-  });
-
-export const cancelBikeReservation = (bikeId: string) =>
-  apiWithAuthConnection<Bike>(`${API}/bikes/reserved`, {
-    method: 'DELETE',
     data: { id: bikeId },
   });
 
@@ -84,6 +88,11 @@ export const addBike = (stationId: string) =>
 
 export const removeBike = (bikeId: string) =>
   apiWithAuthConnection<void>(`${API}/bikes/${bikeId}`, {
+    method: 'DELETE',
+  });
+
+export const removeReservation = (bikeId: string) =>
+  apiWithAuthConnection<void>(`${API}/bikes/reserved/${bikeId}`, {
     method: 'DELETE',
   });
 
@@ -113,3 +122,6 @@ export const unblockStation = (stationId: string) =>
   apiWithAuthConnection<void>(`${API}/stations/blocked/${stationId}`, {
     method: 'DELETE',
   });
+
+export const getUsers = () =>
+  apiWithAuthConnection<UsersResponse>(`${API}/users`).then(res => res.users);
