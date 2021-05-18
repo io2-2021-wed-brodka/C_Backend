@@ -68,6 +68,12 @@ export const rentBike = (bikeId: string) =>
     data: { id: bikeId },
   });
 
+export const reserveBike = (bikeId: string) =>
+  apiWithAuthConnection<ReservedBike>(`${API}/bikes/reserved`, {
+    method: 'POST',
+    data: { id: bikeId },
+  });
+
 export const addStation = (name: string) =>
   apiWithAuthConnection<Station>(`${API}/stations`, {
     method: 'POST',

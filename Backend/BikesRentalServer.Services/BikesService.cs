@@ -4,6 +4,7 @@ using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BikesRentalServer.Services
 {
@@ -176,7 +177,16 @@ namespace BikesRentalServer.Services
         
         #region Reserving
 
-        public ServiceActionResult<IEnumerable<Bike>> GetReservedBikes() => throw new NotImplementedException();
+        public ServiceActionResult<IEnumerable<Bike>> GetReservedBikes()
+        {
+            var user = _usersRepository.GetByUsername(_userContext.Username);
+            if (user.Status is UserStatus.Blocked)
+                return ServiceActionResult.UserBlocked<IEnumerable<Bike>>("User is blocked");
+
+            var reservations = _reservationsRepository.GetActiveReservations(user.Id.ToString());
+            var reservedBikes = reservations.Select(reservation => reservation.Bike);
+            return ServiceActionResult.Success(reservedBikes);
+        }
 
         public ServiceActionResult<Reservation> ReserveBike(string id)
         {
@@ -191,6 +201,8 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.InvalidState<Reservation>("Bike is rented");
             if (bike.Station.Status is StationStatus.Blocked)
                 return ServiceActionResult.InvalidState<Reservation>("Station is blocked");
+            if (_reservationsRepository.GetActiveReservation(id) is not null)
+                return ServiceActionResult.InvalidState<Reservation>("Reservation for bike exists");
 
             var user = _usersRepository.GetByUsername(_userContext.Username);
             if (user.Status is UserStatus.Blocked)

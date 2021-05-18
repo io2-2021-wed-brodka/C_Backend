@@ -17,6 +17,7 @@ const StationBikesList = ({ stationId }: Props) => {
   const [refreshBikesState, refreshBikes] = useRefresh();
   const getBikesOnStation = useServices().getBikesOnStation;
   const rentBike = useServices().rentBike;
+  const reserveBike = useServices().reserveBike;
   const snackbar = useSnackbar();
   const data = usePromise(() => getBikesOnStation(stationId), [
     stationId,
@@ -28,17 +29,24 @@ const StationBikesList = ({ stationId }: Props) => {
       label: 'Reserve',
       type: 'secondary',
       onClick: () => {
-        console.log(id);
+        reserveBike(id)
+          .then(() => {
+            refreshBikes();
+            snackbar.open(`Reserved bike #${id}`);
+          })
+          .catch(err => snackbar.open(err.message));
       },
     },
     {
       label: 'Rent',
       type: 'primary',
       onClick: () => {
-        rentBike(id).then(() => {
-          refreshBikes();
-          snackbar.open(`Rented bike #${id}`);
-        });
+        rentBike(id)
+          .then(() => {
+            refreshBikes();
+            snackbar.open(`Rented bike #${id}`);
+          })
+          .catch(err => snackbar.open(err.message));
       },
     },
   ];

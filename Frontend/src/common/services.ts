@@ -5,16 +5,17 @@ import {
   blockBike,
   blockStation,
   getBikesByStation,
+  getReservedBikes,
   getRentedBikes,
   getActiveStations,
   getAllStations,
   removeBike,
   removeStation,
   rentBike,
+  reserveBike,
   returnBike,
   unblockBike,
   unblockStation,
-  getReservedBikes,
   removeReservation,
   getUsers,
 } from './api/endpoints';
@@ -46,6 +47,7 @@ type AllServices = {
   getReservedBikes: () => Promise<ReservedBike[]>;
   returnBike: (stationId: string, bikeId: string) => Promise<Bike>;
   rentBike: (bikeId: string) => Promise<Bike>;
+  reserveBike: (bikeId: string) => Promise<ReservedBike>;
   addStation: (name: string) => Promise<Station>;
   addBike: (stationId: string) => Promise<Bike>;
   removeBike: (bikeId: string) => Promise<void>;
@@ -64,10 +66,11 @@ export const services: AllServices = {
   getActiveStations: getActiveStations,
   getAllStations: getAllStations,
   getBikesOnStation: getBikesByStation,
-  getRentedBikes: getRentedBikes,
   getReservedBikes: getReservedBikes,
+  getRentedBikes: getRentedBikes,
   returnBike: returnBike,
   rentBike: rentBike,
+  reserveBike: reserveBike,
   addStation: addStation,
   addBike: addBike,
   removeBike: removeBike,
@@ -110,6 +113,13 @@ export const mockedServices: AllServices = {
     }),
   addBike: () => delay<Bike>({ id: '1', status: BikeStatus.Available }),
   removeBike: () => delay<void>(undefined),
+  reserveBike: bikeId =>
+    delay<ReservedBike>({
+      id: bikeId,
+      station: mockedReservedBikes[0].station,
+      reservedAt: mockedReservedBikes[0].reservedAt,
+      reservedTill: mockedReservedBikes[0].reservedTill,
+    }),
   removeReservation: () => delay<void>(undefined),
   removeStation: () => delay<void>(undefined),
   blockStation: id =>

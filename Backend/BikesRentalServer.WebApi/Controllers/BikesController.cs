@@ -278,5 +278,36 @@ namespace BikesRentalServer.WebApi.Controllers
                 _ => throw new InvalidOperationException($"Unexpected result: {response.Status} - {response.Message}"),
             };
         }
+
+        [HttpGet("reserved")]
+        [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
+        public ActionResult<GetAllBikesResponse> GetReservedBikes()
+        {
+            var response = new GetAllBikesResponse
+            {
+                Bikes = _bikesService.GetReservedBikes().Object
+                    .Select(bike => new GetBikeResponse
+                    {
+                        Id = bike.Id.ToString(),
+                        Station = bike.Station is null ? null : new GetStationResponse
+                        {
+                            Id = bike.Station.Id.ToString(),
+                            Name = bike.Station.Name,
+                            Status = bike.Station.Status,
+                            ActiveBikesCount = bike.Station.Bikes.Count(b => b.Status is BikeStatus.Available),
+                        },
+                        User = bike.User is null ? null : new GetUserResponse
+                        {
+                            Id = bike.User.Id.ToString(),
+                            Name = bike.User.Username,
+                        },
+                        Status = bike.Status,
+                    }),
+            };
+
+            return Ok(response);
+        }
     }
 }
