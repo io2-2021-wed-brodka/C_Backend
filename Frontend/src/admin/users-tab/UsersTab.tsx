@@ -6,21 +6,52 @@ import useRefresh from '../../common/hooks/useRefresh';
 import { useSnackbar } from '../../common/hooks/useSnackbar';
 import SnackBar from '../../common/components/SnackBar';
 import {
+  createStyles,
   List,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
   Paper,
+  makeStyles,
+  Theme,
   Typography,
 } from '@material-ui/core';
 import ListItemIconSansPadding from '../../common/components/ListItemIconSansPadding';
 import PersonIcon from '@material-ui/icons/Person';
+import { Button } from '@material-ui/core';
+import { UserStatus } from '../../common/api/models/user';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    button: {
+      marginLeft: theme.spacing(1),
+    },
+    alert: {
+      padding: theme.spacing(2),
+    },
+  }),
+);
 
 const UsersTab = () => {
-  const [refreshState] = useRefresh();
+  const [refreshState, refresh] = useRefresh();
   const data = usePromise(useServices().getUsers, [refreshState]);
   const snackbar = useSnackbar();
+  const BlockUser = useServices().blockUser;
+  const UnblockUser = useServices().unblockUser;
 
+  const onBlockUser = (id: string) => {
+    BlockUser(id)
+      .then(() => refresh())
+      .catch(err => snackbar.open(err.message));
+  };
+
+  const onUnblockUser = (id: string) => {
+    UnblockUser(id)
+      .then(() => refresh())
+      .catch(err => snackbar.open(err.message));
+  };
+
+  const classes = useStyles();
   return (
     <>
       <Typography variant="h4">Users</Typography>
@@ -41,7 +72,26 @@ const UsersTab = () => {
                       }
                     />
                     <ListItemSecondaryAction>
-                      Buttons to block/unblock go here
+                      {user.status === UserStatus.Active && (
+                        <Button
+                          variant="contained"
+                          color={'secondary'}
+                          onClick={() => onBlockUser(user.id)}
+                          key="Block"
+                        >
+                          Block
+                        </Button>
+                      )}
+                      {user.status === UserStatus.Blocked && (
+                        <Button
+                          variant="contained"
+                          color={'default'}
+                          onClick={() => onUnblockUser(user.id)}
+                          key="Unblock"
+                        >
+                          Unblock
+                        </Button>
+                      )}
                     </ListItemSecondaryAction>
                   </ListItem>
                 ))}
