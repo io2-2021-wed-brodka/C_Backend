@@ -58,6 +58,11 @@ namespace BikesRentalServer.DataAccess.Repositories
             return user;
         }
 
+        public IEnumerable<User> GetBlockedUsers()
+        {
+            return _dbContext.Users.Include(u => u.RentedBikes).Include(u => u.Reservations).Where(u => u.Role == UserRole.User && u.Status == UserStatus.Blocked);
+        }
+
         public User GetByUsername(string username)
         {
             return _dbContext.Users.Include(u => u.RentedBikes).Include(u => u.Reservations).SingleOrDefault(u => u.Username == username);

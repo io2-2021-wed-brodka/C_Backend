@@ -33,7 +33,22 @@ namespace BikesRentalServer.WebApi.Controllers
                     {
                         Id = user.Id.ToString(),
                         Name = user.Username,
-                        Status = user.Status,
+                    }),
+            };
+            return Ok(response);
+        }
+
+        [HttpGet("blocked")]
+        [AdminAuthorization]
+        public ActionResult<GetAllUsersResponse> GetBlockedUsers()
+        {
+            var response = new GetAllUsersResponse
+            {
+                Users = _usersService.GetBlockedUsers().Object
+                    .Select(user => new GetUserResponse
+                    {
+                        Id = user.Id.ToString(),
+                        Name = user.Username,
                     }),
             };
             return Ok(response);
@@ -50,7 +65,6 @@ namespace BikesRentalServer.WebApi.Controllers
                 {
                     Id = response.Object.Id.ToString(),
                     Name = response.Object.Username,
-                    Status = response.Object.Status,
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
