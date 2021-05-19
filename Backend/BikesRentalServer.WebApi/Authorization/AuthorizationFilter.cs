@@ -2,6 +2,7 @@
 using BikesRentalServer.Infrastructure;
 using BikesRentalServer.Models;
 using BikesRentalServer.WebApi.Authorization.Attributes;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -49,9 +50,14 @@ namespace BikesRentalServer.WebApi.Authorization
             }
             
             var user = _dbContext.Users.SingleOrDefault(u => u.Username == username);
-            if (user is null || !roles.Contains(user.Role))
+            if (user is null)
             {
                 context.Result = new UnauthorizedObjectResult("Unauthorized");
+                return;
+            }
+            if (!roles.Contains(user.Role))
+            {
+                context.Result = new StatusCodeResult(StatusCodes.Status403Forbidden);
                 return;
             }
             

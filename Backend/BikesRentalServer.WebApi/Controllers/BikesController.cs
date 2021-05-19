@@ -5,6 +5,7 @@ using BikesRentalServer.WebApi.Authorization;
 using BikesRentalServer.WebApi.Authorization.Attributes;
 using BikesRentalServer.WebApi.Dtos.Requests;
 using BikesRentalServer.WebApi.Dtos.Responses;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -163,7 +164,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
-                Status.UserBlocked => Forbid(),
+                Status.UserBlocked => StatusCode(StatusCodes.Status403Forbidden),
                 _ => throw new InvalidOperationException("Invalid state"),
             };
         }
@@ -256,7 +257,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
-                Status.UserBlocked => Forbid(),
+                Status.UserBlocked => StatusCode(StatusCodes.Status403Forbidden),
                 _ => throw new InvalidOperationException("Invalid state"),
             };
         }
