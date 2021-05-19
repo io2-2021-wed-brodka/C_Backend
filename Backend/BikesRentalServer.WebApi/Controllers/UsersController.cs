@@ -33,6 +33,7 @@ namespace BikesRentalServer.WebApi.Controllers
                     {
                         Id = user.Id.ToString(),
                         Name = user.Username,
+                        Status = user.Status,
                     }),
             };
             return Ok(response);

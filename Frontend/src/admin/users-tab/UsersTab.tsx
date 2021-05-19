@@ -15,11 +15,27 @@ import {
 } from '@material-ui/core';
 import ListItemIconSansPadding from '../../common/components/ListItemIconSansPadding';
 import PersonIcon from '@material-ui/icons/Person';
+import { Button } from '@material-ui/core';
+import { UserStatus } from '../../common/api/models/user';
 
 const UsersTab = () => {
-  const [refreshState] = useRefresh();
+  const [refreshState, refresh] = useRefresh();
   const data = usePromise(useServices().getUsers, [refreshState]);
   const snackbar = useSnackbar();
+  const BlockUser = useServices().blockUser;
+  const UnblockUser = useServices().unblockUser;
+
+  const onBlockUser = (id: string) => {
+    BlockUser(id)
+      .then(() => refresh())
+      .catch(err => snackbar.open(err.message));
+  };
+
+  const onUnblockUser = (id: string) => {
+    UnblockUser(id)
+      .then(() => refresh())
+      .catch(err => snackbar.open(err.message));
+  };
 
   return (
     <>
@@ -41,7 +57,26 @@ const UsersTab = () => {
                       }
                     />
                     <ListItemSecondaryAction>
-                      Buttons to block/unblock go here
+                      {user.status === UserStatus.Active && (
+                        <Button
+                          variant="contained"
+                          color={'secondary'}
+                          onClick={() => onBlockUser(user.id)}
+                          key="Block"
+                        >
+                          Block
+                        </Button>
+                      )}
+                      {user.status === UserStatus.Blocked && (
+                        <Button
+                          variant="contained"
+                          color={'default'}
+                          onClick={() => onUnblockUser(user.id)}
+                          key="Unblock"
+                        >
+                          Unblock
+                        </Button>
+                      )}
                     </ListItemSecondaryAction>
                   </ListItem>
                 ))}

@@ -4,6 +4,7 @@ import {
   addStation,
   blockBike,
   blockStation,
+  blockUser,
   getBikesByStation,
   getReservedBikes,
   getRentedBikes,
@@ -16,6 +17,7 @@ import {
   returnBike,
   unblockBike,
   unblockStation,
+  unblockUser,
   removeReservation,
   getUsers,
 } from './api/endpoints';
@@ -34,7 +36,7 @@ import {
 import { ReservedBike } from './api/models/reservedBike';
 import { mockedReservedBikes } from './mocks/reservedBikes';
 import { LoginResponse, UserRole } from './api/models/login-response';
-import { User } from './api/models/user';
+import { User, UserStatus } from './api/models/user';
 import { mockedUsers } from './mocks/users';
 
 type AllServices = {
@@ -55,8 +57,10 @@ type AllServices = {
   removeStation: (stationId: string) => Promise<void>;
   blockStation: (id: string) => Promise<Station>;
   blockBike: (id: string) => Promise<Bike>;
+  blockUser: (id: string) => Promise<User>;
   unblockBike: (id: string) => Promise<void>;
   unblockStation: (id: string) => Promise<void>;
+  unblockUser: (id: string) => Promise<void>;
   getUsers: () => Promise<User[]>;
 };
 
@@ -78,8 +82,10 @@ export const services: AllServices = {
   removeStation: removeStation,
   blockStation: blockStation,
   blockBike: blockBike,
+  blockUser: blockUser,
   unblockBike: unblockBike,
   unblockStation: unblockStation,
+  unblockUser: unblockUser,
   getUsers: getUsers,
 };
 
@@ -130,8 +136,10 @@ export const mockedServices: AllServices = {
       name: '',
     }),
   blockBike: id => delay<Bike>({ id, status: BikeStatus.Blocked }),
+  blockUser: id => delay<User>({ id, status: UserStatus.Blocked, name: '' }),
   unblockBike: () => delay<void>(undefined),
   unblockStation: () => delay<void>(undefined),
+  unblockUser: () => delay<void>(undefined),
   getUsers: () => delay(mockedUsers),
 };
 

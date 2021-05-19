@@ -113,6 +113,12 @@ export const blockBike = (id: string) =>
     data: { id },
   });
 
+export const blockUser = (id: string) =>
+  apiWithAuthConnection<User>(`${API}/users/blocked`, {
+    method: 'POST',
+    data: { id },
+  });
+
 export const unblockBike = (bikeId: string) =>
   apiWithAuthConnection<void>(`${API}/bikes/blocked/${bikeId}`, {
     method: 'DELETE',
@@ -120,6 +126,11 @@ export const unblockBike = (bikeId: string) =>
 
 export const unblockStation = (stationId: string) =>
   apiWithAuthConnection<void>(`${API}/stations/blocked/${stationId}`, {
+    method: 'DELETE',
+  });
+
+export const unblockUser = (userId: string) =>
+  apiWithAuthConnection<void>(`${API}/users/blocked/${userId}`, {
     method: 'DELETE',
   });
 
