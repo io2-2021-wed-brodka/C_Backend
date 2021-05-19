@@ -156,7 +156,7 @@ namespace SeleniumTests
                 By.CssSelector("#root > div.makeStyles-root-1 > header.MuiAppBar-colorPrimary.MuiAppBar-positionSticky.MuiAppBar-root.MuiPaper-elevation4.MuiPaper-root > div.MuiPaper-elevation0.MuiPaper-root.makeStyles-root-7 > div.MuiTabs-root > div.MuiTabs-fixed.MuiTabs-scroller > div.MuiTabs-centered.MuiTabs-flexContainer")
             );
             navbar.FindElement(By.CssSelector("a:nth-child(3)")).Click();
-            int reservationCount = webDriver.FindElements(By.CssSelector("ul")).Count;
+            int reservationCount = webDriver.FindElements(By.CssSelector("li")).Count;
             navbar.FindElement(By.CssSelector("a:nth-child(1)")).Click();
             var station = webDriver.FindElement(
                 By.CssSelector("#root > div.makeStyles-root-1 > div.MuiContainer-maxWidthMd.MuiContainer-root.makeStyles-container-4 > div.MuiAccordion-root.MuiAccordion-rounded.MuiPaper-elevation1.MuiPaper-root.MuiPaper-rounded:nth-child(1) > div.MuiAccordionSummary-root.MuiButtonBase-root")
@@ -172,7 +172,7 @@ namespace SeleniumTests
                 }
             }
             navbar.FindElement(By.CssSelector("a:nth-child(3)")).Click();
-            int newReservationCount = webDriver.FindElements(By.CssSelector("ul")).Count;
+            int newReservationCount = webDriver.FindElements(By.CssSelector("li")).Count;
             Assert.AreEqual(reservationCount+1, newReservationCount);
             webDriver.Close();
         }
@@ -186,13 +186,44 @@ namespace SeleniumTests
                 By.CssSelector("#root > div.makeStyles-root-1 > header.MuiAppBar-colorPrimary.MuiAppBar-positionSticky.MuiAppBar-root.MuiPaper-elevation4.MuiPaper-root > div.MuiPaper-elevation0.MuiPaper-root.makeStyles-root-7 > div.MuiTabs-root > div.MuiTabs-fixed.MuiTabs-scroller > div.MuiTabs-centered.MuiTabs-flexContainer")
             );
             navbar.FindElement(By.CssSelector("a:nth-child(3)")).Click();
-            int reservationCount = webDriver.FindElements(By.CssSelector("ul")).Count;
-            webDriver.FindElement(By.CssSelector("button:nth-child(1)")).Click();
-            int newReservationCount = webDriver.FindElements(By.CssSelector("ul")).Count;
+            int reservationCount = webDriver.FindElements(By.CssSelector("li")).Count;
+            var buttons = webDriver.FindElements(By.CssSelector("button"));
+            foreach (var button in buttons)
+            {
+                if (button.Text == "DROP")
+                {
+                    button.Click();
+                    break;
+                }
+            }
+            int newReservationCount = webDriver.FindElements(By.CssSelector("li")).Count;
             Assert.AreEqual(reservationCount, newReservationCount+1);
             webDriver.Close();
         }
+        [Test]
+        public void VerifyResevatingAndRentingBike()
+        {
+            IWebDriver webDriver = new FirefoxDriver(firefoxOptions);
+            Login(webDriver);
+            var navbar = webDriver.FindElement(
+                By.CssSelector("#root > div.makeStyles-root-1 > header.MuiAppBar-colorPrimary.MuiAppBar-positionSticky.MuiAppBar-root.MuiPaper-elevation4.MuiPaper-root > div.MuiPaper-elevation0.MuiPaper-root.makeStyles-root-7 > div.MuiTabs-root > div.MuiTabs-fixed.MuiTabs-scroller > div.MuiTabs-centered.MuiTabs-flexContainer")
+            );
+            navbar.FindElement(By.CssSelector("a:nth-child(2)")).Click();
+            int rentedBikesCount = webDriver.FindElements(By.CssSelector("li")).Count;
+            navbar.FindElement(By.CssSelector("a:nth-child(1)")).Click();
+            var station = webDriver.FindElement(
+                By.CssSelector("#root > div.makeStyles-root-1 > div.MuiContainer-maxWidthMd.MuiContainer-root.makeStyles-container-4 > div.MuiAccordion-root.MuiAccordion-rounded.MuiPaper-elevation1.MuiPaper-root.MuiPaper-rounded:nth-child(1) > div.MuiAccordionSummary-root.MuiButtonBase-root")
+            );
+            station.Click();
+            webDriver.FindElement(By.CssSelector("button:nth-child(1)")).Click();
+            navbar.FindElement(By.CssSelector("a:nth-child(1)")).Click();
+            webDriver.FindElement(By.CssSelector("button:nth-child(2)")).Click();
+            navbar.FindElement(By.CssSelector("a:nth-child(2)")).Click();
+            int newRentedBikesCount = webDriver.FindElements(By.CssSelector("li")).Count;
+            Assert.AreEqual(newRentedBikesCount, rentedBikesCount + 1);
+            webDriver.Close();
+        }
 
-       
+
     }
 }
