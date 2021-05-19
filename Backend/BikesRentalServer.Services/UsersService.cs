@@ -56,10 +56,16 @@ namespace BikesRentalServer.Services
             var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(user.Username));
             return ServiceActionResult.Success(token);
         }
-        
+
         #endregion
-        
+
         #region Blocking
+
+        public ServiceActionResult<IEnumerable<User>> GetBlockedUsers()
+        {
+            var users = _usersRepository.GetBlockedUsers();
+            return ServiceActionResult.Success(users);
+        }
 
         public ServiceActionResult<User> BlockUser(string userId)
         {

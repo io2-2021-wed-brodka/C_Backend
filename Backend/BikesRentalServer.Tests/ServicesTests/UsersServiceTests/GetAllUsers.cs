@@ -9,7 +9,7 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
     public class GetAllUsers : UsersServiceTestsBase
     {
         [Fact]
-        public void GetAllUsersNonShouldExist()
+        public void GetAllShouldReturnEmptyListWhenNoUsers()
         {
             UsersRepository.Setup(r => r.GetAll()).Returns(new List<User>());
 

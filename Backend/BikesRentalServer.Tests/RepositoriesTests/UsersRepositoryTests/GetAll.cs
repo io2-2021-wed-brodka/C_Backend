@@ -66,7 +66,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.UsersRepositoryTests
         }
 
         [Fact]
-        public void GetAllShouldReturnEmptyIEnumerableWhenNoBikes()
+        public void GetAllShouldReturnEmptyIEnumerableWhenNoUsers()
         {
             var result = _usersRepository.GetAll();
             
