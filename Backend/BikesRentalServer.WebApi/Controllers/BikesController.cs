@@ -28,29 +28,27 @@ namespace BikesRentalServer.WebApi.Controllers
         [AdminAuthorization]
         public ActionResult<GetAllBikesResponse> GetAllBikes()
         {
-            var response = new GetAllBikesResponse
+            var response = _bikesService.GetAllBikes();
+            return Ok(new GetAllBikesResponse
             {
-                Bikes = _bikesService.GetAllBikes().Object
-                    .Select(bike => new GetBikeResponse
+                Bikes = response.Object.Select(bike => new GetBikeResponse
+                {
+                    Id = bike.Id.ToString(),
+                    Station = bike.Station is null ? null : new GetStationResponse
                     {
-                        Id = bike.Id.ToString(),
-                        Station = bike.Station is null ? null : new GetStationResponse 
-                        {
-                            Id = bike.Station.Id.ToString(),
-                            Name = bike.Station.Name,
-                            Status = bike.Station.Status,
-                            ActiveBikesCount = bike.Station.Bikes.Count(b => b.Status is BikeStatus.Available),
-                        },
-                        User = bike.User is null ? null : new GetUserResponse
-                        {
-                            Id = bike.User.Id.ToString(),
-                            Name = bike.User.Username,
-                        },
-                        Status = bike.Status,
-                    }),
-            };
-
-            return Ok(response); 
+                        Id = bike.Station.Id.ToString(),
+                        Name = bike.Station.Name,
+                        Status = bike.Station.Status,
+                        ActiveBikesCount = bike.Station.Bikes.Count(b => b.Status is BikeStatus.Available),
+                    },
+                    User = bike.User is null ? null : new GetUserResponse
+                    {
+                        Id = bike.User.Id.ToString(),
+                        Name = bike.User.Username,
+                    },
+                    Status = bike.Status,
+                }),
+            });
         }
 
         [HttpPost]

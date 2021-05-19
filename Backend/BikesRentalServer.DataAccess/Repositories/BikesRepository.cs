@@ -17,14 +17,14 @@ namespace BikesRentalServer.DataAccess.Repositories
         
         public IEnumerable<Bike> GetAll()
         {
-            return _dbContext.Bikes.Include(b => b.Station).Include(b => b.User);
+            return _dbContext.Bikes.Include(b => b.Station).ThenInclude(s => s.Bikes).Include(b => b.User);
         }
 
         public Bike Get(string id)
         {
             if (!int.TryParse(id, out var iid))
                 return null;
-            return _dbContext.Bikes.Include(b => b.Station).Include(b => b.User).SingleOrDefault(b => b.Id == iid);
+            return _dbContext.Bikes.Include(b => b.Station).ThenInclude(s => s.Bikes).Include(b => b.User).SingleOrDefault(b => b.Id == iid);
         }
 
         public Bike Add(Bike entity)
