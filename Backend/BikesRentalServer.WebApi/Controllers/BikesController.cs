@@ -164,7 +164,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
-                Status.UserBlocked => StatusCode(StatusCodes.Status403Forbidden),
+                Status.UserBlocked => StatusCode(StatusCodes.Status403Forbidden, "User have been blocked"),
                 _ => throw new InvalidOperationException("Invalid state"),
             };
         }
@@ -257,7 +257,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
-                Status.UserBlocked => StatusCode(StatusCodes.Status403Forbidden),
+                Status.UserBlocked => StatusCode(StatusCodes.Status403Forbidden, "User have been blocked"),
                 _ => throw new InvalidOperationException("Invalid state"),
             };
         }
