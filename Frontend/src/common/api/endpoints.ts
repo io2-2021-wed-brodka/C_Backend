@@ -136,3 +136,8 @@ export const unblockUser = (userId: string) =>
 
 export const getUsers = () =>
   apiWithAuthConnection<UsersResponse>(`${API}/users`).then(res => res.users);
+
+export const getBlockedUsers = () =>
+  apiWithAuthConnection<UsersResponse>(`${API}/users/blocked`).then(
+    res => res.users,
+  );
