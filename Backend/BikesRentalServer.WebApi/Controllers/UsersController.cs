@@ -33,7 +33,6 @@ namespace BikesRentalServer.WebApi.Controllers
                     {
                         Id = user.Id.ToString(),
                         Name = user.Username,
-                        Status = user.Status,
                     }),
             };
             return Ok(response);
@@ -57,12 +56,16 @@ namespace BikesRentalServer.WebApi.Controllers
 
         [HttpPost("blocked")]
         [AdminAuthorization]
-        public ActionResult<string> Block(BlockUserRequest request)
+        public ActionResult<GetUserResponse> Block(BlockUserRequest request)
         {
             var response = _usersService.BlockUser(request.Id);
             return response.Status switch
             {
-                Status.Success => Created($"/users/{response.Object.Id}", response.Object),
+                Status.Success => Created($"/users/{response.Object.Id}", new GetUserResponse
+                {
+                    Id = response.Object.Id.ToString(),
+                    Name = response.Object.Username
+                }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
                 Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
@@ -71,7 +74,7 @@ namespace BikesRentalServer.WebApi.Controllers
 
         [HttpDelete("blocked/{id}")]
         [AdminAuthorization]
-        public ActionResult<string> Unblock(string id)
+        public ActionResult<GetUserResponse> Unblock(string id)
         {
             var response = _usersService.UnblockUser(id);
             return response.Status switch
