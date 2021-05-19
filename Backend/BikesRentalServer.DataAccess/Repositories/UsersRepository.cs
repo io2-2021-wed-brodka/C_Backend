@@ -24,7 +24,7 @@ namespace BikesRentalServer.DataAccess.Repositories
         {
             if (!int.TryParse(id, out var iid))
                 return null;
-            return _dbContext.Users.Include(u => u.RentedBikes).Include(u => u.Reservations).SingleOrDefault(u => u.Id == iid && u.Role == UserRole.User);
+            return _dbContext.Users.Include(u => u.RentedBikes).Include(u => u.Reservations).ThenInclude(r => r.Bike).SingleOrDefault(u => u.Id == iid && u.Role == UserRole.User);
         }
 
         public User Add(User entity)
