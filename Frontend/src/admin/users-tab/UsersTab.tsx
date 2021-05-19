@@ -19,11 +19,11 @@ import { Button } from '@material-ui/core';
 
 const UsersTab = () => {
   const [refreshState, refresh] = useRefresh();
-  const data = usePromise(
-    () =>
-      Promise.all([useServices().getUsers(), useServices().getBlockedUsers()]),
-    [refreshState],
-  );
+  const getUsers = useServices().getUsers;
+  const getBlockedUsers = useServices().getBlockedUsers;
+  const data = usePromise(() => Promise.all([getUsers(), getBlockedUsers()]), [
+    refreshState,
+  ]);
   const snackbar = useSnackbar();
   const blockUser = useServices().blockUser;
   const unblockUser = useServices().unblockUser;
