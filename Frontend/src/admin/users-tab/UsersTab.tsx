@@ -6,14 +6,11 @@ import useRefresh from '../../common/hooks/useRefresh';
 import { useSnackbar } from '../../common/hooks/useSnackbar';
 import SnackBar from '../../common/components/SnackBar';
 import {
-  createStyles,
   List,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
   Paper,
-  makeStyles,
-  Theme,
   Typography,
 } from '@material-ui/core';
 import ListItemIconSansPadding from '../../common/components/ListItemIconSansPadding';
