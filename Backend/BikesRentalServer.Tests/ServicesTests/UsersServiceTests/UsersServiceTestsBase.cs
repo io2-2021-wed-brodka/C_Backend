@@ -8,10 +8,11 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
     {
         protected Mock<IUsersRepository> UsersRepository { get; } = new Mock<IUsersRepository>();
         protected Mock<IReservationsRepository> ReservationsRepository { get; } = new Mock<IReservationsRepository>();
+        protected Mock<IBikesRepository> BikesRepository { get; } = new Mock<IBikesRepository>();
 
         protected IUsersService GetUsersService()
         {
-            return new Services.UsersService(UsersRepository.Object, ReservationsRepository.Object);
+            return new Services.UsersService(UsersRepository.Object, ReservationsRepository.Object, BikesRepository.Object);
         }
     }
 }
