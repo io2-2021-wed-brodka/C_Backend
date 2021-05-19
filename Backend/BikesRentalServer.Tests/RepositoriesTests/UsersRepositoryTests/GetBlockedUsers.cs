@@ -42,7 +42,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.UsersRepositoryTests
                     Role = UserRole.User,
                 },
             };
-            _dbContext.Users.AddRange(users);
+            _dbContext.Users.AddRange(blockedUsers);
             _dbContext.Users.AddRange(new[]
             {
                 new User
@@ -56,6 +56,53 @@ namespace BikesRentalServer.Tests.RepositoriesTests.UsersRepositoryTests
                     Username = "tomek",
                     Status = UserStatus.Blocked,
                     Role = UserRole.Tech,
+                },
+            });
+            _dbContext.SaveChanges();
+
+            var result = _usersRepository.GetBlockedUsers();
+
+            result.Should().BeEquivalentTo(blockedUsers);
+        }
+
+        [Fact]
+        public void GetBlockedUsersShouldReturnOnlyBlockedUsers()
+        {
+            var blockedUsers = new[]
+            {
+                new User
+                {
+                    Username = "adam",
+                    Status = UserStatus.Blocked,
+                    Role = UserRole.User,
+                },
+                new User
+                {
+                    Username = "marcin",
+                    Status = UserStatus.Blocked,
+                    Role = UserRole.User,
+                },
+                new User
+                {
+                    Username = "krzysztof",
+                    Status = UserStatus.Blocked,
+                    Role = UserRole.User,
+                },
+            };
+            _dbContext.Users.AddRange(blockedUsers);
+            _dbContext.Users.AddRange(new[]
+            {
+                new User
+                {
+                    Username = "piotr",
+                    Status = UserStatus.Active,
+                    Role = UserRole.User,
+                },
+                new User
+                {
+                    Username = "tomek",
+                    Status = UserStatus.Active,
+                    Role = UserRole.User,
                 },
             });
             _dbContext.SaveChanges();
