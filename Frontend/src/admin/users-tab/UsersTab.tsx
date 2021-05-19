@@ -21,17 +21,6 @@ import PersonIcon from '@material-ui/icons/Person';
 import { Button } from '@material-ui/core';
 import { UserStatus } from '../../common/api/models/user';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    button: {
-      marginLeft: theme.spacing(1),
-    },
-    alert: {
-      padding: theme.spacing(2),
-    },
-  }),
-);
-
 const UsersTab = () => {
   const [refreshState, refresh] = useRefresh();
   const data = usePromise(useServices().getUsers, [refreshState]);
@@ -51,7 +40,6 @@ const UsersTab = () => {
       .catch(err => snackbar.open(err.message));
   };
 
-  const classes = useStyles();
   return (
     <>
       <Typography variant="h4">Users</Typography>
