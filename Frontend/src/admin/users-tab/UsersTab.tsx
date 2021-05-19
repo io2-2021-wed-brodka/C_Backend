@@ -16,23 +16,26 @@ import {
 import ListItemIconSansPadding from '../../common/components/ListItemIconSansPadding';
 import PersonIcon from '@material-ui/icons/Person';
 import { Button } from '@material-ui/core';
-import { UserStatus } from '../../common/api/models/user';
 
 const UsersTab = () => {
   const [refreshState, refresh] = useRefresh();
-  const data = usePromise(useServices().getUsers, [refreshState]);
+  const data = usePromise(
+    () =>
+      Promise.all([useServices().getUsers(), useServices().getBlockedUsers()]),
+    [refreshState],
+  );
   const snackbar = useSnackbar();
-  const BlockUser = useServices().blockUser;
-  const UnblockUser = useServices().unblockUser;
+  const blockUser = useServices().blockUser;
+  const unblockUser = useServices().unblockUser;
 
   const onBlockUser = (id: string) => {
-    BlockUser(id)
+    blockUser(id)
       .then(() => refresh())
       .catch(err => snackbar.open(err.message));
   };
 
   const onUnblockUser = (id: string) => {
-    UnblockUser(id)
+    unblockUser(id)
       .then(() => refresh())
       .catch(err => snackbar.open(err.message));
   };
@@ -43,7 +46,7 @@ const UsersTab = () => {
 
       <Paper>
         <DataLoader data={data}>
-          {users =>
+          {([users, blockedUsers]) =>
             !!users.length && (
               <List dense={true}>
                 {users.map(user => (
@@ -57,17 +60,9 @@ const UsersTab = () => {
                       }
                     />
                     <ListItemSecondaryAction>
-                      {user.status === UserStatus.Active && (
-                        <Button
-                          variant="contained"
-                          color={'secondary'}
-                          onClick={() => onBlockUser(user.id)}
-                          key="Block"
-                        >
-                          Block
-                        </Button>
-                      )}
-                      {user.status === UserStatus.Blocked && (
+                      {blockedUsers.some(
+                        blockedUser => blockedUser.name === user.name,
+                      ) ? (
                         <Button
                           variant="contained"
                           color={'default'}
@@ -75,6 +70,15 @@ const UsersTab = () => {
                           key="Unblock"
                         >
                           Unblock
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="contained"
+                          color={'secondary'}
+                          onClick={() => onBlockUser(user.id)}
+                          key="Block"
+                        >
+                          Block
                         </Button>
                       )}
                     </ListItemSecondaryAction>
