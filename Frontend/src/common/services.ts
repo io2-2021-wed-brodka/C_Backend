@@ -20,6 +20,7 @@ import {
   unblockUser,
   removeReservation,
   getUsers,
+  getBlockedUsers,
 } from './api/endpoints';
 import { Bike, BikeStatus } from './api/models/bike';
 import { Station, StationStatus } from './api/models/station';
@@ -62,6 +63,7 @@ type AllServices = {
   unblockStation: (id: string) => Promise<void>;
   unblockUser: (id: string) => Promise<void>;
   getUsers: () => Promise<User[]>;
+  getBlockedUsers: () => Promise<User[]>;
 };
 
 export const services: AllServices = {
@@ -87,6 +89,7 @@ export const services: AllServices = {
   unblockStation: unblockStation,
   unblockUser: unblockUser,
   getUsers: getUsers,
+  getBlockedUsers: getBlockedUsers,
 };
 
 export const mockedServices: AllServices = {
@@ -141,6 +144,7 @@ export const mockedServices: AllServices = {
   unblockStation: () => delay<void>(undefined),
   unblockUser: () => delay<void>(undefined),
   getUsers: () => delay(mockedUsers),
+  getBlockedUsers: () => delay(mockedUsers),
 };
 
 export const ServicesContext = createContext(services);
