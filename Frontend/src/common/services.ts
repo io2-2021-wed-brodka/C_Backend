@@ -37,7 +37,7 @@ import {
 import { ReservedBike } from './api/models/reservedBike';
 import { mockedReservedBikes } from './mocks/reservedBikes';
 import { LoginResponse, UserRole } from './api/models/login-response';
-import { User, UserStatus } from './api/models/user';
+import { User } from './api/models/user';
 import { mockedUsers } from './mocks/users';
 
 type AllServices = {
@@ -139,7 +139,7 @@ export const mockedServices: AllServices = {
       name: '',
     }),
   blockBike: id => delay<Bike>({ id, status: BikeStatus.Blocked }),
-  blockUser: id => delay<User>({ id, status: UserStatus.Blocked, name: '' }),
+  blockUser: id => delay<User>({ id, name: '' }),
   unblockBike: () => delay<void>(undefined),
   unblockStation: () => delay<void>(undefined),
   unblockUser: () => delay<void>(undefined),
