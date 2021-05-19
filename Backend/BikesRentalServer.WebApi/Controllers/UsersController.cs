@@ -64,7 +64,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 Status.Success => Created($"/users/{response.Object.Id}", new GetUserResponse
                 {
                     Id = response.Object.Id.ToString(),
-                    Name = response.Object.Username
+                    Name = response.Object.Username,
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
@@ -74,7 +74,7 @@ namespace BikesRentalServer.WebApi.Controllers
 
         [HttpDelete("blocked/{id}")]
         [AdminAuthorization]
-        public ActionResult<GetUserResponse> Unblock(string id)
+        public IActionResult Unblock(string id)
         {
             var response = _usersService.UnblockUser(id);
             return response.Status switch
@@ -118,7 +118,7 @@ namespace BikesRentalServer.WebApi.Controllers
         }
 
         [HttpPost("/logout")]
-        public ActionResult<string> Logout()
+        public IActionResult Logout()
         {
             return NoContent();
         }

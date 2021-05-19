@@ -164,6 +164,8 @@ namespace BikesRentalServer.WebApi.Controllers
                 {
                     Id = station.Id.ToString(),
                     Name = station.Name,
+                    Status = station.Status,
+                    ActiveBikesCount = station.Bikes.Count(b => b.Status is BikeStatus.Available),
                 }),
             };
             return Ok(response);
@@ -179,6 +181,8 @@ namespace BikesRentalServer.WebApi.Controllers
                 {
                     Id = station.Id.ToString(),
                     Name = station.Name,
+                    Status = station.Status,
+                    ActiveBikesCount = station.Bikes.Count(b => b.Status is BikeStatus.Available),
                 }),
             };
             return Ok(response);
@@ -195,6 +199,8 @@ namespace BikesRentalServer.WebApi.Controllers
                 {
                     Id = response.Object.Id.ToString(),
                     Name = response.Object.Name,
+                    Status = response.Object.Status,
+                    ActiveBikesCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Available),
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
