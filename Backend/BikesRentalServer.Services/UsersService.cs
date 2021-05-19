@@ -69,7 +69,9 @@ namespace BikesRentalServer.Services
             if (user.Status is UserStatus.Blocked)
                 return ServiceActionResult.InvalidState<User>("User already blocked");
 
-            foreach (var reservation in user.Reservations)
+            var reservations = new Reservation[user.Reservations.Count];
+            user.Reservations.CopyTo(reservations);
+            foreach (var reservation in reservations)
                 _reservationsRepository.Remove(reservation);
             user = _usersRepository.SetStatus(userId, UserStatus.Blocked);
 
