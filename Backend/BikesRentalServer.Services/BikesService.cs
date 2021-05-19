@@ -180,9 +180,6 @@ namespace BikesRentalServer.Services
         public ServiceActionResult<IEnumerable<Bike>> GetReservedBikes()
         {
             var user = _usersRepository.GetByUsername(_userContext.Username);
-            if (user.Status is UserStatus.Blocked)
-                return ServiceActionResult.UserBlocked<IEnumerable<Bike>>("User is blocked");
-
             var reservations = _reservationsRepository.GetActiveReservations(user.Id.ToString());
             var reservedBikes = reservations.Select(reservation => reservation.Bike);
             return ServiceActionResult.Success(reservedBikes);
