@@ -12,11 +12,13 @@ namespace BikesRentalServer.Services
     {
         private readonly IUsersRepository _usersRepository;
         private readonly IReservationsRepository _reservationsRepository;
+        private readonly IBikesRepository _bikesRepository;
 
-        public UsersService(IUsersRepository usersRepository, IReservationsRepository reservationsRepository)
+        public UsersService(IUsersRepository usersRepository, IReservationsRepository reservationsRepository, IBikesRepository bikesRepository)
         {
             _usersRepository = usersRepository;
             _reservationsRepository = reservationsRepository;
+            _bikesRepository = bikesRepository;
         }
         
         #region Basics
@@ -78,7 +80,10 @@ namespace BikesRentalServer.Services
             var reservations = new Reservation[user.Reservations.Count];
             user.Reservations.CopyTo(reservations);
             foreach (var reservation in reservations)
+            {
                 _reservationsRepository.Remove(reservation);
+                _bikesRepository.SetStatus(reservation.Bike.Id.ToString(), BikeStatus.Available);
+            }
             user = _usersRepository.SetStatus(userId, UserStatus.Blocked);
 
             // We don't touch user's rented bikes here. He won't be able to rent new ones, he can return only.

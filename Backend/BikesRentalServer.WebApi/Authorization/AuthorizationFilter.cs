@@ -57,7 +57,10 @@ namespace BikesRentalServer.WebApi.Authorization
             }
             if (!roles.Contains(user.Role))
             {
-                context.Result = new StatusCodeResult(StatusCodes.Status403Forbidden);
+                context.Result = new ObjectResult("Insufficient permissions")
+                {
+                    StatusCode = StatusCodes.Status403Forbidden,
+                };
                 return;
             }
             
