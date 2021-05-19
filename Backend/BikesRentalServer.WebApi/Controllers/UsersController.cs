@@ -39,6 +39,22 @@ namespace BikesRentalServer.WebApi.Controllers
             return Ok(response);
         }
 
+        [HttpGet("blocked")]
+        [AdminAuthorization]
+        public ActionResult<GetAllUsersResponse> GetBlockedUsers()
+        {
+            var response = new GetAllUsersResponse
+            {
+                Users = _usersService.GetBlockedUsers().Object
+                    .Select(user => new GetUserResponse
+                    {
+                        Id = user.Id.ToString(),
+                        Name = user.Username,
+                    }),
+            };
+            return Ok(response);
+        }
+
         [HttpPost("blocked")]
         [AdminAuthorization]
         public ActionResult<string> Block(BlockUserRequest request)
