@@ -75,10 +75,20 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
             const int userId = 2;
             var reservations = new List<Reservation>
             {
-                new Reservation(),
-                new Reservation(),
-                new Reservation(),
-                new Reservation(),
+                new Reservation
+                {
+                    Bike = new Bike
+                    {
+                        Id = 3
+                    }
+                },
+                new Reservation
+                {
+                    Bike = new Bike
+                    {
+                        Id = 4
+                    }
+                },
             };
             UsersRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<UserStatus>(s => s == UserStatus.Blocked)))
                 .Returns(new User
