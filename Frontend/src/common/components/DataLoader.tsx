@@ -15,7 +15,7 @@ const DataLoader = <T,>({
   return (
     <>
       {loading && <Spinner />}
-      {error && <Alert severity="error">Oops! You are offline...</Alert>}
+      {error && <Alert severity="error">Oops! Something went wrong...</Alert>}
       {results && children(results)}
     </>
   );
