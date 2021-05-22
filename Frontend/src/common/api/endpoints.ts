@@ -7,7 +7,7 @@ import { ReservedBike } from './models/reservedBike';
 import { LoginResponse } from './models/login-response';
 import { User } from './models/user';
 
-const API = 'http://localhost:5000';
+const API = 'http://localhost:8080';
 
 export type StationsResponse = { stations: Station[] };
 export type BikesResponse = { bikes: Bike[] };
