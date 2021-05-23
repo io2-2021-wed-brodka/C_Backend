@@ -24,7 +24,8 @@
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"ms-dotnettools.csharp",
-		"fernandoescolar.vscode-solution-explorer"
+		"fernandoescolar.vscode-solution-explorer",
+		"patcx.vscode-nuget-gallery"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
