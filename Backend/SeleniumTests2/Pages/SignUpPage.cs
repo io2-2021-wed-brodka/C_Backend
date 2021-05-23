@@ -22,6 +22,7 @@ namespace SeleniumTests2
             GetLoginInput().SendKeys(login);
             GetPasswordInput().SendKeys(password);
             GetSignUpButton().Click();
+            driver.Sleep();
         }
 
         public LoginPage GoToSignUp()

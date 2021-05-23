@@ -13,7 +13,7 @@ namespace SeleniumTests2
 {
     public static class BackendHelpers
     {
-        public static async Task<LogInResponse> LogIn(this RestClient client, string login, string password)
+        public static Task<LogInResponse> LogIn(this RestClient client, string login, string password)
         {
             var body = new LogInRequest
             {
@@ -21,7 +21,24 @@ namespace SeleniumTests2
                 Password = password
             };
             
-            return await client.PostRequest<LogInResponse>("login", body);
+            return client.PostRequest<LogInResponse>("login", body);
+        }
+
+        public static async Task<string> LogInAsAdmin(this RestClient client, string login, string password)
+        {
+            return (await client.LogIn("admin", "admin")).Token;
+        }
+
+        // do not use this, it is only for database warmup
+        public static void LogInBlocking(this RestClient client, string login, string password)
+        {
+            var body = new LogInRequest
+            {
+                Login = login,
+                Password = password
+            };
+            
+            client.PostRequestBlocking<LogInResponse>("login", body);
         }
 
         public static Task<LogInResponse> SignUp(this RestClient client, string login, string password)

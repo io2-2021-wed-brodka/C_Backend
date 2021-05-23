@@ -5,16 +5,19 @@ namespace SeleniumTests2
 {
     public class LoginPage : PageBase
     {
-        public LoginPage(IWebDriver driver) : base(driver)
+        public LoginPage(IWebDriver driver, bool isAdminPage = false) : base(driver)
         {
-            AssertPage();
+            AssertPage(isAdminPage);
         }
 
-        private void AssertPage()
+        private void AssertPage(bool isAdminPage)
         {
             GetLoginInput();
             GetPasswordInput();
-            GetSignUpLink();
+            if(!isAdminPage)
+            {
+                GetSignUpLink();
+            }
         }
 
         public void LogIn(string login, string password)
@@ -22,6 +25,7 @@ namespace SeleniumTests2
             GetLoginInput().SendKeys(login);
             GetPasswordInput().SendKeys(password);
             GetSignInButton().Click();
+            driver.Sleep();
         }
 
         public SignUpPage GoToSignUp()

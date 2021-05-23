@@ -13,14 +13,21 @@ namespace SeleniumTests2
 {
     public static class ApiHelpers
     {
-        public static async Task<T> PostRequest<T>(this RestClient client, string endpoint, object body)
+        public static Task<T> PostRequest<T>(this RestClient client, string endpoint, object body)
         {
             var request = new RestRequest(endpoint, DataFormat.Json);
             request.AddJsonBody(body);
 
-            var resp = await client.ExecutePostAsync<T>(request);
+            return client.PostAsync<T>(request);
+        }
 
-            return resp.Data;
+        // please use async version, this one is used only one time and on purpose
+        public static void PostRequestBlocking<T>(this RestClient client, string endpoint, object body)
+        {
+            var request = new RestRequest(endpoint, DataFormat.Json);
+            request.AddJsonBody(body);
+
+            client.Post<T>(request);
         }
 
         public static Task<T> PostRequest<T>(this RestClient client, string endpoint, object body, string token)

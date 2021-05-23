@@ -1,6 +1,5 @@
 using System;
 using Xunit;
-using System.Threading;
 using FluentAssertions;
 
 namespace SeleniumTests2
@@ -14,7 +13,6 @@ namespace SeleniumTests2
             var signUpPage = loginPage.GoToSignUp();
 
             signUpPage.SignUp("admin", "some pass");
-            Thread.Sleep(1000);
 
             Action checkIfSignUpSucceed = () => new StationsPage(_driver);
             checkIfSignUpSucceed.Should().Throw<Exception>();
@@ -31,7 +29,6 @@ namespace SeleniumTests2
             var signUpPage = loginPage.GoToSignUp();
 
             signUpPage.SignUp(login, password);
-            Thread.Sleep(1000);
             Action checkIfSignUpSucceed = () => new StationsPage(_driver);
             
             checkIfSignUpSucceed();

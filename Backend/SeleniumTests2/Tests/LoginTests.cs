@@ -1,6 +1,5 @@
 using System;
 using Xunit;
-using System.Threading;
 using FluentAssertions;
 using System.Threading.Tasks;
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
@@ -15,7 +14,6 @@ namespace SeleniumTests2
             var loginPage = new LoginPage(_driver);
 
             loginPage.LogIn("some-non-existing-user", "with-password");
-            Thread.Sleep(1000);
 
             Action checkIfLoginSucceed = () => new StationsPage(_driver);
             checkIfLoginSucceed.Should().Throw<Exception>();
@@ -27,12 +25,10 @@ namespace SeleniumTests2
             var loginPage = new LoginPage(_driver);
 
             loginPage.LogIn("admin", "admin");
-            Thread.Sleep(1000);
+
             Action checkIfLoginSucceed = () => new StationsPage(_driver);
-            
             checkIfLoginSucceed();
         }
-
 
         [Fact]
         public async Task LogInWithCorrectCredentialsShouldSucceed()
@@ -43,11 +39,50 @@ namespace SeleniumTests2
             var loginPage = new LoginPage(_driver);
 
             loginPage.LogIn(login, password);
-            Thread.Sleep(1000);
             Action checkIfLoginSucceed = () => new StationsPage(_driver);
             
             checkIfLoginSucceed();
         }
-        
+
+        [Fact]
+        public async Task AdminLogInWithCorrectCredentialsShouldSucceed()
+        {
+            _driver.OpenAdminTab();
+            var loginPage = new LoginPage(_driver, true);
+
+            loginPage.LogIn("admin", "admin");
+            Action checkIfLoginSucceed = () => new AdminStationsPage(_driver);
+            
+            checkIfLoginSucceed();
+        }
+
+        [Fact]
+        public void AdminLogInWithWrongCredentialsShouldFail()
+        {
+            _driver.OpenAdminTab();
+            var loginPage = new LoginPage(_driver, true);
+
+            loginPage.LogIn("some-non-existing-user", "with-password");
+
+            Action checkIfLoginSucceed = () => new AdminStationsPage(_driver);
+            checkIfLoginSucceed.Should().Throw<Exception>();
+        }
+
+        [Fact]
+        public async Task AdminLogInWithUserCredentialsShouldFail()
+        {
+            var login = GetUniqueString();
+            var password = "23456";
+            var token = await _api.SignUp(login, password);
+
+            _driver.OpenAdminTab();
+            var loginPage = new LoginPage(_driver, true);
+
+            loginPage.LogIn(login, password);
+
+            Action checkIfLoginSucceed = () => new AdminStationsPage(_driver);
+            checkIfLoginSucceed.Should().Throw<Exception>();
+        }
+
     }
 }
