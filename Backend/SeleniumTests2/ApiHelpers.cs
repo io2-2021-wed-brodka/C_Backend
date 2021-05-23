@@ -13,12 +13,13 @@ namespace SeleniumTests2
 {
     public static class ApiHelpers
     {
-        public static Task<T> PostRequest<T>(this RestClient client, string endpoint, object body)
+        public static async Task<T> PostRequest<T>(this RestClient client, string endpoint, object body)
         {
             var request = new RestRequest(endpoint, DataFormat.Json);
             request.AddJsonBody(body);
 
-            return client.PostAsync<T>(request);
+            var response = await client.ExecutePostAsync<T>(request);
+            return response.Data;
         }
 
         // please use async version, this one is used only one time and on purpose
@@ -30,13 +31,14 @@ namespace SeleniumTests2
             client.Post<T>(request);
         }
 
-        public static Task<T> PostRequest<T>(this RestClient client, string endpoint, object body, string token)
+        public static async Task<T> PostRequest<T>(this RestClient client, string endpoint, object body, string token)
         {
             var request = new RestRequest(endpoint, DataFormat.Json);
             request.AddJsonBody(body);
             request.AddHeader("Authorization", $"Bearer {token}");
 
-            return client.PostAsync<T>(request);
+            var response = await client.ExecutePostAsync<T>(request);
+            return response.Data;
         }
     }
 }
