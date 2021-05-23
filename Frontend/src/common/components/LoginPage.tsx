@@ -117,7 +117,7 @@ const LoginPage = () => {
           <Grid container>
             <Grid item>
               {isUserApp() && (
-                <Link href="/signup" variant="body2">
+                <Link href="/signup" variant="body2" id="go-to-sign-up">
                   {"Don't have an account? Sign Up"}
                 </Link>
               )}
