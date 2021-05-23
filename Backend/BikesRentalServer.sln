@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BikesRentalServer.DataAcces
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BikesRentalServer.Services", "BikesRentalServer.Services\BikesRentalServer.Services.csproj", "{C06E5ABE-5F69-4FC7-8690-DB28DA8F8655}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeleniumTests2", "SeleniumTests2\SeleniumTests2.csproj", "{CAA90B33-0ECB-4635-B179-97CC4131B1D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{C06E5ABE-5F69-4FC7-8690-DB28DA8F8655}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C06E5ABE-5F69-4FC7-8690-DB28DA8F8655}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C06E5ABE-5F69-4FC7-8690-DB28DA8F8655}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAA90B33-0ECB-4635-B179-97CC4131B1D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAA90B33-0ECB-4635-B179-97CC4131B1D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAA90B33-0ECB-4635-B179-97CC4131B1D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAA90B33-0ECB-4635-B179-97CC4131B1D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
