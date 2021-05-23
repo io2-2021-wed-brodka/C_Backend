@@ -17,5 +17,23 @@ namespace SeleniumTests2
                 throw new Exception(DriverIsOnWrongPage);
             }
         }
+
+        public bool HasStation(string stationName)
+        {
+            try
+            {
+                GetStationElement(stationName);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private IWebElement GetStationElement(string stationName)
+        {
+            return driver.FindElement(By.Id($"station-{stationName}"));
+        }
     }
 }
