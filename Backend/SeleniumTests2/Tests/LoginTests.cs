@@ -45,7 +45,7 @@ namespace SeleniumTests2
         }
 
         [Fact]
-        public async Task AdminLogInWithCorrectCredentialsShouldSucceed()
+        public void AdminLogInWithCorrectCredentialsShouldSucceed()
         {
             _driver.OpenAdminTab();
             var loginPage = new LoginPage(_driver, true);
