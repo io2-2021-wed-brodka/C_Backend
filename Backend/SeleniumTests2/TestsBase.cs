@@ -5,6 +5,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using System.Threading.Tasks;
 using RestSharp;
+using RestSharp.Serializers.NewtonsoftJson;
 
 namespace SeleniumTests2
 {
@@ -12,12 +13,15 @@ namespace SeleniumTests2
     {
         public static readonly string UserSiteUrl = "http://localhost:3001";
         public static readonly string AdminSiteUrl = "http://localhost:3002";
-        protected readonly RestClient _api = new RestClient("http://localhost:8080");
+        protected readonly RestClient _api;
         protected IWebDriver _driver;
         private static bool _warmedUp;
 
         protected TestsBase()
         {
+            _api = new RestClient("http://localhost:8080");
+            _api.UseNewtonsoftJson();
+            
             var chromeOptions = new ChromeOptions();
             _driver = new RemoteWebDriver(chromeOptions);
             _driver.Manage().Window.Maximize();
