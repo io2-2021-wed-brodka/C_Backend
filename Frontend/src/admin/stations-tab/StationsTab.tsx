@@ -7,7 +7,7 @@ import NewStationForm from './NewStationForm';
 import useRefresh from './../../common/hooks/useRefresh';
 import { useSnackbar } from './../../common/hooks/useSnackbar';
 import SnackBar from '../../common/components/SnackBar';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import { StationStatus } from '../../common/api/models/station';
 
 enum StationStatusExtension {
@@ -34,6 +34,10 @@ const StationsTab = () => {
 
   return (
     <>
+      <Typography variant="h4" id="stations-header">
+        Stations
+      </Typography>
+      <br />
       <Button
         variant="contained"
         color={stationFilter == stationFilterType.All ? 'secondary' : 'primary'}

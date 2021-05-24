@@ -70,7 +70,7 @@ const UserApp = () => {
                 render={({ location }) => (
                   <>
                     {!getTokenFromLocalStorage() && <Redirect to={'/login'} />}
-                    <AppBar position="sticky">
+                    <AppBar position="sticky" id="user-site-navbar">
                       <ApplicationBar />
                       <Navigation pathname={location.pathname} />
                     </AppBar>
