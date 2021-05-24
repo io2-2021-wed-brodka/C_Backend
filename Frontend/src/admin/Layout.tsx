@@ -152,7 +152,7 @@ const Layout = ({ children }: Props) => {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
+        <Container maxWidth="lg" className={classes.container} id="admin-site">
           {children}
           <Box pt={4}>
             <Copyright />

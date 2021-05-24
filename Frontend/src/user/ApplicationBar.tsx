@@ -59,7 +59,7 @@ const ApplicationBar = () => {
         CityBikes
       </Typography>
       <div>
-        <IconButton onClick={handleMenu} color="inherit">
+        <IconButton onClick={handleMenu} color="inherit" id="account-menu">
           <AccountCircle />
         </IconButton>
         <Menu
@@ -68,7 +68,9 @@ const ApplicationBar = () => {
           open={open}
           onClose={handleClose}
         >
-          <MenuItem onClick={logout}>Logout</MenuItem>
+          <MenuItem onClick={logout} id="logout">
+            Logout
+          </MenuItem>
         </Menu>
       </div>
     </Toolbar>

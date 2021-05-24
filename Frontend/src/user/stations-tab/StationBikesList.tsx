@@ -36,6 +36,7 @@ const StationBikesList = ({ stationId }: Props) => {
           })
           .catch(err => snackbar.open(err.message));
       },
+      id: `reserve-${id}`,
     },
     {
       label: 'Rent',
@@ -48,6 +49,7 @@ const StationBikesList = ({ stationId }: Props) => {
           })
           .catch(err => snackbar.open(err.message));
       },
+      id: `rent-${id}`,
     },
   ];
 

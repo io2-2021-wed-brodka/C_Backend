@@ -19,35 +19,35 @@ const Menu = () => {
 
   return (
     <List>
-      <ListItem button component={Link} to={'/stations'}>
+      <ListItem button component={Link} to={'/stations'} id="go-to-stations">
         <ListItemIcon>
           <RoomIcon />
         </ListItemIcon>
         <ListItemText primary="Stations" />
       </ListItem>
 
-      <ListItem button component={Link} to={'/bikes'}>
+      <ListItem button component={Link} to={'/bikes'} id="go-to-bikes">
         <ListItemIcon>
           <DirectionsBikeIcon />
         </ListItemIcon>
         <ListItemText primary="Bikes" />
       </ListItem>
 
-      <ListItem button component={Link} to={'/users'}>
+      <ListItem button component={Link} to={'/users'} id="go-to-users">
         <ListItemIcon>
           <PeopleIcon />
         </ListItemIcon>
         <ListItemText primary="Users" />
       </ListItem>
 
-      <ListItem button component={Link} to={'/techs'}>
+      <ListItem button component={Link} to={'/techs'} id="go-to-techs">
         <ListItemIcon>
           <BuildIcon />
         </ListItemIcon>
         <ListItemText primary="Techs" />
       </ListItem>
 
-      <ListItem button onClick={logout}>
+      <ListItem button onClick={logout} id="logout">
         <ListItemIcon>
           <ArrowBackIcon />
         </ListItemIcon>

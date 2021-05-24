@@ -42,7 +42,7 @@ const Station = ({ name, id }: Props) => {
   };
 
   return (
-    <Accordion onChange={handleChange}>
+    <Accordion onChange={handleChange} id={`station-${name}`}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography className={classes.heading}>{name}</Typography>
       </AccordionSummary>
