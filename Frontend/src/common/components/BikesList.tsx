@@ -29,6 +29,7 @@ export type BikeAction = {
   onClick: () => void;
   type: 'primary' | 'secondary' | 'default';
   label: string;
+  id: string;
 };
 
 export type BikeActionsForBike = (bike: Bike) => BikeAction[];
@@ -58,13 +59,14 @@ const BikesList = ({ bikes, bikeActions }: Props) => {
                 primary={<Typography variant="h6">{`#${bike.id}`}</Typography>}
               />
               <ListItemSecondaryAction>
-                {bikeActions(bike).map(({ onClick, label, type }) => (
+                {bikeActions(bike).map(({ onClick, label, type, id }) => (
                   <Button
                     variant="contained"
                     color={type}
                     onClick={onClick}
                     key={label}
                     className={classes.button}
+                    id={id}
                   >
                     {label}
                   </Button>

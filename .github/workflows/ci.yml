@@ -22,4 +22,4 @@ jobs:
     - name: Build
       run: dotnet build ./**/*.sln --no-restore
     - name: Test
-      run: dotnet test Backend/*.sln --no-build --verbosity normal
+      run: dotnet test Backend/BikesRentalServer.Tests/BikesRentalServer.Tests.csproj --no-build --verbosity normal

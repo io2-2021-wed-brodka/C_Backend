@@ -20,7 +20,7 @@ const ReservationsTab = () => {
 
   const bikeActions: BikeActionsForBike = ({ id }) => [
     {
-      label: 'Drop',
+      label: 'Cancel',
       type: 'default',
       onClick: () => {
         removeReservation(id)
@@ -30,6 +30,7 @@ const ReservationsTab = () => {
           })
           .catch(e => snackbar.open(e.message));
       },
+      id: `cancel-${id}`,
     },
     {
       label: 'Rent',
@@ -42,6 +43,7 @@ const ReservationsTab = () => {
           })
           .catch(e => snackbar.open(e.message));
       },
+      id: `rent-${id}`,
     },
   ];
 

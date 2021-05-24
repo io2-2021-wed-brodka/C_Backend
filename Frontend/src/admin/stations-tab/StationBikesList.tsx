@@ -37,6 +37,7 @@ const StationBikesList = ({ stationId, refresh }: Props) => {
           .then(() => internalRefresh())
           .catch(err => snackbar.open(err.message));
       },
+      id: status === BikeStatus.Blocked ? `unblock-${id}` : `block-${id}`,
     },
     {
       label: 'Remove',
@@ -46,6 +47,7 @@ const StationBikesList = ({ stationId, refresh }: Props) => {
           .then(() => internalRefresh())
           .catch(err => snackbar.open(err.message));
       },
+      id: `remove-${id}`,
     },
   ];
 
