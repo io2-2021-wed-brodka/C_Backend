@@ -117,7 +117,11 @@ const LoginPage = () => {
           <Grid container>
             <Grid item>
               {isUserApp() && (
-                <Link href="/signup" variant="body2" id="go-to-sign-up">
+                <Link
+                  variant="body2"
+                  id="go-to-sign-up"
+                  onClick={() => history.push('/signup')}
+                >
                   {"Don't have an account? Sign Up"}
                 </Link>
               )}

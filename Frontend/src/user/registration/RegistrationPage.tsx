@@ -107,11 +107,15 @@ const RegistrationPage = () => {
             color="primary"
             className={classes.submit}
           >
-            Sign In
+            Sign Up
           </Button>
           <Grid container>
             <Grid item>
-              <Link href="/login" variant="body2" id="go-to-sign-in">
+              <Link
+                variant="body2"
+                id="go-to-sign-in"
+                onClick={() => history.push('/')}
+              >
                 {'Already have an account? Sign In'}
               </Link>
             </Grid>
