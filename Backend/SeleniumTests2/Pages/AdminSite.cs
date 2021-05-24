@@ -14,5 +14,17 @@ namespace SeleniumTests2
         {
             driver.FindElement(By.Id("admin-site"));
         }
+
+        public LoginPage LogOut()
+        {
+            GetLogOutButton().Click();
+            driver.Sleep();
+            return new LoginPage(driver, true);
+        }
+
+        private IWebElement GetLogOutButton()
+        {
+            return driver.FindElement(By.Id("logout"));
+        }
     }
 }

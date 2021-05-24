@@ -1,13 +1,16 @@
-using System;
 using Xunit;
-using System.Threading;
 using FluentAssertions;
 using System.Threading.Tasks;
+using Xunit.Abstractions;
 
 namespace SeleniumTests2
 {
     public class AdminStationsTests : TestsBase
     {
+        public AdminStationsTests(ITestOutputHelper output) : base(output)
+        {
+        }
+
         [Fact]
         public void NewStationShouldBeOnList()
         {

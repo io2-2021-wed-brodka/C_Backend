@@ -1,4 +1,6 @@
 using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Remote;
 using System.Linq;
 using System.Threading;
 
@@ -8,10 +10,24 @@ namespace SeleniumTests2
     {
         public static void OpenAdminTab(this IWebDriver driver)
         {
+            var testName = driver.FindElement(By.Id("test-helper")).Text;
             ((IJavaScriptExecutor)driver).ExecuteScript("window.open();");
             driver.SwitchToAdminTab();
             driver.Navigate().GoToUrl(TestsBase.AdminSiteUrl);
-            Thread.Sleep(500);
+            Thread.Sleep(100);
+            driver.SetTabTitle(testName);
+            Thread.Sleep(100);
+        }
+
+        public static IWebDriver InitDriverWithUserPage()
+        {
+            var chromeOptions = new ChromeOptions();
+            var driver = new RemoteWebDriver(chromeOptions);
+            driver.Manage().Window.Maximize();
+
+            driver.Navigate().GoToUrl(TestsBase.UserSiteUrl);
+
+            return driver;
         }
 
         public static void SwitchToUserTab(this IWebDriver driver)
@@ -32,6 +48,11 @@ namespace SeleniumTests2
         public static void Sleep(this IWebDriver driver)
         {
             driver.Sleep(1);
+        }
+
+        public static void SetTabTitle(this IWebDriver driver, string title)
+        {
+            ((IJavaScriptExecutor)driver).ExecuteScript($"document.getElementById('test-helper').innerText = \"{title}\";");
         }
     }
 }

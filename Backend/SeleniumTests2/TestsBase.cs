@@ -6,6 +6,9 @@ using OpenQA.Selenium;
 using System.Threading.Tasks;
 using RestSharp;
 using RestSharp.Serializers.NewtonsoftJson;
+using Xunit.Abstractions;
+using System.Reflection;
+using System.Linq;
 
 namespace SeleniumTests2
 {
@@ -17,16 +20,14 @@ namespace SeleniumTests2
         protected IWebDriver _driver;
         private static bool _warmedUp;
 
-        protected TestsBase()
+        protected TestsBase(ITestOutputHelper output)
         {
             _api = new RestClient("http://localhost:8080");
             _api.UseNewtonsoftJson();
             
-            var chromeOptions = new ChromeOptions();
-            _driver = new RemoteWebDriver(chromeOptions);
-            _driver.Manage().Window.Maximize();
+            _driver = SeleniumHelpers.InitDriverWithUserPage();
 
-            _driver.Navigate().GoToUrl(UserSiteUrl);
+            SetTestNameInTabTitle(output);
 
             // warp up database, so that migration can happen and all tests will run quickly
             if(!_warmedUp)
@@ -65,6 +66,15 @@ namespace SeleniumTests2
             loginPage.LogIn(login, password);
 
             return new StationsPage(_driver);
+        }
+
+        private void SetTestNameInTabTitle(ITestOutputHelper output)
+        {
+            var type = output.GetType();
+            var testMember = type.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
+            var test = (ITest)testMember.GetValue(output);
+            var displayName = string.Join('.', test.DisplayName.Split('.').Skip(2).ToArray());
+            _driver.SetTabTitle(displayName);
         }
     }
 }

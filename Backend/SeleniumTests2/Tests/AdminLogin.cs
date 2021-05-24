@@ -2,11 +2,16 @@ using System;
 using Xunit;
 using FluentAssertions;
 using System.Threading.Tasks;
+using Xunit.Abstractions;
 
 namespace SeleniumTests2
 {
     public class AdminLoginTests : TestsBase
     {
+        public AdminLoginTests(ITestOutputHelper output) : base(output)
+        {
+        }
+
         [Fact]
         public void AdminLogInWithCorrectCredentialsShouldSucceed()
         {
@@ -47,5 +52,13 @@ namespace SeleniumTests2
             checkIfLoginSucceed.Should().Throw<Exception>();
         }
 
+        [Fact]
+        public void LogOutShouldSucceed()
+        {
+            _driver.OpenAdminTab();
+            var adminStationsPage = LoginAsAdmin();
+
+            var loginPage = adminStationsPage.LogOut();
+        }
     }
 }

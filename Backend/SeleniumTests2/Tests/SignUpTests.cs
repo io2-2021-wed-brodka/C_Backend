@@ -1,11 +1,16 @@
 using System;
 using Xunit;
 using FluentAssertions;
+using Xunit.Abstractions;
 
 namespace SeleniumTests2
 {
     public class SignUpTests : TestsBase
     {
+        public SignUpTests(ITestOutputHelper output) : base(output)
+        {
+        }
+
         [Fact]
         public void SignUpWithExistingLoginShouldFail()
         {
