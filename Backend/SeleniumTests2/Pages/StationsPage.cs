@@ -31,6 +31,14 @@ namespace SeleniumTests2
             }
         }
 
+        public RentalsPage GoToRentals()
+        {
+            driver.FindElement(By.Id("rentals")).Click();
+            driver.Sleep();
+
+            return new RentalsPage(driver);
+        }
+
         private IWebElement GetStationElement(string stationName)
         {
             return driver.FindElement(By.Id($"station-{stationName}"));

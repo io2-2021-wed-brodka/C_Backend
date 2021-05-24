@@ -41,6 +41,7 @@ const RentalsTab = () => {
       onClick: () => {
         alert(id);
       },
+      id: `report-${id}`,
     },
     {
       label: 'Return',
@@ -49,6 +50,7 @@ const RentalsTab = () => {
         setReturnedBikeId(id);
         setDialogIsOpen(true);
       },
+      id: `return-${id}`,
     },
   ];
 

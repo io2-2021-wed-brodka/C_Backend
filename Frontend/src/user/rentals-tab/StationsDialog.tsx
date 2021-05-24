@@ -34,6 +34,7 @@ const StationsDialog = ({ close, selectStation }: Props) => {
               {stations.map(station => (
                 <ListItem
                   button
+                  id={`return-on-station-${station.id}`}
                   key={station.name}
                   onClick={() => selectStation(station)}
                 >

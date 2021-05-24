@@ -60,6 +60,7 @@ const Navigation = ({ pathname }: Props) => {
             component={Link}
             to={url}
             value={url}
+            id={name.toLowerCase()}
           ></Tab>
         ))}
       </Tabs>
