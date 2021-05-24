@@ -40,14 +40,9 @@ namespace SeleniumTests2
             driver.SwitchTo().Window(driver.WindowHandles.Last());
         }
 
-        public static void Sleep(this IWebDriver driver, int seconds)
+        public static void Sleep(this IWebDriver driver, int seconds = 1)
         {
             Thread.Sleep(seconds * 1000);
-        }
-
-        public static void Sleep(this IWebDriver driver)
-        {
-            driver.Sleep(1);
         }
 
         public static void SetTabTitle(this IWebDriver driver, string title)
