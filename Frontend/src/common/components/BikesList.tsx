@@ -61,21 +61,20 @@ const BikesList = ({ bikes, bikeActions, showStatus, showLocation }: Props) => {
               <Typography variant="h6">{`#${bike.id}`}</Typography>
 
               {showStatus && (
-                <Chip
-                  label={`Status: ${bike.status}`}
-                  variant="outlined"
-                ></Chip>
+                <Chip label={`${bike.status}`} variant="outlined"></Chip>
               )}
               {showLocation &&
                 (bike.user != null ? (
                   <Chip
                     label={`At user: ${bike.user.name}`}
                     variant="outlined"
+                    color="secondary"
                   />
                 ) : bike.station != null ? (
                   <Chip
                     label={`At station: ${bike.station.name}`}
                     variant="outlined"
+                    color="primary"
                   />
                 ) : (
                   <Chip label={`Unknown location`} variant="outlined" />
