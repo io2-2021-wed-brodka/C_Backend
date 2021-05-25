@@ -111,7 +111,7 @@ namespace SeleniumTests2.Tests
         }
 
         [Fact]
-        public async Task StationShouldNotBeVisibleToUserAfterItIsUnblocked()
+        public async Task StationShouldBeVisibleToUserAfterItIsUnblocked()
         {
             var stationName = GetUniqueString();
             var adminToken = await Api.LogInAsAdmin();
