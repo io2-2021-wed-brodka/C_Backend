@@ -1,12 +1,12 @@
 using System;
-using Xunit;
-using FluentAssertions;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Xunit;
 using Xunit.Abstractions;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
-namespace SeleniumTests2
+namespace SeleniumTests2.Tests
 {
     public class LoginTests : TestsBase
     {
@@ -17,22 +17,22 @@ namespace SeleniumTests2
         [Fact]
         public void LogInWithWrongCredentialsShouldFail()
         {
-            var loginPage = new LoginPage(_driver);
+            var loginPage = new LoginPage(Driver);
 
             loginPage.LogIn("some-non-existing-user", "with-password");
 
-            Action checkIfLoginSucceed = () => new StationsPage(_driver);
+            Action checkIfLoginSucceed = () => new StationsPage(Driver);
             checkIfLoginSucceed.Should().Throw<Exception>();
         }
 
         [Fact]
         public void LogInWithAdminCredentialsShouldSucceed()
         {
-            var loginPage = new LoginPage(_driver);
+            var loginPage = new LoginPage(Driver);
 
             loginPage.LogIn("admin", "admin");
 
-            Action checkIfLoginSucceed = () => new StationsPage(_driver);
+            Action checkIfLoginSucceed = () => new StationsPage(Driver);
             checkIfLoginSucceed();
         }
 
@@ -41,11 +41,11 @@ namespace SeleniumTests2
         {
             var login = GetUniqueString();
             var password = "23456";
-            var token = await _api.SignUp(login, password);
-            var loginPage = new LoginPage(_driver);
+            var token = await Api.SignUp(login, password);
+            var loginPage = new LoginPage(Driver);
 
             loginPage.LogIn(login, password);
-            Action checkIfLoginSucceed = () => new StationsPage(_driver);
+            Action checkIfLoginSucceed = () => new StationsPage(Driver);
             
             checkIfLoginSucceed();
         }

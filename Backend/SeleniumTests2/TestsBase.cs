@@ -1,7 +1,4 @@
 using System;
-using Xunit;
-using OpenQA.Selenium.Remote;
-using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using System.Threading.Tasks;
 using RestSharp;
@@ -16,30 +13,32 @@ namespace SeleniumTests2
     {
         public static readonly string UserSiteUrl = "http://localhost:3001";
         public static readonly string AdminSiteUrl = "http://localhost:3002";
-        protected readonly RestClient _api;
-        protected IWebDriver _driver;
+        
+        protected RestClient Api { get; set; }
+        protected IWebDriver Driver { get; set; }
+        
         private static bool _warmedUp;
 
         protected TestsBase(ITestOutputHelper output)
         {
-            _api = new RestClient("http://localhost:8080");
-            _api.UseNewtonsoftJson();
+            Api = new RestClient("http://localhost:8080");
+            Api.UseNewtonsoftJson();
             
-            _driver = SeleniumHelpers.InitDriverWithUserPage();
+            Driver = SeleniumHelpers.InitDriverWithUserPage();
 
             SetTestNameInTabTitle(output);
 
             // warp up database, so that migration can happen and all tests will run quickly
-            if(!_warmedUp)
+            if (!_warmedUp)
             {
-                _api.LogInBlocking("login", "password");
+                Api.LogInBlocking("login", "password");
                 _warmedUp = true;
             }
         }
 
         public void Dispose()
         {
-            _driver.Quit();
+            Driver.Quit();
         }
 
         protected string GetUniqueString()
@@ -49,23 +48,23 @@ namespace SeleniumTests2
 
         protected AdminStationsPage LoginAsAdmin()
         {
-            var loginPage = new LoginPage(_driver, true);
+            var loginPage = new LoginPage(Driver, true);
 
             loginPage.LogIn("admin", "admin");
 
-            return new AdminStationsPage(_driver);
+            return new AdminStationsPage(Driver);
         }
 
         protected async Task<StationsPage> LoginAsSomeUser()
         {
             var login = GetUniqueString();
-            var password = "23456";
-            var token = await _api.SignUp(login, password);
-            var loginPage = new LoginPage(_driver);
+            const string password = "23456";
+            await Api.SignUp(login, password);
+            var loginPage = new LoginPage(Driver);
 
             loginPage.LogIn(login, password);
 
-            return new StationsPage(_driver);
+            return new StationsPage(Driver);
         }
 
         private void SetTestNameInTabTitle(ITestOutputHelper output)
@@ -74,7 +73,7 @@ namespace SeleniumTests2
             var testMember = type.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
             var test = (ITest)testMember.GetValue(output);
             var displayName = string.Join('.', test.DisplayName.Split('.').Skip(2).ToArray());
-            _driver.SetTabTitle(displayName);
+            Driver.SetTabTitle(displayName);
         }
     }
 }
