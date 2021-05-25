@@ -29,6 +29,9 @@ namespace BikesRentalServer.DataAccess
                     PasswordHash = Toolbox.ComputeHash("admin"),
                 });
 
+            if(!this.Database.IsSqlite())
+                return;
+
             var station1 = new Station
             {
                 Id = 1,
