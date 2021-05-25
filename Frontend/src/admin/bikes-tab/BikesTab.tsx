@@ -17,7 +17,7 @@ const BikesTab = () => {
   const removeBike = useServices().removeBike;
   const blockBike = useServices().blockBike;
   const unblockBike = useServices().unblockBike;
-  const data = usePromise(useServices().getBikes, [refreshState]);
+  const data = usePromise(getBikes, [refreshState]);
   const snackbar = useSnackbar();
 
   const bikeActions: BikeActionsForBike = ({ id, status }) => [
