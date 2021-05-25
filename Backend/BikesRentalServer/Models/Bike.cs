@@ -31,6 +31,7 @@
         /// Station at which bike currently is. Can be null if bike is rented.
         /// </summary>
         public Station Station { get; set; }
+        public int? StationId { get; set; }
     }
 
     public enum BikeStatus
