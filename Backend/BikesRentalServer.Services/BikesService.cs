@@ -34,7 +34,15 @@ namespace BikesRentalServer.Services
         public ServiceActionResult<IEnumerable<Bike>> GetAllBikes()
         {
             var bikes = _bikesRepository.GetAll();
-            return ServiceActionResult.Success(bikes);
+            return ServiceActionResult.Success(bikes.Select(bike => new Bike
+            {
+                Description = bike.Description,
+                Id = bike.Id,
+                Station = bike.Station,
+                Status = _reservationsRepository.GetActiveReservation(bike.Id.ToString()) is null ? bike.Status : BikeStatus.Reserved,
+                User = bike.User,
+                StationId = bike.StationId,
+            }));
         }
 
         public ServiceActionResult<Bike> GetBike(string id)
@@ -42,7 +50,15 @@ namespace BikesRentalServer.Services
             var bike = _bikesRepository.Get(id);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
-            return ServiceActionResult.Success(bike);
+            return ServiceActionResult.Success(new Bike
+            {
+                Description = bike.Description,
+                Id = bike.Id,
+                Station = bike.Station,
+                Status = _reservationsRepository.GetActiveReservation(bike.Id.ToString()) is null ? bike.Status : BikeStatus.Reserved,
+                User = bike.User,
+                StationId = bike.StationId,
+            });
         }
 
         public ServiceActionResult<Bike> AddBike(string stationId)
@@ -56,7 +72,15 @@ namespace BikesRentalServer.Services
                 Station = station,
                 Status = Bike.DefaultBikeStatus,
             });
-            return ServiceActionResult.Success(bike);
+            return ServiceActionResult.Success(new Bike
+            {
+                Description = bike.Description,
+                Id = bike.Id,
+                Station = bike.Station,
+                Status = _reservationsRepository.GetActiveReservation(bike.Id.ToString()) is null ? bike.Status : BikeStatus.Reserved,
+                User = bike.User,
+                StationId = bike.StationId,
+            });
         }
 
         public ServiceActionResult<Bike> RemoveBike(string id)
@@ -70,7 +94,15 @@ namespace BikesRentalServer.Services
                 throw new InvalidOperationException("Trying to remove rented bike");
 
             bike = _bikesRepository.Remove(bike);
-            return ServiceActionResult.Success(bike);
+            return ServiceActionResult.Success(new Bike
+            {
+                Description = bike.Description,
+                Id = bike.Id,
+                Station = bike.Station,
+                Status = _reservationsRepository.GetActiveReservation(bike.Id.ToString()) is null ? bike.Status : BikeStatus.Reserved,
+                User = bike.User,
+                StationId = bike.StationId,
+            });
         }
         
         #endregion
@@ -80,7 +112,15 @@ namespace BikesRentalServer.Services
         public ServiceActionResult<IEnumerable<Bike>> GetRentedBikes()
         {
             var user = _usersRepository.GetByUsername(_userContext.Username);
-            return ServiceActionResult.Success<IEnumerable<Bike>>(user.RentedBikes);
+            return ServiceActionResult.Success(user.RentedBikes.Select(bike => new Bike
+            {
+                Description = bike.Description,
+                Id = bike.Id,
+                Station = bike.Station,
+                Status = bike.Status,
+                User = bike.User,
+                StationId = bike.StationId,
+            }));
         }
 
         public ServiceActionResult<Bike> RentBike(string id)
@@ -112,7 +152,15 @@ namespace BikesRentalServer.Services
 
             _bikesRepository.SetStatus(id, BikeStatus.Rented);
             bike = _bikesRepository.Associate(id, user);
-            return ServiceActionResult.Success(bike);
+            return ServiceActionResult.Success(new Bike
+            {
+                Description = bike.Description,
+                Id = bike.Id,
+                Station = bike.Station,
+                Status = bike.Status,
+                User = bike.User,
+                StationId = bike.StationId,
+            });
         }
 
         public ServiceActionResult<Bike> GiveBikeBack(string bikeId, string stationId)
@@ -131,7 +179,15 @@ namespace BikesRentalServer.Services
 
             _bikesRepository.SetStatus(bikeId, BikeStatus.Available);
             bike = _bikesRepository.Associate(bikeId, station);
-            return ServiceActionResult.Success(bike);
+            return ServiceActionResult.Success(new Bike
+            {
+                Description = bike.Description,
+                Id = bike.Id,
+                Station = bike.Station,
+                Status = bike.Status,
+                User = bike.User,
+                StationId = bike.StationId,
+            });
         }
         
         #endregion
@@ -141,7 +197,15 @@ namespace BikesRentalServer.Services
         public ServiceActionResult<IEnumerable<Bike>> GetBlockedBikes()
         {
             var bikes = _bikesRepository.GetBlocked();
-            return ServiceActionResult.Success(bikes);
+            return ServiceActionResult.Success(bikes.Select(bike => new Bike
+            {
+                Description = bike.Description,
+                Id = bike.Id,
+                Station = bike.Station,
+                Status = bike.Status,
+                User = bike.User,
+                StationId = bike.StationId,
+            }));
         }
 
         public ServiceActionResult<Bike> BlockBike(string id)
@@ -160,7 +224,15 @@ namespace BikesRentalServer.Services
                     var reservation = _reservationsRepository.GetActiveReservation(bike.Id.ToString());
                     if (reservation is not null)
                         _reservationsRepository.Remove(reservation);
-                    return ServiceActionResult.Success(bike);
+                    return ServiceActionResult.Success(new Bike
+                    {
+                        Description = bike.Description,
+                        Id = bike.Id,
+                        Station = bike.Station,
+                        Status = bike.Status,
+                        User = bike.User,
+                        StationId = bike.StationId,
+                    });
             }
         }
 
@@ -173,7 +245,15 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.InvalidState<Bike>("Bike not blocked");
 
             bike = _bikesRepository.SetStatus(id, BikeStatus.Available);
-            return ServiceActionResult.Success(bike);
+            return ServiceActionResult.Success(new Bike
+            {
+                Description = bike.Description,
+                Id = bike.Id,
+                Station = bike.Station,
+                Status = bike.Status,
+                User = bike.User,
+                StationId = bike.StationId,
+            });
         }
         
         #endregion
@@ -185,7 +265,15 @@ namespace BikesRentalServer.Services
             var user = _usersRepository.GetByUsername(_userContext.Username);
             var reservations = _reservationsRepository.GetActiveReservations(user.Id.ToString());
             var reservedBikes = reservations.Select(reservation => reservation.Bike);
-            return ServiceActionResult.Success(reservedBikes);
+            return ServiceActionResult.Success(reservedBikes.Select(bike => new Bike
+            {
+                Description = bike.Description,
+                Id = bike.Id,
+                Station = bike.Station,
+                Status = BikeStatus.Reserved,
+                User = bike.User,
+                StationId = bike.StationId,
+            }));
         }
 
         public ServiceActionResult<Reservation> ReserveBike(string id)
@@ -216,7 +304,14 @@ namespace BikesRentalServer.Services
                 ReservationDate = DateTime.Now,
                 ExpirationDate = DateTime.Now.AddMinutes(30),
             });
-            return ServiceActionResult.Success(reservation);
+            return ServiceActionResult.Success(new Reservation
+            {
+                Bike = reservation.Bike,
+                Id = reservation.Id,
+                User = reservation.User,
+                ExpirationDate = reservation.ExpirationDate,
+                ReservationDate = reservation.ExpirationDate,
+            });
         }
 
         public ServiceActionResult<Bike> CancelBikeReservation(string bikeId)
@@ -231,7 +326,15 @@ namespace BikesRentalServer.Services
 
             _bikesRepository.SetStatus(bikeId, BikeStatus.Available);
             _reservationsRepository.Remove(reservation);
-            return ServiceActionResult.Success(reservation.Bike);
+            return ServiceActionResult.Success(new Bike
+            {
+                Description = reservation.Bike.Description,
+                Id = reservation.Bike.Id,
+                Station = reservation.Bike.Station,
+                Status = reservation.Bike.Status,
+                User = reservation.Bike.User,
+                StationId = reservation.Bike.StationId,
+            });
         }
 
         #endregion
