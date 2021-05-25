@@ -114,6 +114,24 @@ namespace SeleniumTests2
             driver.Sleep();
         }
 
+        public void ClickRemoveStation(string stationName)
+        {
+            GetRemoveStationButton(stationName).Click();
+            driver.Sleep();
+        }
+
+        public void ClickBlockStation(string stationName)
+        {
+            GetBlockStationButton(stationName).Click();
+            driver.Sleep();
+        }
+
+        public void ClickUnblockStation(string stationName)
+        {
+            GetUnblockStationButton(stationName).Click();
+            driver.Sleep();
+        }
+
         private IWebElement GetStationsHeader()
         {
             return driver.FindElement(By.Id("stations-header"));
@@ -162,6 +180,21 @@ namespace SeleniumTests2
         private IWebElement GetRemoveBikeButton(string bikeId)
         {
             return driver.FindElement(By.Id($"remove-bike-{bikeId}"));
+        }
+
+        private IWebElement GetBlockStationButton(string stationName)
+        {
+            return driver.FindElement(By.Id($"block-station-{stationName}"));
+        }
+
+        private IWebElement GetUnblockStationButton(string stationName)
+        {
+            return driver.FindElement(By.Id($"unblock-station-{stationName}"));
+        }
+
+        private IWebElement GetRemoveStationButton(string stationName)
+        {
+            return driver.FindElement(By.Id($"remove-station-{stationName}"));
         }
     }
 }
