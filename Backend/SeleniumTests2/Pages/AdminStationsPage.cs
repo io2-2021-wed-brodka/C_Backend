@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using OpenQA.Selenium;
 
 namespace SeleniumTests2
@@ -37,6 +39,24 @@ namespace SeleniumTests2
             }
         }
 
+        public int GetUnblockedBikesCount()
+        {
+            return GetUnblockedBikes().Count();
+        }
+
+        public void ClickOnStation(string stationName)
+        {
+            // This should change bike station list to opened if it was closed before or vice versa.
+            GetStationElement(stationName).Click();
+            driver.Sleep();
+        }
+
+        public void AddBikeToOpenedStation()
+        {
+            GetAddBikeButton().Click();
+            driver.Sleep();
+        }
+
         private IWebElement GetStationsHeader()
         {
             return driver.FindElement(By.Id("stations-header"));
@@ -55,6 +75,21 @@ namespace SeleniumTests2
         private IWebElement GetStationElement(string stationName)
         {
             return driver.FindElement(By.Id($"station-{stationName}"));
+        }
+
+        private IWebElement GetAddBikeButton()
+        {
+            return driver.FindElement(By.Id("add-bike"));
+        }
+
+        private IEnumerable<IWebElement> GetUnblockedBikes()
+        {
+            return driver.FindElements(By.Id("block-bike"));
+        }
+
+        private List<IWebElement> GetBlockedBikes()
+        {
+            return driver.FindElements(By.Id("unblock-bike")).ToList();
         }
     }
 }
