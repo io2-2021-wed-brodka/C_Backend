@@ -10,11 +10,13 @@ namespace BikesRentalServer.Services
     public class StationsService : IStationsService
     {
         private readonly IStationsRepository _stationsRepository;
+        private readonly IReservationsRepository _reservationsRepository;
         private readonly UserContext _userContext;
 
-        public StationsService(IStationsRepository stationsRepository, UserContext userContext)
+        public StationsService(IStationsRepository stationsRepository, IReservationsRepository reservationsRepository, UserContext userContext)
         {
             _stationsRepository = stationsRepository;
+            _reservationsRepository = reservationsRepository;
             _userContext = userContext;
         }
 
@@ -43,7 +45,7 @@ namespace BikesRentalServer.Services
             if (station.Status is StationStatus.Blocked && _userContext.Role is UserRole.User)
                 return ServiceActionResult.InvalidState<IEnumerable<Bike>>("User cannot get bikes from blocked station");
 
-            var bikes = station.Bikes.Where(bike => bike.Status == BikeStatus.Available);
+            var bikes = station.Bikes.Where(bike => bike.Status is BikeStatus.Available && _reservationsRepository.GetActiveReservation(bike.Id.ToString()) is null);
             return ServiceActionResult.Success(bikes);
         }
   
