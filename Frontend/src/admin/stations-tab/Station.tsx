@@ -97,6 +97,7 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
                 variant="contained"
                 color={'secondary'}
                 onClick={onAddBike}
+                id="add-bike"
               >
                 Add bike
               </Button>{' '}
@@ -105,7 +106,6 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
                   variant="contained"
                   color={'default'}
                   onClick={onBlockStation}
-                  id="add-bike"
                 >
                   Block
                 </Button>

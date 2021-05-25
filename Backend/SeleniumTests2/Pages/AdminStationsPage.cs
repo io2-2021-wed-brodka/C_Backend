@@ -146,23 +146,22 @@ namespace SeleniumTests2
 
         private List<IWebElement> GetBikeElements()
         {
-            // Not sure if it works? Hopefully it returns all items with id starting with "bike-".
-            return driver.FindElements(By.Id($"bike-")).ToList();
+            return driver.FindElements(By.CssSelector("[id^=bike-]")).ToList();
         }
 
         private IWebElement GetBlockBikeButton(string bikeId)
         {
-            return driver.FindElement(By.Id($"block-{bikeId}"));
+            return driver.FindElement(By.Id($"block-bike-{bikeId}"));
         }
 
         private IWebElement GetUnblockBikeButton(string bikeId)
         {
-            return driver.FindElement(By.Id($"unblock-{bikeId}"));
+            return driver.FindElement(By.Id($"unblock-bike-{bikeId}"));
         }
 
         private IWebElement GetRemoveBikeButton(string bikeId)
         {
-            return driver.FindElement(By.Id($"remove-{bikeId}"));
+            return driver.FindElement(By.Id($"remove-bike-{bikeId}"));
         }
     }
 }
