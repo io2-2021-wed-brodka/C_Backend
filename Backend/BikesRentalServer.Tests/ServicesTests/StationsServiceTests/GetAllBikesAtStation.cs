@@ -30,73 +30,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
         }
 
         [Fact]
-        public void GetAllBikesAtStationForAdminShouldReturnAllBikesAtStation()
-        {
-            var bikes = new List<Bike>
-            {
-                new Bike
-                {
-                    Status = BikeStatus.Available,
-                },
-                new Bike
-                {
-                    Status = BikeStatus.Reserved,
-                },
-                new Bike
-                {
-                    Status = BikeStatus.Blocked,
-                },
-            };
-            var station = new Station
-            {
-                Name = "Szpital psychiatryczny",
-                Id = 2,
-                Bikes = bikes,
-            };
-            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
-
-            var stationsService = GetStationsService("maklovitz", UserRole.Admin);
-            var result = stationsService.GetActiveBikesAtStation(station.Id.ToString());
-
-            result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(bikes);
-        }
-
-        [Fact]
-        public void GetAllBikesAtStationForTechShouldReturnAllBikesAtStation()
-        {
-            var bikes = new List<Bike>
-            {
-                new Bike
-                {
-                    Status = BikeStatus.Available,
-                },
-                new Bike
-                {
-                    Status = BikeStatus.Reserved,
-                },
-                new Bike
-                {
-                    Status = BikeStatus.Blocked,
-                },
-            };
-            var station = new Station
-            {
-                Name = "Szpital psychiatryczny",
-                Id = 2,
-                Bikes = bikes,
-            };
-            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
-
-            var stationsService = GetStationsService("maklovitz", UserRole.Tech);
-            var result = stationsService.GetActiveBikesAtStation(station.Id.ToString());
-
-            result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(bikes);
-        }
-
-        [Fact]
-        public void GetAllBikesAtStationForUserShouldReturnAllAvailableBikesAtStation()
+        public void GetAllBikesAtStationShouldReturnAllAvailableBikesAtStation()
         {
             var availableBikes = new []
             {

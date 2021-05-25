@@ -18,6 +18,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                 Status = UserStatus.Active,
                 Username = "maciek",
             };
+            var now = DateTime.Now;
             var reservation = new Reservation
             {
                 Bike = new Bike
@@ -30,8 +31,8 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                     },
                 },
                 User = user,
-                ReservationDate = DateTime.Now,
-                ExpirationDate = DateTime.Now.AddMinutes(30),
+                ReservationDate = now,
+                ExpirationDate = now.AddMinutes(30),
             };
             BikesRepository.Setup(r => r.Get(bikeId.ToString()))
                 .Returns(new Bike
@@ -60,7 +61,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             var result = bikesService.ReserveBike(bikeId.ToString());
 
             result.Status.Should().Be(Status.Success);
-            result.Object.Should().Be(reservation);
+            result.Object.Should().BeEquivalentTo(reservation);
             ReservationsRepository.Verify();
         }
 
@@ -110,6 +111,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                     },
                 })
                 .Verifiable();
+            ReservationsRepository.Setup(r => r.Add(It.IsAny<Reservation>())).Returns(reservation);
 
             var bikesService = GetBikesService();
             var result = bikesService.ReserveBike(bikeId.ToString());

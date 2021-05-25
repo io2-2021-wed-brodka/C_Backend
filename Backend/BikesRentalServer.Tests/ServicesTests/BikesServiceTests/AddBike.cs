@@ -16,7 +16,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             {
                 Id = stationId,
             });
-            BikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Verifiable();
+            BikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Returns(new Bike()).Verifiable();
             
             var bikesService = GetBikesService();
             var result = bikesService.AddBike(stationId.ToString());

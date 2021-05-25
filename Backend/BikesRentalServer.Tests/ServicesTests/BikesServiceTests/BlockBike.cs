@@ -40,7 +40,9 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
         public void BlockBikeShouldChangeBikeStatusForBlocked()
         {
             const int bikeId = 123;
-            BikesRepository.Setup(r => r.SetStatus(It.Is<string>(id => id == bikeId.ToString()), It.Is<BikeStatus>(b => b == BikeStatus.Blocked))).Verifiable();
+            BikesRepository.Setup(r => r.SetStatus(It.Is<string>(id => id == bikeId.ToString()), It.Is<BikeStatus>(b => b == BikeStatus.Blocked)))
+                .Returns(new Bike())
+                .Verifiable();
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {

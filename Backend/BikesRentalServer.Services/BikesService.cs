@@ -315,7 +315,7 @@ namespace BikesRentalServer.Services
                 Id = reservation.Id,
                 User = reservation.User,
                 ExpirationDate = reservation.ExpirationDate,
-                ReservationDate = reservation.ExpirationDate,
+                ReservationDate = reservation.ReservationDate,
             });
         }
 
