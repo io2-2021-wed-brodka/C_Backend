@@ -9,6 +9,7 @@ import {
   makeStyles,
   Theme,
   Typography,
+  Chip,
 } from '@material-ui/core';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import { Bike } from '../api/models/bike';
@@ -57,29 +58,29 @@ const BikesList = ({ bikes, bikeActions, showStatus, showLocation }: Props) => {
               <ListItemIconSansPadding>
                 <DirectionsBikeIcon />
               </ListItemIconSansPadding>
-              <ListItemText
-                primary={<Typography variant="h6">{`#${bike.id}`}</Typography>}
-              />
+              <Typography variant="h6">{`#${bike.id}`}</Typography>
+
               {showStatus && (
-                <ListItemText
-                  primary={
-                    <Typography variant="subtitle1">{`Status: ${bike.status}`}</Typography>
-                  }
-                />
+                <Chip
+                  label={`Status: ${bike.status}`}
+                  variant="outlined"
+                ></Chip>
               )}
-              {showLocation && (
-                <ListItemText
-                  primary={
-                    bike.user != null ? (
-                      <Typography variant="subtitle1">{`At user: ${bike.user.name}`}</Typography>
-                    ) : bike.station != null ? (
-                      <Typography variant="subtitle1">{`At station: ${bike.station.name}`}</Typography>
-                    ) : (
-                      <Typography variant="subtitle1">{`Unknown location`}</Typography>
-                    )
-                  }
-                />
-              )}
+              {showLocation &&
+                (bike.user != null ? (
+                  <Chip
+                    label={`At user: ${bike.user.name}`}
+                    variant="outlined"
+                  />
+                ) : bike.station != null ? (
+                  <Chip
+                    label={`At station: ${bike.station.name}`}
+                    variant="outlined"
+                  />
+                ) : (
+                  <Chip label={`Unknown location`} variant="outlined" />
+                ))}
+
               <ListItemSecondaryAction>
                 {bikeActions(bike).map(({ onClick, label, type, id }) => (
                   <Button
