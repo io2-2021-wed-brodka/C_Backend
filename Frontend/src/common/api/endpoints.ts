@@ -31,6 +31,9 @@ export const getActiveStations = () =>
     res => res.stations,
   );
 
+export const getBikes = () =>
+  apiWithAuthConnection<BikesResponse>(`${API}/bikes`).then(res => res.bikes);
+
 export const getAllStations = () =>
   apiWithAuthConnection<StationsResponse>(`${API}/stations`).then(
     res => res.stations,

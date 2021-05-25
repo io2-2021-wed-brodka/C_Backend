@@ -5,6 +5,7 @@ import {
   blockBike,
   blockStation,
   blockUser,
+  getBikes,
   getBikesByStation,
   getReservedBikes,
   getRentedBikes,
@@ -25,7 +26,7 @@ import {
 import { Bike, BikeStatus } from './api/models/bike';
 import { Station, StationStatus } from './api/models/station';
 import { mockedStations } from './mocks/stations';
-import { mockedBikesByStations } from './mocks/bikes';
+import { mockedBikesByStations, mockedBikes } from './mocks/bikes';
 import { mockedRentedBikes } from './mocks/rentals';
 import { delay } from './mocks/mockedApiResponse';
 import { BearerToken } from './api/models/bearer-token';
@@ -45,6 +46,7 @@ type AllServices = {
   signUp: (login: string, password: string) => Promise<BearerToken>;
   getActiveStations: () => Promise<Station[]>;
   getAllStations: () => Promise<Station[]>;
+  getBikes: () => Promise<Bike[]>;
   getBikesOnStation: (stationId: string) => Promise<Bike[]>;
   getRentedBikes: () => Promise<Bike[]>;
   getReservedBikes: () => Promise<ReservedBike[]>;
@@ -71,6 +73,7 @@ export const services: AllServices = {
   signUp: signUpAndSaveToken,
   getActiveStations: getActiveStations,
   getAllStations: getAllStations,
+  getBikes: getBikes,
   getBikesOnStation: getBikesByStation,
   getReservedBikes: getReservedBikes,
   getRentedBikes: getRentedBikes,
@@ -107,6 +110,7 @@ export const mockedServices: AllServices = {
   },
   getActiveStations: () => delay(mockedStations),
   getAllStations: () => delay(mockedStations),
+  getBikes: () => delay(mockedBikes),
   getBikesOnStation: stationId => delay(mockedBikesByStations[stationId]),
   getRentedBikes: () => delay(mockedRentedBikes),
   getReservedBikes: () => delay(mockedReservedBikes),
