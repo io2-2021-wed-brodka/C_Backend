@@ -34,14 +34,18 @@ namespace BikesRentalServer.Services
         public ServiceActionResult<IEnumerable<Bike>> GetAllBikes()
         {
             var bikes = _bikesRepository.GetAll();
-            return ServiceActionResult.Success(bikes.Select(bike => new Bike
+            return ServiceActionResult.Success(bikes.Select(bike =>
             {
-                Description = bike.Description,
-                Id = bike.Id,
-                Station = bike.Station,
-                Status = _reservationsRepository.GetActiveReservation(bike.Id.ToString()) is null ? bike.Status : BikeStatus.Reserved,
-                User = bike.User,
-                StationId = bike.StationId,
+                var reservation = _reservationsRepository.GetActiveReservation(bike.Id.ToString());
+                return new Bike
+                {
+                    Description = bike.Description,
+                    Id = bike.Id,
+                    Station = bike.Station,
+                    Status = reservation is null ? bike.Status : BikeStatus.Reserved,
+                    User = reservation is null ? bike.User : reservation.User,
+                    StationId = bike.StationId,
+                };
             }));
         }
 
@@ -50,13 +54,14 @@ namespace BikesRentalServer.Services
             var bike = _bikesRepository.Get(id);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
+            var reservation = _reservationsRepository.GetActiveReservation(id);
             return ServiceActionResult.Success(new Bike
             {
                 Description = bike.Description,
                 Id = bike.Id,
                 Station = bike.Station,
-                Status = _reservationsRepository.GetActiveReservation(bike.Id.ToString()) is null ? bike.Status : BikeStatus.Reserved,
-                User = bike.User,
+                Status = reservation is null ? bike.Status : BikeStatus.Reserved,
+                User = reservation is null ? bike.User : reservation.User,
                 StationId = bike.StationId,
             });
         }
