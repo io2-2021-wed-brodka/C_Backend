@@ -43,11 +43,8 @@ namespace BikesRentalServer.Services
             if (station.Status is StationStatus.Blocked && _userContext.Role is UserRole.User)
                 return ServiceActionResult.InvalidState<IEnumerable<Bike>>("User cannot get bikes from blocked station");
 
-            var bikes = station.Bikes;
-            if (_userContext.Role is UserRole.User)
-                bikes = bikes.Where(bike => bike.Status == BikeStatus.Available).ToList();
-
-            return ServiceActionResult.Success<IEnumerable<Bike>>(bikes);
+            var bikes = station.Bikes.Where(bike => bike.Status == BikeStatus.Available);
+            return ServiceActionResult.Success(bikes);
         }
   
         public ServiceActionResult<Station> AddStation(string name)
