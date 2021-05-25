@@ -10,11 +10,13 @@ namespace BikesRentalServer.Services
     public class StationsService : IStationsService
     {
         private readonly IStationsRepository _stationsRepository;
+        private readonly IReservationsRepository _reservationsRepository;
         private readonly UserContext _userContext;
 
-        public StationsService(IStationsRepository stationsRepository, UserContext userContext)
+        public StationsService(IStationsRepository stationsRepository, IReservationsRepository reservationsRepository, UserContext userContext)
         {
             _stationsRepository = stationsRepository;
+            _reservationsRepository = reservationsRepository;
             _userContext = userContext;
         }
 
@@ -23,7 +25,13 @@ namespace BikesRentalServer.Services
         public ServiceActionResult<IEnumerable<Station>> GetAllStations()
         {
             var stations = _stationsRepository.GetAll();
-            return ServiceActionResult.Success(stations);
+            return ServiceActionResult.Success(stations.Select(station => new Station
+            {
+                Bikes = station.Bikes,
+                Id = station.Id,
+                Name = station.Name,
+                Status = station.Status,
+            }));
         }
 
         public ServiceActionResult<Station> GetStation(string id)
@@ -32,10 +40,16 @@ namespace BikesRentalServer.Services
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
 
-            return ServiceActionResult.Success(station);
+            return ServiceActionResult.Success(new Station
+            {
+                Bikes = station.Bikes,
+                Id = station.Id,
+                Name = station.Name,
+                Status = station.Status,
+            } );
         }
         
-        public ServiceActionResult<IEnumerable<Bike>> GetAllBikesAtStation(string id)
+        public ServiceActionResult<IEnumerable<Bike>> GetActiveBikesAtStation(string id)
         {
             var station = _stationsRepository.Get(id);
             if (station is null)
@@ -43,11 +57,16 @@ namespace BikesRentalServer.Services
             if (station.Status is StationStatus.Blocked && _userContext.Role is UserRole.User)
                 return ServiceActionResult.InvalidState<IEnumerable<Bike>>("User cannot get bikes from blocked station");
 
-            var bikes = station.Bikes;
-            if (_userContext.Role is UserRole.User)
-                bikes = bikes.Where(bike => bike.Status == BikeStatus.Available).ToList();
-
-            return ServiceActionResult.Success<IEnumerable<Bike>>(bikes);
+            var bikes = station.Bikes.Where(bike => bike.Status is BikeStatus.Available && _reservationsRepository.GetActiveReservation(bike.Id.ToString()) is null);
+            return ServiceActionResult.Success(bikes.Select(bike => new Bike
+            {
+                Description = bike.Description,
+                Id = bike.Id,
+                Station = bike.Station,
+                Status = bike.Status,
+                User = bike.User,
+                StationId = bike.StationId,
+            }));
         }
   
         public ServiceActionResult<Station> AddStation(string name)
@@ -57,7 +76,13 @@ namespace BikesRentalServer.Services
                 Name = name,
                 Status = StationStatus.Active,
             });
-            return ServiceActionResult.Success(station);
+            return ServiceActionResult.Success(new Station
+            {
+                Bikes = station.Bikes,
+                Id = station.Id,
+                Name = station.Name,
+                Status = station.Status,
+            });
         }
 
         public ServiceActionResult<Station> RemoveStation(string id)
@@ -71,7 +96,13 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.InvalidState<Station>("Station has bikes");
 
             station = _stationsRepository.Remove(id);
-            return ServiceActionResult.Success(station);
+            return ServiceActionResult.Success(new Station
+            {
+                Bikes = station.Bikes,
+                Id = station.Id,
+                Name = station.Name,
+                Status = station.Status,
+            });
         }
         
         #endregion
@@ -81,13 +112,25 @@ namespace BikesRentalServer.Services
         public ServiceActionResult<IEnumerable<Station>> GetBlockedStations()
         {
             var stations = _stationsRepository.GetBlocked();
-            return ServiceActionResult.Success(stations);
+            return ServiceActionResult.Success(stations.Select(station => new Station
+            {
+                Bikes = station.Bikes,
+                Id = station.Id,
+                Name = station.Name,
+                Status = station.Status,
+            }));
         }
 
         public ServiceActionResult<IEnumerable<Station>> GetActiveStations()
         {
             var stations = _stationsRepository.GetActive();
-            return ServiceActionResult.Success(stations);
+            return ServiceActionResult.Success(stations.Select(station => new Station
+            {
+                Bikes = station.Bikes,
+                Id = station.Id,
+                Name = station.Name,
+                Status = station.Status,
+            }));
         }
 
         public ServiceActionResult<Station> BlockStation(string id)
@@ -99,7 +142,13 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.InvalidState<Station>("Station already blocked");
 
             station = _stationsRepository.SetStatus(id, StationStatus.Blocked);
-            return ServiceActionResult.Success(station);
+            return ServiceActionResult.Success(new Station
+            {
+                Bikes = station.Bikes,
+                Id = station.Id,
+                Name = station.Name,
+                Status = station.Status,
+            });
         }
 
         public ServiceActionResult<Station> UnblockStation(string id)
@@ -111,7 +160,13 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.InvalidState<Station>("Station not blocked");
 
             station = _stationsRepository.SetStatus(id, StationStatus.Active);
-            return ServiceActionResult.Success(station);
+            return ServiceActionResult.Success(new Station
+            {
+                Bikes = station.Bikes,
+                Id = station.Id,
+                Name = station.Name,
+                Status = station.Status,
+            });
         }
         
         #endregion

@@ -19,7 +19,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                     Id = bikeId,
                     Status = BikeStatus.Blocked,
                 });
-            BikesRepository.Setup(r => r.Remove(It.IsAny<Bike>())).Verifiable();
+            BikesRepository.Setup(r => r.Remove(It.IsAny<Bike>())).Returns(new Bike()).Verifiable();
 
             var bikesService = GetBikesService();
             var result = bikesService.RemoveBike(bikeId.ToString());

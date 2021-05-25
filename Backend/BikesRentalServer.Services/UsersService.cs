@@ -26,7 +26,16 @@ namespace BikesRentalServer.Services
         public ServiceActionResult<IEnumerable<User>> GetAllUsers()
         {
             var users = _usersRepository.GetAll().Where(user => user.Role == UserRole.User);
-            return ServiceActionResult.Success(users);
+            return ServiceActionResult.Success(users.Select(user => new User
+            {
+                Id = user.Id,
+                Reservations = user.Reservations,
+                Role = user.Role,
+                Status = user.Status,
+                Username = user.Username,
+                PasswordHash = user.PasswordHash,
+                RentedBikes = user.RentedBikes,
+            }));
         }
         
         public ServiceActionResult<User> GetUserByUsernameAndPassword(string username, string password)
@@ -35,7 +44,16 @@ namespace BikesRentalServer.Services
             if (user is null)
                 return ServiceActionResult.EntityNotFound<User>("User not found");
             
-            return ServiceActionResult.Success(user);
+            return ServiceActionResult.Success(new User
+            {
+                Id = user.Id,
+                Reservations = user.Reservations,
+                Role = user.Role,
+                Status = user.Status,
+                Username = user.Username,
+                PasswordHash = user.PasswordHash,
+                RentedBikes = user.RentedBikes,
+            });
         }
 
         public ServiceActionResult<User> AddUser(string username, string password)
@@ -50,7 +68,16 @@ namespace BikesRentalServer.Services
                 Role = UserRole.User,
                 Status = UserStatus.Active,
             });
-            return ServiceActionResult.Success(user);
+            return ServiceActionResult.Success(new User
+            {
+                Id = user.Id,
+                Reservations = user.Reservations,
+                Role = user.Role,
+                Status = user.Status,
+                Username = user.Username,
+                PasswordHash = user.PasswordHash,
+                RentedBikes = user.RentedBikes,
+            });
         }
 
         public ServiceActionResult<string> GenerateBearerToken(User user)
@@ -66,7 +93,16 @@ namespace BikesRentalServer.Services
         public ServiceActionResult<IEnumerable<User>> GetBlockedUsers()
         {
             var users = _usersRepository.GetBlockedUsers();
-            return ServiceActionResult.Success(users);
+            return ServiceActionResult.Success(users.Select(user => new User
+            {
+                Id = user.Id,
+                Reservations = user.Reservations,
+                Role = user.Role,
+                Status = user.Status,
+                Username = user.Username,
+                PasswordHash = user.PasswordHash,
+                RentedBikes = user.RentedBikes,
+            }));
         }
 
         public ServiceActionResult<User> BlockUser(string userId)
@@ -88,7 +124,16 @@ namespace BikesRentalServer.Services
 
             // We don't touch user's rented bikes here. He won't be able to rent new ones, he can return only.
 
-            return ServiceActionResult.Success(user);
+            return ServiceActionResult.Success(new User
+            {
+                Id = user.Id,
+                Reservations = user.Reservations,
+                Role = user.Role,
+                Status = user.Status,
+                Username = user.Username,
+                PasswordHash = user.PasswordHash,
+                RentedBikes = user.RentedBikes,
+            });
         }
 
         public ServiceActionResult<User> UnblockUser(string userId)
@@ -99,8 +144,17 @@ namespace BikesRentalServer.Services
             if (user.Status is UserStatus.Active)
                 return ServiceActionResult.InvalidState<User>("User already unblocked");
 
-            var unblockedUser = _usersRepository.SetStatus(userId, UserStatus.Active);
-            return ServiceActionResult.Success(unblockedUser);
+            user = _usersRepository.SetStatus(userId, UserStatus.Active);
+            return ServiceActionResult.Success(new User
+            {
+                Id = user.Id,
+                Reservations = user.Reservations,
+                Role = user.Role,
+                Status = user.Status,
+                Username = user.Username,
+                PasswordHash = user.PasswordHash,
+                RentedBikes = user.RentedBikes,
+            });
         }
         
         #endregion

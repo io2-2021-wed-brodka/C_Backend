@@ -23,80 +23,14 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
             var stationsService = GetStationsService();
-            var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
+            var result = stationsService.GetActiveBikesAtStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEmpty();
         }
 
         [Fact]
-        public void GetAllBikesAtStationForAdminShouldReturnAllBikesAtStation()
-        {
-            var bikes = new List<Bike>
-            {
-                new Bike
-                {
-                    Status = BikeStatus.Available,
-                },
-                new Bike
-                {
-                    Status = BikeStatus.Reserved,
-                },
-                new Bike
-                {
-                    Status = BikeStatus.Blocked,
-                },
-            };
-            var station = new Station
-            {
-                Name = "Szpital psychiatryczny",
-                Id = 2,
-                Bikes = bikes,
-            };
-            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
-
-            var stationsService = GetStationsService("maklovitz", UserRole.Admin);
-            var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
-
-            result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(bikes);
-        }
-
-        [Fact]
-        public void GetAllBikesAtStationForTechShouldReturnAllBikesAtStation()
-        {
-            var bikes = new List<Bike>
-            {
-                new Bike
-                {
-                    Status = BikeStatus.Available,
-                },
-                new Bike
-                {
-                    Status = BikeStatus.Reserved,
-                },
-                new Bike
-                {
-                    Status = BikeStatus.Blocked,
-                },
-            };
-            var station = new Station
-            {
-                Name = "Szpital psychiatryczny",
-                Id = 2,
-                Bikes = bikes,
-            };
-            StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
-
-            var stationsService = GetStationsService("maklovitz", UserRole.Tech);
-            var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
-
-            result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(bikes);
-        }
-
-        [Fact]
-        public void GetAllBikesAtStationForUserShouldReturnAllAvailableBikesAtStation()
+        public void GetAllBikesAtStationShouldReturnAllAvailableBikesAtStation()
         {
             var availableBikes = new []
             {
@@ -132,7 +66,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
             var stationsService = GetStationsService("maklovitz", UserRole.User);
-            var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
+            var result = stationsService.GetActiveBikesAtStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEquivalentTo(availableBikes);
@@ -144,7 +78,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Station)null);
 
             var stationsService = GetStationsService();
-            var result = stationsService.GetAllBikesAtStation("4");
+            var result = stationsService.GetActiveBikesAtStation("4");
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
@@ -163,7 +97,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
             
             var stationsService = GetStationsService("user", UserRole.User);
-            var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
+            var result = stationsService.GetActiveBikesAtStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
