@@ -78,8 +78,18 @@ namespace SeleniumTests2
             {
                 Id = bikeId
             };
-            
+
             return client.PostRequest<GetBikeResponse>("bikes/rented", body, adminToken);
+        }
+
+        public static Task<GetBikeResponse> BlockBike(this RestClient client, string bikeId, string adminToken)
+        {
+            var body = new BlockBikeRequest
+            {
+                Id = bikeId
+            };
+
+            return client.PostRequest<GetBikeResponse>("bikes/blocked", body, adminToken);
         }
     }
 }
