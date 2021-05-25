@@ -57,7 +57,14 @@ const StationBikesList = ({ stationId, refresh }: Props) => {
   return (
     <>
       <DataLoader data={data}>
-        {bikes => <BikesList bikes={bikes} bikeActions={bikeActions} />}
+        {bikes => (
+          <BikesList
+            bikes={bikes}
+            bikeActions={bikeActions}
+            showStatus={true}
+            showLocation={false}
+          />
+        )}
       </DataLoader>
       <SnackBar {...snackbar.props} />
     </>

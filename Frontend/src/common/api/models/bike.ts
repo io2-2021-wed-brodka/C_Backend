@@ -1,3 +1,6 @@
+import { Station } from './station';
+import { User } from './user';
+
 export enum BikeStatus {
   Available = 'available',
   Blocked = 'blocked',
@@ -8,4 +11,6 @@ export enum BikeStatus {
 export interface Bike {
   id: string;
   status: BikeStatus;
+  user?: User;
+  station?: Station;
 }

@@ -58,6 +58,8 @@ const ReservationsTab = () => {
                 status: BikeStatus.Reserved,
               }))}
               bikeActions={bikeActions}
+              showLocation={false}
+              showStatus={false}
             />
           )}
         </DataLoader>

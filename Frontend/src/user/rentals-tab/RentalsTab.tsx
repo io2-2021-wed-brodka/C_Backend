@@ -58,7 +58,14 @@ const RentalsTab = () => {
     <>
       <Paper>
         <DataLoader data={data}>
-          {bikes => <BikesList bikes={bikes} bikeActions={bikeActions} />}
+          {bikes => (
+            <BikesList
+              bikes={bikes}
+              bikeActions={bikeActions}
+              showStatus={false}
+              showLocation={false}
+            />
+          )}
         </DataLoader>
       </Paper>
       <SnackBar {...snackbar.props} />

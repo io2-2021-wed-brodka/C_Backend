@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
-import { Bike } from '../api/models/bike';
+import { Bike, BikeStatus } from '../api/models/bike';
 import ListItemIconSansPadding from './ListItemIconSansPadding';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -37,9 +37,11 @@ export type BikeActionsForBike = (bike: Bike) => BikeAction[];
 type Props = {
   bikes: Bike[];
   bikeActions: BikeActionsForBike;
+  showStatus: boolean;
+  showLocation: boolean;
 };
 
-const BikesList = ({ bikes, bikeActions }: Props) => {
+const BikesList = ({ bikes, bikeActions, showStatus, showLocation }: Props) => {
   const classes = useStyles();
   return (
     <>
@@ -58,6 +60,26 @@ const BikesList = ({ bikes, bikeActions }: Props) => {
               <ListItemText
                 primary={<Typography variant="h6">{`#${bike.id}`}</Typography>}
               />
+              {showStatus && (
+                <ListItemText
+                  primary={
+                    <Typography variant="subtitle1">{`Status: ${bike.status}`}</Typography>
+                  }
+                />
+              )}
+              {showLocation && (
+                <ListItemText
+                  primary={
+                    bike.user != null ? (
+                      <Typography variant="subtitle1">{`At user: ${bike.user.name}`}</Typography>
+                    ) : bike.station != null ? (
+                      <Typography variant="subtitle1">{`At station: ${bike.station.name}`}</Typography>
+                    ) : (
+                      <Typography variant="subtitle1">{`Unknown location`}</Typography>
+                    )
+                  }
+                />
+              )}
               <ListItemSecondaryAction>
                 {bikeActions(bike).map(({ onClick, label, type, id }) => (
                   <Button
