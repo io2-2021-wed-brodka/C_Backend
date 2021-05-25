@@ -1,9 +1,9 @@
-using Xunit;
-using FluentAssertions;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Xunit;
 using Xunit.Abstractions;
 
-namespace SeleniumTests2
+namespace SeleniumTests2.Tests
 {
     public class AdminStationsTests : TestsBase
     {
@@ -16,7 +16,7 @@ namespace SeleniumTests2
         {
             var stationName = GetUniqueString();
 
-            _driver.OpenAdminTab();
+            Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
 
             adminStationsPage.AddStation(stationName);
@@ -29,12 +29,12 @@ namespace SeleniumTests2
         {
             var stationName = GetUniqueString();
 
-            _driver.OpenAdminTab();
+            Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
 
             adminStationsPage.AddStation(stationName);
 
-            _driver.SwitchToUserTab();
+            Driver.SwitchToUserTab();
             var stationsPage = await LoginAsSomeUser();
             stationsPage.HasStation(stationName).Should().BeTrue();
         }

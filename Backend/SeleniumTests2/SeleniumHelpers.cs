@@ -1,3 +1,4 @@
+using System;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
@@ -22,6 +23,7 @@ namespace SeleniumTests2
         public static IWebDriver InitDriverWithUserPage()
         {
             var chromeOptions = new ChromeOptions();
+            chromeOptions.AddArgument("--disable-dev-shm-usage");
             var driver = new RemoteWebDriver(chromeOptions);
             driver.Manage().Window.Maximize();
 

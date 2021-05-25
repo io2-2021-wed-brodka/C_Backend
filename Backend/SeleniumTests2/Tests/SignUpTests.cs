@@ -14,12 +14,12 @@ namespace SeleniumTests2
         [Fact]
         public void SignUpWithExistingLoginShouldFail()
         {
-            var loginPage = new LoginPage(_driver);
+            var loginPage = new LoginPage(Driver);
             var signUpPage = loginPage.GoToSignUp();
 
             signUpPage.SignUp("admin", "some pass");
 
-            Action checkIfSignUpSucceed = () => new StationsPage(_driver);
+            Action checkIfSignUpSucceed = () => new StationsPage(Driver);
             checkIfSignUpSucceed.Should().Throw<Exception>();
             signUpPage.ContainsSnackbar().Should().BeTrue();
         }
@@ -30,11 +30,11 @@ namespace SeleniumTests2
             var login = GetUniqueString();
             var password = "123";
 
-            var loginPage = new LoginPage(_driver);
+            var loginPage = new LoginPage(Driver);
             var signUpPage = loginPage.GoToSignUp();
 
             signUpPage.SignUp(login, password);
-            Action checkIfSignUpSucceed = () => new StationsPage(_driver);
+            Action checkIfSignUpSucceed = () => new StationsPage(Driver);
             
             checkIfSignUpSucceed();
         }

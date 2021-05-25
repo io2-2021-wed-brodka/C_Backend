@@ -1,10 +1,10 @@
 using System;
-using Xunit;
-using FluentAssertions;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Xunit;
 using Xunit.Abstractions;
 
-namespace SeleniumTests2
+namespace SeleniumTests2.Tests
 {
     public class AdminLoginTests : TestsBase
     {
@@ -15,11 +15,11 @@ namespace SeleniumTests2
         [Fact]
         public void AdminLogInWithCorrectCredentialsShouldSucceed()
         {
-            _driver.OpenAdminTab();
-            var loginPage = new LoginPage(_driver, true);
+            Driver.OpenAdminTab();
+            var loginPage = new LoginPage(Driver, true);
 
             loginPage.LogIn("admin", "admin");
-            Action checkIfLoginSucceed = () => new AdminStationsPage(_driver);
+            Action checkIfLoginSucceed = () => new AdminStationsPage(Driver);
             
             checkIfLoginSucceed();
         }
@@ -27,12 +27,12 @@ namespace SeleniumTests2
         [Fact]
         public void AdminLogInWithWrongCredentialsShouldFail()
         {
-            _driver.OpenAdminTab();
-            var loginPage = new LoginPage(_driver, true);
+            Driver.OpenAdminTab();
+            var loginPage = new LoginPage(Driver, true);
 
             loginPage.LogIn("some-non-existing-user", "with-password");
 
-            Action checkIfLoginSucceed = () => new AdminStationsPage(_driver);
+            Action checkIfLoginSucceed = () => new AdminStationsPage(Driver);
             checkIfLoginSucceed.Should().Throw<Exception>();
         }
 
@@ -41,21 +41,21 @@ namespace SeleniumTests2
         {
             var login = GetUniqueString();
             var password = "23456";
-            var token = await _api.SignUp(login, password);
+            var token = await Api.SignUp(login, password);
 
-            _driver.OpenAdminTab();
-            var loginPage = new LoginPage(_driver, true);
+            Driver.OpenAdminTab();
+            var loginPage = new LoginPage(Driver, true);
 
             loginPage.LogIn(login, password);
 
-            Action checkIfLoginSucceed = () => new AdminStationsPage(_driver);
+            Action checkIfLoginSucceed = () => new AdminStationsPage(Driver);
             checkIfLoginSucceed.Should().Throw<Exception>();
         }
 
         [Fact]
         public void LogOutShouldSucceed()
         {
-            _driver.OpenAdminTab();
+            Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
 
             var loginPage = adminStationsPage.LogOut();
