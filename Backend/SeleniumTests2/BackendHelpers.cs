@@ -1,9 +1,3 @@
-using System;
-using Xunit;
-using OpenQA.Selenium.Remote;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium;
-using System.Threading;
 using RestSharp;
 using BikesRentalServer.WebApi.Dtos.Responses;
 using System.Threading.Tasks;
@@ -60,6 +54,16 @@ namespace SeleniumTests2
             };
             
             return client.PostRequest<GetStationResponse>("stations", body, adminToken);
+        }
+
+        public static Task<GetStationResponse> BlockStation(this RestClient client, string stationId, string adminToken)
+        {
+            var body = new BlockStationRequest
+            {
+                Id = stationId
+            };
+            
+            return client.PostRequest<GetStationResponse>("stations/blocked", body, adminToken);
         }
 
         public static Task<GetBikeResponse> AddBike(this RestClient client, string stationId, string adminToken)

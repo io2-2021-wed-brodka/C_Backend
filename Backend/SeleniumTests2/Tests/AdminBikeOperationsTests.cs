@@ -104,13 +104,13 @@ namespace SeleniumTests2.Tests
             var adminToken = await Api.LogInAsAdmin();
             var station = await Api.AddStation(stationName, adminToken);
             var bike = await Api.AddBike(station.Id, adminToken);
-            await Api.BlockBike(bike.Id, adminToken);
 
             Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
             adminStationsPage.ClickOnStation(stationName);
             bool bikeExistsBefore = adminStationsPage.HasBike(bike.Id);
             adminStationsPage.ClickRemoveBike(bike.Id);
+            adminStationsPage.ClickOnStation(stationName);
             bool bikeExistsAfter = adminStationsPage.HasBike(bike.Id);
 
             bikeExistsBefore.Should().BeTrue();
