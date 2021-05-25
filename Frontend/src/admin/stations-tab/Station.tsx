@@ -106,6 +106,7 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
                   variant="contained"
                   color={'default'}
                   onClick={onBlockStation}
+                  id={`block-station-${name}`}
                 >
                   Block
                 </Button>
@@ -115,7 +116,7 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
                   variant="contained"
                   color={'default'}
                   onClick={onUnblockStation}
-                  id="unblock-station"
+                  id={`unblock-station-${name}`}
                 >
                   Unblock
                 </Button>
@@ -124,7 +125,7 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
                 variant="contained"
                 color={'primary'}
                 onClick={onRemoveStation}
-                id="remove-station"
+                id={`remove-station-${name}`}
               >
                 Remove
               </Button>
