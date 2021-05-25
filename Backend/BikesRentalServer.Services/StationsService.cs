@@ -65,6 +65,8 @@ namespace BikesRentalServer.Services
             var station = _stationsRepository.Get(id);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Station>("Station not found");
+            if (station.Status is StationStatus.Active)
+                return ServiceActionResult.InvalidState<Station>("Station is active");
             if (station.Bikes.Count > 0)
                 return ServiceActionResult.InvalidState<Station>("Station has bikes");
 

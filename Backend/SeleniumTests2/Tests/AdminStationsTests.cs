@@ -46,6 +46,7 @@ namespace SeleniumTests2.Tests
             var adminToken = await Api.LogInAsAdmin();
             var station = await Api.AddStation(stationName, adminToken);
             await Api.AddBike(station.Id, adminToken);
+            await Api.BlockStation(station.Id, adminToken);
 
             Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
@@ -55,17 +56,35 @@ namespace SeleniumTests2.Tests
 
             adminStationsPage.HasStation(stationName).Should().BeTrue();
             adminStationsPage.ContainsSnackbar().Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task StationShouldNotBeRemovableWhenItHasNoBikeAndItIsActive()
+        {
+            var stationName = GetUniqueString();
+            var adminToken = await Api.LogInAsAdmin();
+            var station = await Api.AddStation(stationName, adminToken);
+
+            Driver.OpenAdminTab();
+            var adminStationsPage = LoginAsAdmin();
+
+            adminStationsPage.ClickOnStation(stationName);
+            adminStationsPage.ClickRemoveStation(stationName);
+
+            adminStationsPage.ContainsSnackbar().Should().BeTrue();
+            adminStationsPage.HasStation(stationName).Should().BeTrue();
             Driver.SwitchToUserTab();
             var stationsPage = await LoginAsSomeUser();
             stationsPage.HasStation(stationName).Should().BeTrue();
         }
 
         [Fact]
-        public async Task StationShouldBeRemovableWhenItHasNoBike()
+        public async Task StationShouldBeRemovableWhenItHasNoBikeAndItIsBlocked()
         {
             var stationName = GetUniqueString();
             var adminToken = await Api.LogInAsAdmin();
             var station = await Api.AddStation(stationName, adminToken);
+            await Api.BlockStation(station.Id, adminToken);
 
             Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
