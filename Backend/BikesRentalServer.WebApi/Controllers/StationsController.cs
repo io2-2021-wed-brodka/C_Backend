@@ -101,7 +101,7 @@ namespace BikesRentalServer.WebApi.Controllers
         [AdminAuthorization]
         public ActionResult<GetAllBikesResponse> GetAllBikesAtStation(string id)
         {
-            var response = _stationsService.GetAllBikesAtStation(id);
+            var response = _stationsService.GetActiveBikesAtStation(id);
             return response.Status switch
             {
                 Status.Success => Ok(new GetAllBikesResponse

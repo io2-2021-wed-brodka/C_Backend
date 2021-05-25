@@ -37,7 +37,7 @@ namespace BikesRentalServer.Services
             return ServiceActionResult.Success(station);
         }
         
-        public ServiceActionResult<IEnumerable<Bike>> GetAllBikesAtStation(string id)
+        public ServiceActionResult<IEnumerable<Bike>> GetActiveBikesAtStation(string id)
         {
             var station = _stationsRepository.Get(id);
             if (station is null)

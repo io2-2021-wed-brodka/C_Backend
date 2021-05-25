@@ -23,7 +23,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
             var stationsService = GetStationsService();
-            var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
+            var result = stationsService.GetActiveBikesAtStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEmpty();
@@ -56,7 +56,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
             var stationsService = GetStationsService("maklovitz", UserRole.Admin);
-            var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
+            var result = stationsService.GetActiveBikesAtStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEquivalentTo(bikes);
@@ -89,7 +89,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
             var stationsService = GetStationsService("maklovitz", UserRole.Tech);
-            var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
+            var result = stationsService.GetActiveBikesAtStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEquivalentTo(bikes);
@@ -132,7 +132,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
 
             var stationsService = GetStationsService("maklovitz", UserRole.User);
-            var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
+            var result = stationsService.GetActiveBikesAtStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEquivalentTo(availableBikes);
@@ -144,7 +144,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Station)null);
 
             var stationsService = GetStationsService();
-            var result = stationsService.GetAllBikesAtStation("4");
+            var result = stationsService.GetActiveBikesAtStation("4");
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
@@ -163,7 +163,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
             
             var stationsService = GetStationsService("user", UserRole.User);
-            var result = stationsService.GetAllBikesAtStation(station.Id.ToString());
+            var result = stationsService.GetActiveBikesAtStation(station.Id.ToString());
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
