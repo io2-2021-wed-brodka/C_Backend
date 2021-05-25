@@ -50,7 +50,7 @@ const StationBikesList = ({ stationId, refresh }: Props) => {
           .then(() => internalRefresh())
           .catch(err => snackbar.open(err.message));
       },
-      id: `remove-bike${id}`,
+      id: `remove-bike-${id}`,
     },
   ];
 
