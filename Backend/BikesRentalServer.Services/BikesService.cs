@@ -157,6 +157,9 @@ namespace BikesRentalServer.Services
                     return ServiceActionResult.InvalidState<Bike>("Bike is rented");
                 default:
                     bike = _bikesRepository.SetStatus(id, BikeStatus.Blocked);
+                    var reservation = _reservationsRepository.GetActiveReservation(bike.Id.ToString());
+                    if (reservation is not null)
+                        _reservationsRepository.Remove(reservation);
                     return ServiceActionResult.Success(bike);
             }
         }
