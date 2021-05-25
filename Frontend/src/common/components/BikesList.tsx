@@ -5,7 +5,6 @@ import {
   List,
   ListItem,
   ListItemSecondaryAction,
-  ListItemText,
   makeStyles,
   Theme,
   Typography,
