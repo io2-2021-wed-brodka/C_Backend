@@ -1,7 +1,7 @@
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenQA.Selenium;
 
 namespace SeleniumTests2
 {
@@ -39,9 +39,60 @@ namespace SeleniumTests2
             }
         }
 
-        public int GetUnblockedBikesCount()
+        public bool HasBike(string bikeId)
         {
-            return GetUnblockedBikes().Count();
+            try
+            {
+                GetBikeElement(bikeId);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool IsBikeBlocked(string bikeId)
+        {
+            try
+            {
+                GetUnblockBikeButton(bikeId);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool IsBikeUnblocked(string bikeId)
+        {
+            try
+            {
+                GetBlockBikeButton(bikeId);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public int GetBikesCount()
+        {
+            return GetBikeElements().Count;
+        }
+
+        public void BlockBike(string bikeId)
+        {
+            GetBlockBikeButton(bikeId).Click();
+            driver.Sleep();
+        }
+
+        public void UnblockBike(string bikeId)
+        {
+            GetUnblockBikeButton(bikeId).Click();
+            driver.Sleep();
         }
 
         public void ClickOnStation(string stationName)
@@ -54,6 +105,12 @@ namespace SeleniumTests2
         public void AddBikeToOpenedStation()
         {
             GetAddBikeButton().Click();
+            driver.Sleep();
+        }
+
+        public void ClickRemoveBike(string bikeId)
+        {
+            GetRemoveBikeButton(bikeId).Click();
             driver.Sleep();
         }
 
@@ -82,14 +139,30 @@ namespace SeleniumTests2
             return driver.FindElement(By.Id("add-bike"));
         }
 
-        private IEnumerable<IWebElement> GetUnblockedBikes()
+        private IWebElement GetBikeElement(string bikeId)
         {
-            return driver.FindElements(By.Id("block-bike"));
+            return driver.FindElement(By.Id($"bike-{bikeId}"));
         }
 
-        private List<IWebElement> GetBlockedBikes()
+        private List<IWebElement> GetBikeElements()
         {
-            return driver.FindElements(By.Id("unblock-bike")).ToList();
+            // Not sure if it works? Hopefully it returns all items with id starting with "bike-".
+            return driver.FindElements(By.Id($"bike-")).ToList();
+        }
+
+        private IWebElement GetBlockBikeButton(string bikeId)
+        {
+            return driver.FindElement(By.Id($"block-{bikeId}"));
+        }
+
+        private IWebElement GetUnblockBikeButton(string bikeId)
+        {
+            return driver.FindElement(By.Id($"unblock-{bikeId}"));
+        }
+
+        private IWebElement GetRemoveBikeButton(string bikeId)
+        {
+            return driver.FindElement(By.Id($"remove-{bikeId}"));
         }
     }
 }

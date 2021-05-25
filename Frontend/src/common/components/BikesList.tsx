@@ -51,7 +51,7 @@ const BikesList = ({ bikes, bikeActions }: Props) => {
       {!!bikes.length && (
         <List dense={true}>
           {bikes.map(bike => (
-            <ListItem key={bike.id}>
+            <ListItem key={bike.id} id={`bike-${bike.id}`}>
               <ListItemIconSansPadding>
                 <DirectionsBikeIcon />
               </ListItemIconSansPadding>
