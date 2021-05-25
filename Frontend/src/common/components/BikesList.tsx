@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
-import { Bike, BikeStatus } from '../api/models/bike';
+import { Bike } from '../api/models/bike';
 import ListItemIconSansPadding from './ListItemIconSansPadding';
 
 const useStyles = makeStyles((theme: Theme) =>
