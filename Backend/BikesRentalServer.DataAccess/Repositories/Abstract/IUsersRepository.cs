@@ -9,5 +9,6 @@ namespace BikesRentalServer.DataAccess.Repositories.Abstract
         User GetByUsername(string username);
         User GetByUsernameAndPassword(string username, string password);
         User SetStatus(string id, UserStatus status);
+        User SetStatus(int id, UserStatus status);
     }
 }

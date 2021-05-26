@@ -69,17 +69,6 @@ namespace BikesRentalServer.DataAccess.Repositories
             return station;
         }
 
-        public Station Remove(Station entity)
-        {
-            if (!_dbContext.Stations.Contains(entity))
-                return null;
-            
-            var station = _dbContext.Stations.Remove(entity).Entity;
-            _dbContext.SaveChanges();
-
-            return station;
-        }
-
         public IEnumerable<Station> GetActive()
         {
             return _dbContext.Stations
@@ -95,6 +84,18 @@ namespace BikesRentalServer.DataAccess.Repositories
         }
 
         public Station SetStatus(string id, StationStatus status)
+        {
+            var station = Get(id);
+            if (station is null)
+                return null;
+
+            station.Status = status;
+            _dbContext.SaveChanges();
+
+            return station;
+        }
+
+        public Station SetStatus(int id, StationStatus status)
         {
             var station = Get(id);
             if (station is null)

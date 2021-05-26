@@ -73,17 +73,6 @@ namespace BikesRentalServer.DataAccess.Repositories
             return user;
         }
 
-        public User Remove(User entity)
-        {
-            if (!_dbContext.Users.Contains(entity))
-                return null;
-            
-            var user = _dbContext.Users.Remove(entity).Entity;
-            _dbContext.SaveChanges();
-
-            return user;
-        }
-
         public IEnumerable<User> GetBlockedUsers()
         {
             return _dbContext.Users
@@ -109,6 +98,18 @@ namespace BikesRentalServer.DataAccess.Repositories
         }
 
         public User SetStatus(string id, UserStatus status)
+        {
+            var user = Get(id);
+            if (user is null)
+                return null;
+
+            user.Status = status;
+            _dbContext.SaveChanges();
+
+            return user;
+        }
+
+        public User SetStatus(int id, UserStatus status)
         {
             var user = Get(id);
             if (user is null)
