@@ -45,7 +45,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                     },
                 });
             UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>())).Returns(user);
-            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), BikeStatus.Reserved))
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<int>(), BikeStatus.Reserved))
                 .Returns(new Bike
                 {
                     Id = bikeId,
@@ -100,7 +100,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                     },
                 });
             UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>())).Returns(user);
-            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), BikeStatus.Reserved))
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<int>(), BikeStatus.Reserved))
                 .Returns(new Bike
                 {
                     Id = bikeId,

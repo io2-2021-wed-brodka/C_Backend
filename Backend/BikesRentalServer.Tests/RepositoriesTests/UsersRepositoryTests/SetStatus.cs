@@ -29,7 +29,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.UsersRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            _usersRepository.SetStatus(user.Id.ToString(), UserStatus.Blocked);
+            _usersRepository.SetStatus(user.Id, UserStatus.Blocked);
 
             user.Status.Should().Be(UserStatus.Blocked);
         }
@@ -45,7 +45,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.UsersRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            var result = _usersRepository.SetStatus(user.Id.ToString(), UserStatus.Blocked);
+            var result = _usersRepository.SetStatus(user.Id, UserStatus.Blocked);
 
             result.Should().BeEquivalentTo(user);
         }
@@ -53,7 +53,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.UsersRepositoryTests
         [Fact]
         public void SetStatusOfNotExistingUserShouldReturnNull()
         {
-            const string id = "7";
+            const int id = 7;
             
             var result = _usersRepository.SetStatus(id, UserStatus.Active);
 

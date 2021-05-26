@@ -18,14 +18,20 @@ namespace BikesRentalServer.DataAccess.Repositories
 
         public IEnumerable<Reservation> GetAll()
         {
-            return _dbContext.Reservations.Include(r => r.Bike).Include(r => r.User);
+            return _dbContext.Reservations
+                .Include(r => r.Bike)
+                .Include(r => r.User);
         }
 
         public Reservation Get(string id)
         {
             if (!int.TryParse(id, out var iid))
                 return null;
-            return _dbContext.Reservations.Include(r => r.Bike).Include(r => r.User).SingleOrDefault(r => r.Id == iid);
+            
+            return _dbContext.Reservations
+                .Include(r => r.Bike)
+                .Include(r => r.User)
+                .SingleOrDefault(r => r.Id == iid);
         }
 
         public Reservation Add(Reservation entity)
@@ -36,7 +42,7 @@ namespace BikesRentalServer.DataAccess.Repositories
             return reservation;
         }
 
-        public Reservation Remove(string id)
+        public Reservation Remove(int id)
         {
             var reservation = Get(id);
             if (reservation is null)
@@ -48,29 +54,22 @@ namespace BikesRentalServer.DataAccess.Repositories
             return reservation;
         }
 
-        public Reservation Remove(Reservation entity)
+        public Reservation GetActiveReservation(int bikeId)
         {
-            if (!_dbContext.Reservations.Contains(entity))
-                return null;
-            
-            var reservation = _dbContext.Reservations.Remove(entity).Entity;
-            _dbContext.SaveChanges();
-
-            return reservation;
+            return _dbContext.Reservations
+                .Include(r => r.Bike)
+                .Include(r => r.User)
+                .SingleOrDefault(r => r.Bike.Id == bikeId && r.ExpirationDate > DateTime.Now);
         }
 
-        public Reservation GetActiveReservation(string bikeId)
+        public IEnumerable<Reservation> GetActiveReservations(int userId)
         {
-            if (!int.TryParse(bikeId, out var iid))
-                return null;
-            return _dbContext.Reservations.Include(r => r.Bike).Include(r => r.User).SingleOrDefault(r => r.Bike.Id == iid && r.ExpirationDate > DateTime.Now);
+            return _dbContext.Reservations
+                .Include(r => r.Bike)
+                .Include(r => r.User)
+                .Where(r => r.User.Id == userId && r.ExpirationDate > DateTime.Now);
         }
 
-        public List<Reservation> GetActiveReservations(string userId)
-        {
-            if (!int.TryParse(userId, out var iid))
-                return null;
-            return _dbContext.Reservations.Include(r => r.Bike).Include(r => r.User).Where(r => r.User.Id == iid && r.ExpirationDate > DateTime.Now).ToList();
-        }
+        private Reservation Get(int id) => Get(id.ToString());
     }
 }

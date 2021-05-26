@@ -43,7 +43,7 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
         public void UnblockUserSimpleSuccess()
         {
             const string userId = "2";
-            UsersRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<UserStatus>(s => s == UserStatus.Active)))
+            UsersRepository.Setup(r => r.SetStatus(It.IsAny<int>(), It.Is<UserStatus>(s => s == UserStatus.Active)))
                 .Returns(new User
                 {
                     Id = 2,

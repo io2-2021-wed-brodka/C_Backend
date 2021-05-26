@@ -18,8 +18,8 @@ namespace BikesRentalServer.Services.Abstract
         #region Blocking
 
         ServiceActionResult<IEnumerable<User>> GetBlockedUsers();
-        ServiceActionResult<User> BlockUser(string userId);
-        ServiceActionResult<User> UnblockUser(string userId);
+        ServiceActionResult<User> BlockUser(string id);
+        ServiceActionResult<User> UnblockUser(string id);
         
         #endregion
     }

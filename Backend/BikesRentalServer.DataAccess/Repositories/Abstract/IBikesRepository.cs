@@ -6,8 +6,8 @@ namespace BikesRentalServer.DataAccess.Repositories.Abstract
     public interface IBikesRepository : IRepository<Bike>
     {
         IEnumerable<Bike> GetBlocked();
-        Bike SetStatus(string id, BikeStatus status);
-        Bike Associate(string id, User user);
-        Bike Associate(string id, Station station);
+        Bike SetStatus(int id, BikeStatus status);
+        Bike AssociateWithUser(int bikeId, int userId);
+        Bike AssociateWithStation(int bikeId, int stationId);
     }
 }

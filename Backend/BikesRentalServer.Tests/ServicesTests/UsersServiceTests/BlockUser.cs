@@ -44,7 +44,7 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
         public void BlockUserShouldSetUserStateToBanned()
         {
             const int userId = 2;
-            UsersRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<UserStatus>(s => s == UserStatus.Blocked)))
+            UsersRepository.Setup(r => r.SetStatus(It.IsAny<int>(), It.Is<UserStatus>(s => s == UserStatus.Blocked)))
                 .Returns(new User
                 {
                     Id = userId,
@@ -90,7 +90,7 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
                     }
                 },
             };
-            UsersRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<UserStatus>(s => s == UserStatus.Blocked)))
+            UsersRepository.Setup(r => r.SetStatus(It.IsAny<int>(), It.Is<UserStatus>(s => s == UserStatus.Blocked)))
                 .Returns(new User
                 {
                     Id = userId,
@@ -104,7 +104,7 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
                     Status = UserStatus.Active,
                     Reservations = reservations,
                 });
-            ReservationsRepository.Setup(r => r.Remove(It.IsAny<Reservation>())).Returns(new Reservation()).Verifiable();
+            ReservationsRepository.Setup(r => r.Remove(It.IsAny<int>())).Returns(new Reservation()).Verifiable();
 
             var usersService = GetUsersService();
             var response = usersService.BlockUser(userId.ToString());
@@ -112,7 +112,7 @@ namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
             response.Status.Should().Be(Status.Success);
             response.Object.Should().NotBeNull();
             response.Object.Reservations.Should().BeEmpty();
-            ReservationsRepository.Verify(r => r.Remove(It.IsAny<Reservation>()), Times.Exactly(reservations.Count));
+            ReservationsRepository.Verify(r => r.Remove(It.IsAny<int>()), Times.Exactly(reservations.Count));
         }
     }
 }

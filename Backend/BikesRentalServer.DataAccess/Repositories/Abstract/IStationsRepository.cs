@@ -7,6 +7,6 @@ namespace BikesRentalServer.DataAccess.Repositories.Abstract
     {
         IEnumerable<Station> GetActive();
         IEnumerable<Station> GetBlocked();
-        Station SetStatus(string id, StationStatus status);
+        Station SetStatus(int id, StationStatus status);
     }
 }
