@@ -12,8 +12,10 @@ import {
 } from '@material-ui/core';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import { clearTokenFromLocalStorage } from './../common/authentication/token-functions';
+import { clearTokenAndLoginFromLocalStorage } from './../common/authentication/token-functions';
 import { useHistory } from 'react-router-dom';
+import { useServices } from '../common/services';
+import usePromise from '../common/hooks/usePromise';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,6 +31,8 @@ const useStyles = makeStyles((theme: Theme) =>
 const ApplicationBar = () => {
   const classes = useStyles();
   const history = useHistory();
+  const getLogin = useServices().getLogin;
+  const login = usePromise(getLogin);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -41,7 +45,7 @@ const ApplicationBar = () => {
   };
 
   const logout = () => {
-    clearTokenFromLocalStorage();
+    clearTokenAndLoginFromLocalStorage();
     history.push('/');
   };
 
@@ -56,7 +60,7 @@ const ApplicationBar = () => {
         <DirectionsBikeIcon />
       </IconButton>
       <Typography variant="h6" className={classes.title}>
-        CityBikes
+        {login.results && `Hello, ${login.results}!`}
       </Typography>
       <div>
         <IconButton onClick={handleMenu} color="inherit" id="account-menu">

@@ -1,18 +1,24 @@
 import { BearerToken } from './../api/models/bearer-token';
 import { signIn, signUp } from './../api/endpoints';
 
-const localStorageKey = 'token';
+const localStorageTokenKey = 'token';
+const localStorageLoginKey = 'login';
 
-export const saveTokenInLocalStorage = (token: BearerToken) => {
-  localStorage.setItem(localStorageKey, JSON.stringify(token));
+export const saveTokenAndLoginInLocalStorage = (
+  token: BearerToken,
+  login: string,
+) => {
+  localStorage.setItem(localStorageTokenKey, JSON.stringify(token));
+  localStorage.setItem(localStorageLoginKey, login);
 };
 
-export const clearTokenFromLocalStorage = () => {
-  localStorage.removeItem(localStorageKey);
+export const clearTokenAndLoginFromLocalStorage = () => {
+  localStorage.removeItem(localStorageTokenKey);
+  localStorage.removeItem(localStorageLoginKey);
 };
 
 export const getTokenFromLocalStorage = () => {
-  const tokenInJSON = localStorage.getItem(localStorageKey);
+  const tokenInJSON = localStorage.getItem(localStorageTokenKey);
 
   if (tokenInJSON) {
     return JSON.parse(tokenInJSON) as BearerToken;
@@ -20,16 +26,21 @@ export const getTokenFromLocalStorage = () => {
   return null;
 };
 
+export const getLoginFromLocalStorage = () =>
+  new Promise(resolve => {
+    resolve(localStorage.getItem(localStorageLoginKey) || '');
+  }) as Promise<string>;
+
 export const signInAndSaveToken = (login: string, password: string) => {
   return signIn(login, password).then(user => {
-    saveTokenInLocalStorage({ token: user.token });
+    saveTokenAndLoginInLocalStorage({ token: user.token }, login);
     return user;
   });
 };
 
 export const signUpAndSaveToken = (login: string, password: string) => {
   return signUp(login, password).then(bearerToken => {
-    saveTokenInLocalStorage(bearerToken);
+    saveTokenAndLoginInLocalStorage(bearerToken, login);
     return bearerToken;
   });
 };
