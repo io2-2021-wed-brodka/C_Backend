@@ -20,8 +20,7 @@ namespace BikesRentalServer.DataAccess.Repositories
         {
             return _dbContext.Reservations
                 .Include(r => r.Bike)
-                .Include(r => r.User)
-                .ToList();
+                .Include(r => r.User);
         }
 
         public Reservation Get(string id)
@@ -96,15 +95,14 @@ namespace BikesRentalServer.DataAccess.Repositories
                 .SingleOrDefault(r => r.Bike.Id == iid && r.ExpirationDate > DateTime.Now);
         }
 
-        public List<Reservation> GetActiveReservations(string userId)
+        public IEnumerable<Reservation> GetActiveReservations(string userId)
         {
             if (!int.TryParse(userId, out var iid))
                 return null;
             return _dbContext.Reservations
                 .Include(r => r.Bike)
                 .Include(r => r.User)
-                .Where(r => r.User.Id == iid && r.ExpirationDate > DateTime.Now)
-                .ToList();
+                .Where(r => r.User.Id == iid && r.ExpirationDate > DateTime.Now);
         }
     }
 }
