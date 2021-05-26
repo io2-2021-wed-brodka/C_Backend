@@ -8,9 +8,7 @@ namespace SeleniumTests2.Tests
     public class AdminBikeOperationsTests : TestsBase
     {
         public AdminBikeOperationsTests(ITestOutputHelper output) : base(output)
-        {
-            
-        }
+        { }
 
         [Fact]
         public async Task AdminAddNewBikeShouldSucceed()
@@ -40,14 +38,16 @@ namespace SeleniumTests2.Tests
 
             Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
-            adminStationsPage.ClickOnStation(stationName);
-            bool bikeExists = adminStationsPage.HasBike(bike.Id);
-            bool bikeBlockedBefore = adminStationsPage.IsBikeBlocked(bike.Id);
-            adminStationsPage.BlockBike(bike.Id);
-            bool bikeBlockedAfter = adminStationsPage.IsBikeBlocked(bike.Id);
+            var adminBikesPage = adminStationsPage.GoToBikes();
+            var bikeExistsBefore = adminBikesPage.HasBike(bike.Id);
+            var bikeBlockedBefore = adminBikesPage.IsBikeBlocked(bike.Id);
+            adminBikesPage.BlockBike(bike.Id);
+            var bikeExistsAfter = adminBikesPage.HasBike(bike.Id);
+            var bikeBlockedAfter = adminBikesPage.IsBikeBlocked(bike.Id);
 
-            bikeExists.Should().BeTrue();
+            bikeExistsBefore.Should().BeTrue();
             bikeBlockedBefore.Should().BeFalse();
+            bikeExistsAfter.Should().BeTrue();
             bikeBlockedAfter.Should().BeTrue();
         }
 
@@ -62,14 +62,16 @@ namespace SeleniumTests2.Tests
 
             Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
-            adminStationsPage.ClickOnStation(stationName);
-            bool bikeExistsBefore = adminStationsPage.HasBike(bike.Id);
-            bool bikeBlockedBefore = adminStationsPage.IsBikeBlocked(bike.Id);
-            adminStationsPage.UnblockBike(bike.Id);
-            bool bikeBlockedAfter = adminStationsPage.IsBikeBlocked(bike.Id);
+            var adminBikesPage = adminStationsPage.GoToBikes();
+            var bikeExistsBefore = adminBikesPage.HasBike(bike.Id);
+            var bikeBlockedBefore = adminBikesPage.IsBikeBlocked(bike.Id);
+            adminBikesPage.UnblockBike(bike.Id);
+            var bikeExistsAfter = adminBikesPage.HasBike(bike.Id);
+            var bikeBlockedAfter = adminBikesPage.IsBikeBlocked(bike.Id);
 
             bikeExistsBefore.Should().BeTrue();
             bikeBlockedBefore.Should().BeTrue();
+            bikeExistsAfter.Should().BeTrue();
             bikeBlockedAfter.Should().BeFalse();
         }
 
@@ -84,10 +86,10 @@ namespace SeleniumTests2.Tests
 
             Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
-            adminStationsPage.ClickOnStation(stationName);
-            bool bikeExistsBefore = adminStationsPage.HasBike(bike.Id);
-            adminStationsPage.ClickRemoveBike(bike.Id);
-            bool bikeExistsAfter = adminStationsPage.HasBike(bike.Id);
+            var adminBikesPage = adminStationsPage.GoToBikes();
+            var bikeExistsBefore = adminBikesPage.HasBike(bike.Id);
+            adminBikesPage.RemoveBike(bike.Id);
+            var bikeExistsAfter = adminBikesPage.HasBike(bike.Id);
 
             bikeExistsBefore.Should().BeTrue();
             bikeExistsAfter.Should().BeFalse();
@@ -103,11 +105,10 @@ namespace SeleniumTests2.Tests
 
             Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
-            adminStationsPage.ClickOnStation(stationName);
-            bool bikeExistsBefore = adminStationsPage.HasBike(bike.Id);
-            adminStationsPage.ClickRemoveBike(bike.Id);
-            adminStationsPage.ClickOnStation(stationName);
-            bool bikeExistsAfter = adminStationsPage.HasBike(bike.Id);
+            var adminBikesPage = adminStationsPage.GoToBikes();
+            var bikeExistsBefore = adminBikesPage.HasBike(bike.Id);
+            adminBikesPage.RemoveBike(bike.Id);
+            var bikeExistsAfter = adminBikesPage.HasBike(bike.Id);
 
             bikeExistsBefore.Should().BeTrue();
             bikeExistsAfter.Should().BeTrue();

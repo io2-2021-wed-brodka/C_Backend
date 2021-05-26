@@ -45,7 +45,9 @@ const BikesTab = () => {
 
   return (
     <>
-      <Typography variant="h4">Bikes</Typography>
+      <Typography variant="h4" id="bikes-header">
+        Bikes
+      </Typography>
 
       <Paper>
         <DataLoader data={data}>

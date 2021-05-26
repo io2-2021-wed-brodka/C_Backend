@@ -1,5 +1,6 @@
 using System;
 using OpenQA.Selenium;
+using SeleniumTests2.Pages;
 
 namespace SeleniumTests2
 {
@@ -20,6 +21,22 @@ namespace SeleniumTests2
             GetLogOutButton().Click();
             driver.Sleep();
             return new LoginPage(driver, true);
+        }
+
+        public AdminStationsPage GoToStations()
+        {
+            driver.FindElement(By.Id("go-to-stations")).Click();
+            driver.Sleep();
+
+            return new AdminStationsPage(driver);
+        }
+
+        public AdminBikesPage GoToBikes()
+        {
+            driver.FindElement(By.Id("go-to-bikes")).Click();
+            driver.Sleep();
+
+            return new AdminBikesPage(driver);
         }
 
         private IWebElement GetLogOutButton()
