@@ -49,7 +49,14 @@ const BikesTab = () => {
 
       <Paper>
         <DataLoader data={data}>
-          {bikes => <BikesList bikes={bikes} bikeActions={bikeActions} />}
+          {bikes => (
+            <BikesList
+              bikes={bikes}
+              bikeActions={bikeActions}
+              showStatus={true}
+              showLocation={true}
+            />
+          )}
         </DataLoader>
         <SnackBar {...snackbar.props} />
       </Paper>

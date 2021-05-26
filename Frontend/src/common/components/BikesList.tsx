@@ -5,10 +5,10 @@ import {
   List,
   ListItem,
   ListItemSecondaryAction,
-  ListItemText,
   makeStyles,
   Theme,
   Typography,
+  Chip,
 } from '@material-ui/core';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import { Bike } from '../api/models/bike';
@@ -37,9 +37,11 @@ export type BikeActionsForBike = (bike: Bike) => BikeAction[];
 type Props = {
   bikes: Bike[];
   bikeActions: BikeActionsForBike;
+  showStatus: boolean;
+  showLocation: boolean;
 };
 
-const BikesList = ({ bikes, bikeActions }: Props) => {
+const BikesList = ({ bikes, bikeActions, showStatus, showLocation }: Props) => {
   const classes = useStyles();
   return (
     <>
@@ -55,9 +57,28 @@ const BikesList = ({ bikes, bikeActions }: Props) => {
               <ListItemIconSansPadding>
                 <DirectionsBikeIcon />
               </ListItemIconSansPadding>
-              <ListItemText
-                primary={<Typography variant="h6">{`#${bike.id}`}</Typography>}
-              />
+              <Typography variant="h6">{`#${bike.id}`}</Typography>
+
+              {showStatus && (
+                <Chip label={`${bike.status}`} variant="outlined"></Chip>
+              )}
+              {showLocation &&
+                (bike.user != null ? (
+                  <Chip
+                    label={`At user: ${bike.user.name}`}
+                    variant="outlined"
+                    color="secondary"
+                  />
+                ) : bike.station != null ? (
+                  <Chip
+                    label={`At station: ${bike.station.name}`}
+                    variant="outlined"
+                    color="primary"
+                  />
+                ) : (
+                  <Chip label={`Unknown location`} variant="outlined" />
+                ))}
+
               <ListItemSecondaryAction>
                 {bikeActions(bike).map(({ onClick, label, type, id }) => (
                   <Button
