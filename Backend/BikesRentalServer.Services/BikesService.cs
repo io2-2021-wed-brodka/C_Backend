@@ -156,7 +156,7 @@ namespace BikesRentalServer.Services
             }
 
             _bikesRepository.SetStatus(bike.Id, BikeStatus.Rented);
-            bike = _bikesRepository.Associate(bike.Id, user);
+            bike = _bikesRepository.AssociateWithUser(bike.Id, user.Id);
             return ServiceActionResult.Success(new Bike
             {
                 Description = bike.Description,
@@ -183,7 +183,7 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.InvalidState<Bike>("Bike not rented by calling user");
 
             _bikesRepository.SetStatus(bike.Id, BikeStatus.Available);
-            bike = _bikesRepository.Associate(bike.Id, station);
+            bike = _bikesRepository.AssociateWithStation(bike.Id, station.Id);
             return ServiceActionResult.Success(new Bike
             {
                 Description = bike.Description,
