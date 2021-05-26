@@ -39,7 +39,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            _bikesRepository.Associate(bike.Id.ToString(), user);
+            _bikesRepository.Associate(bike.Id, user);
             
             bike.User.Should().BeEquivalentTo(user);
             bike.Station.Should().BeNull();
@@ -66,7 +66,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            _bikesRepository.Associate(bike.Id.ToString(), station);
+            _bikesRepository.Associate(bike.Id, station);
             
             bike.Station.Should().BeEquivalentTo(station);
             bike.User.Should().BeNull();
@@ -87,7 +87,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            var result = _bikesRepository.Associate(bike.Id.ToString(), user);
+            var result = _bikesRepository.Associate(bike.Id, user);
             
             result.Should().BeEquivalentTo(bike);
         }
@@ -107,7 +107,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            var result = _bikesRepository.Associate(bike.Id.ToString(), station);
+            var result = _bikesRepository.Associate(bike.Id, station);
             
             result.Should().BeEquivalentTo(bike);
         }
@@ -115,7 +115,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
         [Fact]
         public void AssociateNotExistingBikeWithUserShouldReturnNull()
         {
-            const string id = "id";
+            const int id = 6;
 
             var result = _bikesRepository.Associate(id, new User());
 
@@ -125,7 +125,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
         [Fact]
         public void AssociateNotExistingBikeWithStationShouldReturnNull()
         {
-            const string id = "id";
+            const int id = 6;
 
             var result = _bikesRepository.Associate(id, new Station());
 
@@ -142,7 +142,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            var result = _bikesRepository.Associate(bike.Id.ToString(), new User
+            var result = _bikesRepository.Associate(bike.Id, new User
             {
                 Username = "null",
             });
@@ -160,7 +160,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            var result = _bikesRepository.Associate(bike.Id.ToString(), new Station
+            var result = _bikesRepository.Associate(bike.Id, new Station
             {
                 Name = "name",
             });

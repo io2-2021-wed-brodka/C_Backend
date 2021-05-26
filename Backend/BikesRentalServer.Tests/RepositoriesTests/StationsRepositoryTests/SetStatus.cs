@@ -29,7 +29,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.StationsRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            _stationsRepository.SetStatus(station.Id.ToString(), StationStatus.Active);
+            _stationsRepository.SetStatus(station.Id, StationStatus.Active);
 
             station.Status.Should().Be(BikeStatus.Available);
         }
@@ -45,7 +45,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.StationsRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            var result = _stationsRepository.SetStatus(station.Id.ToString(), StationStatus.Active);
+            var result = _stationsRepository.SetStatus(station.Id, StationStatus.Active);
 
             result.Should().BeEquivalentTo(station);
         }
@@ -53,7 +53,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.StationsRepositoryTests
         [Fact]
         public void SetStatusOfNotExistingBikeShouldReturnNull()
         {
-            const string id = "7";
+            const int id = 7;
             
             var result = _stationsRepository.SetStatus(id, StationStatus.Blocked);
 

@@ -19,7 +19,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             };
 
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
-            ReservationsRepository.Setup(r => r.GetActiveReservation(It.IsAny<string>()))
+            ReservationsRepository.Setup(r => r.GetActiveReservation(It.IsAny<int>()))
                 .Returns(new Reservation
                 {
                     Bike = bike,
@@ -46,12 +46,12 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             };
 
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
-            ReservationsRepository.Setup(r => r.GetActiveReservation(It.IsAny<string>()))
+            ReservationsRepository.Setup(r => r.GetActiveReservation(It.IsAny<int>()))
                 .Returns(new Reservation
                 {
                     Bike = bike,
                 });
-            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), BikeStatus.Available)).Verifiable();
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<int>(), BikeStatus.Available)).Verifiable();
 
             var bikesService = GetBikesService();
             var result = bikesService.CancelBikeReservation(bikeId.ToString());
@@ -64,15 +64,15 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
         public void CancelReservationOfNotExistingBikeShouldReturnEntityNotFound()
         {
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Bike)null);
-            ReservationsRepository.Setup(r => r.GetActiveReservation(It.IsAny<string>())).Returns((Reservation)null);
-            ReservationsRepository.Setup(r => r.Remove(It.IsAny<Reservation>())).Verifiable();
+            ReservationsRepository.Setup(r => r.GetActiveReservation(It.IsAny<int>())).Returns((Reservation)null);
+            ReservationsRepository.Setup(r => r.Remove(It.IsAny<int>())).Verifiable();
 
             var bikesService = GetBikesService();
             var result = bikesService.CancelBikeReservation("123");
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
-            ReservationsRepository.Verify(r => r.Remove(It.IsAny<Reservation>()), Times.Never);
+            ReservationsRepository.Verify(r => r.Remove(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
@@ -86,15 +86,15 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             };
 
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
-            ReservationsRepository.Setup(r => r.GetActiveReservation(It.IsAny<string>())).Returns((Reservation)null);
-            ReservationsRepository.Setup(r => r.Remove(It.IsAny<Reservation>())).Verifiable();
+            ReservationsRepository.Setup(r => r.GetActiveReservation(It.IsAny<int>())).Returns((Reservation)null);
+            ReservationsRepository.Setup(r => r.Remove(It.IsAny<int>())).Verifiable();
 
             var bikesService = GetBikesService();
             var result = bikesService.CancelBikeReservation(bikeId.ToString());
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
-            ReservationsRepository.Verify(r => r.Remove(It.IsAny<Reservation>()), Times.Never);
+            ReservationsRepository.Verify(r => r.Remove(It.IsAny<int>()), Times.Never);
         }
     }
 }
