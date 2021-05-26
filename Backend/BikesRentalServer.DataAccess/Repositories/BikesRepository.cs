@@ -17,14 +17,30 @@ namespace BikesRentalServer.DataAccess.Repositories
         
         public IEnumerable<Bike> GetAll()
         {
-            return _dbContext.Bikes.Include(b => b.Station).ThenInclude(s => s.Bikes).Include(b => b.User);
+            return _dbContext.Bikes
+                .Include(b => b.Station)
+                .ThenInclude(s => s.Bikes)
+                .Include(b => b.User);
         }
 
         public Bike Get(string id)
         {
             if (!int.TryParse(id, out var iid))
                 return null;
-            return _dbContext.Bikes.Include(b => b.Station).ThenInclude(s => s.Bikes).Include(b => b.User).SingleOrDefault(b => b.Id == iid);
+            return _dbContext.Bikes
+                .Include(b => b.Station)
+                .ThenInclude(s => s.Bikes)
+                .Include(b => b.User)
+                .SingleOrDefault(b => b.Id == iid);
+        }
+
+        public Bike Get(int id)
+        {
+            return _dbContext.Bikes
+                .Include(b => b.Station)
+                .ThenInclude(s => s.Bikes)
+                .Include(b => b.User)
+                .SingleOrDefault(b => b.Id == id);
         }
 
         public Bike Add(Bike entity)
@@ -36,6 +52,18 @@ namespace BikesRentalServer.DataAccess.Repositories
         }
 
         public Bike Remove(string id)
+        {
+            var bike = Get(id);
+            if (bike is null)
+                return null;
+
+            _dbContext.Bikes.Remove(bike);
+            _dbContext.SaveChanges();
+
+            return bike;
+        }
+
+        public Bike Remove(int id)
         {
             var bike = Get(id);
             if (bike is null)
@@ -60,7 +88,10 @@ namespace BikesRentalServer.DataAccess.Repositories
 
         public IEnumerable<Bike> GetBlocked()
         {
-            return _dbContext.Bikes.Where(b => b.Status == BikeStatus.Blocked).Include(b => b.Station).Include(b => b.User);
+            return _dbContext.Bikes
+                .Where(b => b.Status == BikeStatus.Blocked)
+                .Include(b => b.Station)
+                .Include(b => b.User);
         }
 
         public Bike SetStatus(string id, BikeStatus status)

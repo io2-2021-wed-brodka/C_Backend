@@ -17,14 +17,28 @@ namespace BikesRentalServer.DataAccess.Repositories
         
         public IEnumerable<User> GetAll()
         {
-            return _dbContext.Users.Include(u => u.RentedBikes).Include(u => u.Reservations).Where(u => u.Role == UserRole.User);
+            return _dbContext.Users
+                .Include(u => u.RentedBikes)
+                .Include(u => u.Reservations)
+                .Where(u => u.Role == UserRole.User);
         }
 
         public User Get(string id)
         {
             if (!int.TryParse(id, out var iid))
                 return null;
-            return _dbContext.Users.Include(u => u.RentedBikes).Include(u => u.Reservations).ThenInclude(r => r.Bike).SingleOrDefault(u => u.Id == iid && u.Role == UserRole.User);
+            return _dbContext.Users.Include(u => u.RentedBikes)
+                .Include(u => u.Reservations)
+                .ThenInclude(r => r.Bike)
+                .SingleOrDefault(u => u.Id == iid && u.Role == UserRole.User);
+        }
+
+        public User Get(int id)
+        {
+            return _dbContext.Users.Include(u => u.RentedBikes)
+                .Include(u => u.Reservations)
+                .ThenInclude(r => r.Bike)
+                .SingleOrDefault(u => u.Id == id && u.Role == UserRole.User);
         }
 
         public User Add(User entity)
@@ -36,6 +50,18 @@ namespace BikesRentalServer.DataAccess.Repositories
         }
 
         public User Remove(string id)
+        {
+            var user = Get(id);
+            if (user is null)
+                return null;
+
+            _dbContext.Users.Remove(user);
+            _dbContext.SaveChanges();
+
+            return user;
+        }
+
+        public User Remove(int id)
         {
             var user = Get(id);
             if (user is null)
@@ -60,12 +86,18 @@ namespace BikesRentalServer.DataAccess.Repositories
 
         public IEnumerable<User> GetBlockedUsers()
         {
-            return _dbContext.Users.Include(u => u.RentedBikes).Include(u => u.Reservations).Where(u => u.Role == UserRole.User && u.Status == UserStatus.Blocked);
+            return _dbContext.Users
+                .Include(u => u.RentedBikes)
+                .Include(u => u.Reservations)
+                .Where(u => u.Role == UserRole.User && u.Status == UserStatus.Blocked);
         }
 
         public User GetByUsername(string username)
         {
-            return _dbContext.Users.Include(u => u.RentedBikes).Include(u => u.Reservations).SingleOrDefault(u => u.Username == username);
+            return _dbContext.Users
+                .Include(u => u.RentedBikes)
+                .Include(u => u.Reservations)
+                .SingleOrDefault(u => u.Username == username);
         }
 
         public User GetByUsernameAndPassword(string username, string password)

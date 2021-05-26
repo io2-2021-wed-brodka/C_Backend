@@ -24,7 +24,16 @@ namespace BikesRentalServer.DataAccess.Repositories
         {
             if (!int.TryParse(id, out var iid))
                 return null;
-            return _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id == iid);
+            return _dbContext.Stations
+                .Include(s => s.Bikes)
+                .SingleOrDefault(s => s.Id == iid);
+        }
+
+        public Station Get(int id)
+        {
+            return _dbContext.Stations
+                .Include(s => s.Bikes)
+                .SingleOrDefault(s => s.Id == id);
         }
 
         public Station Add(Station entity)
@@ -37,6 +46,18 @@ namespace BikesRentalServer.DataAccess.Repositories
         }
 
         public Station Remove(string id)
+        {
+            var station = Get(id);
+            if (station is null)
+                return null;
+
+            _dbContext.Stations.Remove(station);
+            _dbContext.SaveChanges();
+
+            return station;
+        }
+
+        public Station Remove(int id)
         {
             var station = Get(id);
             if (station is null)
@@ -61,12 +82,16 @@ namespace BikesRentalServer.DataAccess.Repositories
 
         public IEnumerable<Station> GetActive()
         {
-            return _dbContext.Stations.Where(s => s.Status == StationStatus.Active).Include(s => s.Bikes);
+            return _dbContext.Stations
+                .Where(s => s.Status == StationStatus.Active)
+                .Include(s => s.Bikes);
         }
         
         public IEnumerable<Station> GetBlocked()
         {
-            return _dbContext.Stations.Where(s => s.Status == StationStatus.Blocked).Include(s => s.Bikes);
+            return _dbContext.Stations
+                .Where(s => s.Status == StationStatus.Blocked)
+                .Include(s => s.Bikes);
         }
 
         public Station SetStatus(string id, StationStatus status)
