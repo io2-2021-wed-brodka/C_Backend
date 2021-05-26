@@ -34,29 +34,9 @@ namespace BikesRentalServer.DataAccess.Repositories
                 .SingleOrDefault(r => r.Id == iid);
         }
 
-        public Reservation Get(int id)
-        {
-            return _dbContext.Reservations
-                .Include(r => r.Bike)
-                .Include(r => r.User)
-                .SingleOrDefault(r => r.Id == id);
-        }
-
         public Reservation Add(Reservation entity)
         {
             var reservation = _dbContext.Reservations.Add(entity).Entity;
-            _dbContext.SaveChanges();
-
-            return reservation;
-        }
-
-        public Reservation Remove(string id)
-        {
-            var reservation = Get(id);
-            if (reservation is null)
-                return null;
-
-            _dbContext.Reservations.Remove(reservation);
             _dbContext.SaveChanges();
 
             return reservation;
@@ -74,32 +54,12 @@ namespace BikesRentalServer.DataAccess.Repositories
             return reservation;
         }
 
-        public Reservation GetActiveReservation(string bikeId)
-        {
-            if (!int.TryParse(bikeId, out var iid))
-                return null;
-            return _dbContext.Reservations
-                .Include(r => r.Bike)
-                .Include(r => r.User)
-                .SingleOrDefault(r => r.Bike.Id == iid && r.ExpirationDate > DateTime.Now);
-        }
-
         public Reservation GetActiveReservation(int bikeId)
         {
             return _dbContext.Reservations
                 .Include(r => r.Bike)
                 .Include(r => r.User)
                 .SingleOrDefault(r => r.Bike.Id == bikeId && r.ExpirationDate > DateTime.Now);
-        }
-
-        public IEnumerable<Reservation> GetActiveReservations(string userId)
-        {
-            if (!int.TryParse(userId, out var iid))
-                return null;
-            return _dbContext.Reservations
-                .Include(r => r.Bike)
-                .Include(r => r.User)
-                .Where(r => r.User.Id == iid && r.ExpirationDate > DateTime.Now);
         }
 
         public IEnumerable<Reservation> GetActiveReservations(int userId)
@@ -109,5 +69,7 @@ namespace BikesRentalServer.DataAccess.Repositories
                 .Include(r => r.User)
                 .Where(r => r.User.Id == userId && r.ExpirationDate > DateTime.Now);
         }
+
+        private Reservation Get(int id) => Get(id.ToString());
     }
 }

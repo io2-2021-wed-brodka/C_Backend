@@ -34,30 +34,9 @@ namespace BikesRentalServer.DataAccess.Repositories
                 .SingleOrDefault(b => b.Id == iid);
         }
 
-        public Bike Get(int id)
-        {
-            return _dbContext.Bikes
-                .Include(b => b.Station)
-                .ThenInclude(s => s.Bikes)
-                .Include(b => b.User)
-                .SingleOrDefault(b => b.Id == id);
-        }
-
         public Bike Add(Bike entity)
         {
             var bike = _dbContext.Bikes.Add(entity).Entity;
-            _dbContext.SaveChanges();
-
-            return bike;
-        }
-
-        public Bike Remove(string id)
-        {
-            var bike = Get(id);
-            if (bike is null)
-                return null;
-
-            _dbContext.Bikes.Remove(bike);
             _dbContext.SaveChanges();
 
             return bike;
@@ -83,18 +62,6 @@ namespace BikesRentalServer.DataAccess.Repositories
                 .Include(b => b.User);
         }
 
-        public Bike SetStatus(string id, BikeStatus status)
-        {
-            var bike = Get(id);
-            if (bike is null)
-                return null;
-
-            bike.Status = status;
-            _dbContext.SaveChanges();
-
-            return bike;
-        }
-
         public Bike SetStatus(int id, BikeStatus status)
         {
             var bike = Get(id);
@@ -102,19 +69,6 @@ namespace BikesRentalServer.DataAccess.Repositories
                 return null;
 
             bike.Status = status;
-            _dbContext.SaveChanges();
-
-            return bike;
-        }
-
-        public Bike Associate(string id, User user)
-        {
-            var bike = Get(id);
-            if (bike is null || !_dbContext.Users.Contains(user))
-                return null;
-
-            bike.Station = null;
-            bike.User = user;
             _dbContext.SaveChanges();
 
             return bike;
@@ -133,19 +87,6 @@ namespace BikesRentalServer.DataAccess.Repositories
             return bike;
         }
 
-        public Bike Associate(string id, Station station)
-        {
-            var bike = Get(id);
-            if (bike is null || !_dbContext.Stations.Contains(station))
-                return null;
-
-            bike.User = null;
-            bike.Station = station;
-            _dbContext.SaveChanges();
-
-            return bike;
-        }
-
         public Bike Associate(int id, Station station)
         {
             var bike = Get(id);
@@ -158,5 +99,7 @@ namespace BikesRentalServer.DataAccess.Repositories
 
             return bike;
         }
+
+        private Bike Get(int id) => Get(id.ToString());
     }
 }

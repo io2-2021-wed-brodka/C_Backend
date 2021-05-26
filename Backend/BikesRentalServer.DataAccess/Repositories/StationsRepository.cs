@@ -29,29 +29,10 @@ namespace BikesRentalServer.DataAccess.Repositories
                 .SingleOrDefault(s => s.Id == iid);
         }
 
-        public Station Get(int id)
-        {
-            return _dbContext.Stations
-                .Include(s => s.Bikes)
-                .SingleOrDefault(s => s.Id == id);
-        }
-
         public Station Add(Station entity)
         {
             var station = _dbContext.Stations.Add(entity).Entity;
             _dbContext.Entry(station).Collection(s => s.Bikes).Load();
-            _dbContext.SaveChanges();
-
-            return station;
-        }
-
-        public Station Remove(string id)
-        {
-            var station = Get(id);
-            if (station is null)
-                return null;
-
-            _dbContext.Stations.Remove(station);
             _dbContext.SaveChanges();
 
             return station;
@@ -83,18 +64,6 @@ namespace BikesRentalServer.DataAccess.Repositories
                 .Include(s => s.Bikes);
         }
 
-        public Station SetStatus(string id, StationStatus status)
-        {
-            var station = Get(id);
-            if (station is null)
-                return null;
-
-            station.Status = status;
-            _dbContext.SaveChanges();
-
-            return station;
-        }
-
         public Station SetStatus(int id, StationStatus status)
         {
             var station = Get(id);
@@ -106,5 +75,7 @@ namespace BikesRentalServer.DataAccess.Repositories
 
             return station;
         }
+
+        private Station Get(int id) => Get(id.ToString());
     }
 }

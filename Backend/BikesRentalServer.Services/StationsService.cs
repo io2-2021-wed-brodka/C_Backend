@@ -57,7 +57,7 @@ namespace BikesRentalServer.Services
             if (station.Status is StationStatus.Blocked && _userContext.Role is UserRole.User)
                 return ServiceActionResult.InvalidState<IEnumerable<Bike>>("User cannot get bikes from blocked station");
 
-            var bikes = station.Bikes.Where(bike => bike.Status is BikeStatus.Available && _reservationsRepository.GetActiveReservation(bike.Id.ToString()) is null);
+            var bikes = station.Bikes.Where(bike => bike.Status is BikeStatus.Available && _reservationsRepository.GetActiveReservation(bike.Id) is null);
             return ServiceActionResult.Success(bikes.Select(bike => new Bike
             {
                 Description = bike.Description,
@@ -95,7 +95,7 @@ namespace BikesRentalServer.Services
             if (station.Bikes.Count > 0)
                 return ServiceActionResult.InvalidState<Station>("Station has bikes");
 
-            station = _stationsRepository.Remove(id);
+            station = _stationsRepository.Remove(station.Id);
             return ServiceActionResult.Success(new Station
             {
                 Bikes = station.Bikes,
@@ -141,7 +141,7 @@ namespace BikesRentalServer.Services
             if (station.Status is StationStatus.Blocked)
                 return ServiceActionResult.InvalidState<Station>("Station already blocked");
 
-            station = _stationsRepository.SetStatus(id, StationStatus.Blocked);
+            station = _stationsRepository.SetStatus(station.Id, StationStatus.Blocked);
             return ServiceActionResult.Success(new Station
             {
                 Bikes = station.Bikes,
@@ -159,7 +159,7 @@ namespace BikesRentalServer.Services
             if (station.Status == StationStatus.Active)
                 return ServiceActionResult.InvalidState<Station>("Station not blocked");
 
-            station = _stationsRepository.SetStatus(id, StationStatus.Active);
+            station = _stationsRepository.SetStatus(station.Id, StationStatus.Active);
             return ServiceActionResult.Success(new Station
             {
                 Bikes = station.Bikes,

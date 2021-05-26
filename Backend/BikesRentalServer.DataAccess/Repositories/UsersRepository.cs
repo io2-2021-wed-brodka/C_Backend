@@ -33,29 +33,9 @@ namespace BikesRentalServer.DataAccess.Repositories
                 .SingleOrDefault(u => u.Id == iid && u.Role == UserRole.User);
         }
 
-        public User Get(int id)
-        {
-            return _dbContext.Users.Include(u => u.RentedBikes)
-                .Include(u => u.Reservations)
-                .ThenInclude(r => r.Bike)
-                .SingleOrDefault(u => u.Id == id && u.Role == UserRole.User);
-        }
-
         public User Add(User entity)
         {
             var user = _dbContext.Users.Add(entity).Entity;
-            _dbContext.SaveChanges();
-
-            return user;
-        }
-
-        public User Remove(string id)
-        {
-            var user = Get(id);
-            if (user is null)
-                return null;
-
-            _dbContext.Users.Remove(user);
             _dbContext.SaveChanges();
 
             return user;
@@ -97,18 +77,6 @@ namespace BikesRentalServer.DataAccess.Repositories
                 .SingleOrDefault(u => u.Username == username && u.PasswordHash == Toolbox.ComputeHash(password));
         }
 
-        public User SetStatus(string id, UserStatus status)
-        {
-            var user = Get(id);
-            if (user is null)
-                return null;
-
-            user.Status = status;
-            _dbContext.SaveChanges();
-
-            return user;
-        }
-
         public User SetStatus(int id, UserStatus status)
         {
             var user = Get(id);
@@ -120,5 +88,7 @@ namespace BikesRentalServer.DataAccess.Repositories
 
             return user;
         }
+
+        private User Get(int id) => Get(id.ToString());
     }
 }
