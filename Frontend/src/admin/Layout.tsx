@@ -12,6 +12,8 @@ import Container from '@material-ui/core/Container';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Menu from './Menu';
+import { useServices } from '../common/services';
+import usePromise from '../common/hooks/usePromise';
 
 const Copyright = () => {
   return (
@@ -97,6 +99,8 @@ type Props = {
 
 const Layout = ({ children }: Props) => {
   const classes = useStyles();
+  const getLogin = useServices().getLogin;
+  const login = usePromise(getLogin);
   const [open, setOpen] = React.useState(true);
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -130,7 +134,7 @@ const Layout = ({ children }: Props) => {
             noWrap
             className={classes.title}
           >
-            CityBikes Admin
+            {login.results && `Hello, ${login.results}!`}
           </Typography>
         </Toolbar>
       </AppBar>

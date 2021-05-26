@@ -11,7 +11,7 @@ import {
   Chip,
 } from '@material-ui/core';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
-import { Bike } from '../api/models/bike';
+import { Bike, BikeStatus } from '../api/models/bike';
 import ListItemIconSansPadding from './ListItemIconSansPadding';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -21,6 +21,12 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     alert: {
       padding: theme.spacing(2),
+    },
+    listItem: {
+      marginRight: theme.spacing(0.5),
+    },
+    bikeId: {
+      marginRight: theme.spacing(1),
     },
   }),
 );
@@ -57,28 +63,42 @@ const BikesList = ({ bikes, bikeActions, showStatus, showLocation }: Props) => {
               <ListItemIconSansPadding>
                 <DirectionsBikeIcon />
               </ListItemIconSansPadding>
-              <Typography variant="h6">{`#${bike.id}`}</Typography>
+              <Typography
+                variant="h6"
+                className={classes.bikeId}
+              >{`#${bike.id}`}</Typography>
 
               {showStatus && (
-                <Chip label={`${bike.status}`} variant="outlined"></Chip>
+                <Chip
+                  label={`${bike.status}`}
+                  className={classes.listItem}
+                  variant={
+                    bike.status == BikeStatus.Blocked ? 'outlined' : 'default'
+                  }
+                  color={
+                    bike.status == BikeStatus.Available
+                      ? 'secondary'
+                      : bike.status == BikeStatus.Rented
+                      ? 'primary'
+                      : 'default'
+                  }
+                ></Chip>
               )}
-              {showLocation &&
-                (bike.user != null ? (
-                  <Chip
-                    label={`At user: ${bike.user.name}`}
-                    variant="outlined"
-                    color="secondary"
-                  />
-                ) : bike.station != null ? (
-                  <Chip
-                    label={`At station: ${bike.station.name}`}
-                    variant="outlined"
-                    color="primary"
-                  />
-                ) : (
-                  <Chip label={`Unknown location`} variant="outlined" />
-                ))}
-
+              {showLocation && bike.user && (
+                <Chip
+                  label={`User: ${bike.user.name}`}
+                  color="primary"
+                  variant="outlined"
+                  className={classes.listItem}
+                />
+              )}
+              {showLocation && bike.station && (
+                <Chip
+                  label={`Station: ${bike.station.name}`}
+                  color="secondary"
+                  className={classes.listItem}
+                />
+              )}
               <ListItemSecondaryAction>
                 {bikeActions(bike).map(({ onClick, label, type, id }) => (
                   <Button

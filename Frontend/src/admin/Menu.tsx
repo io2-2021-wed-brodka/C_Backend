@@ -7,13 +7,13 @@ import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import BuildIcon from '@material-ui/icons/Build';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { Link, useHistory } from 'react-router-dom';
-import { clearTokenFromLocalStorage } from '../common/authentication/token-functions';
+import { clearTokenAndLoginFromLocalStorage } from '../common/authentication/token-functions';
 
 const Menu = () => {
   const history = useHistory();
 
   const logout = () => {
-    clearTokenFromLocalStorage();
+    clearTokenAndLoginFromLocalStorage();
     history.push('/');
   };
 

@@ -47,6 +47,9 @@ namespace SeleniumTests2.Tests
 
             rentalsPage.ContainsSnackbar().Should().BeTrue();
             rentalsPage.HasBike(bike.Id).Should().BeFalse();
+            stationsPage = rentalsPage.GoToStations();
+            stationsPage.OpenBikesList(station.Name);
+            stationsPage.HasBike(bike.Id).Should().BeTrue();
         }
     }
 }

@@ -3,7 +3,7 @@ using Xunit;
 using FluentAssertions;
 using Xunit.Abstractions;
 
-namespace SeleniumTests2
+namespace SeleniumTests2.Tests
 {
     public class SignUpTests : TestsBase
     {

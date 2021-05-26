@@ -43,7 +43,7 @@ namespace SeleniumTests2
 
         protected string GetUniqueString()
         {
-            return Guid.NewGuid().ToString();
+            return Guid.NewGuid().ToString().Substring(0, 8);
         }
 
         protected AdminStationsPage LoginAsAdmin()
