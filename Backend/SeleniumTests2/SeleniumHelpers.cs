@@ -24,7 +24,7 @@ namespace SeleniumTests2
         {
             var chromeOptions = new ChromeOptions();
             chromeOptions.AddArgument("--disable-dev-shm-usage");
-            var driver = new RemoteWebDriver(new Uri("http://192.168.1.16:4444"), chromeOptions);
+            var driver = new RemoteWebDriver(chromeOptions);
             driver.Manage().Window.Maximize();
 
             driver.Navigate().GoToUrl(TestsBase.UserSiteUrl);
