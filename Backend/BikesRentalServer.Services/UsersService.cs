@@ -80,6 +80,16 @@ namespace BikesRentalServer.Services
             });
         }
 
+        public ServiceActionResult<User> RemoveUser(string id, UserRole supposedRole)
+        {
+            var user = _usersRepository.Get(id);
+            if (user is null || user.Role != supposedRole)
+                return ServiceActionResult.EntityNotFound<User>($"{supposedRole} not found");
+
+            user = _usersRepository.Remove(user.Id);
+            return ServiceActionResult.Success(user);
+        }
+
         public ServiceActionResult<string> GenerateBearerToken(User user)
         {
             var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(user.Username));
