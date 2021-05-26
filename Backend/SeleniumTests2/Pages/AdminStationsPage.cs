@@ -2,6 +2,7 @@ using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SeleniumTests2.Pages;
 
 namespace SeleniumTests2
 {
@@ -130,6 +131,14 @@ namespace SeleniumTests2
         {
             GetUnblockStationButton(stationName).Click();
             driver.Sleep();
+        }
+
+        public AdminBikesPage GoToBikes()
+        {
+            driver.FindElement(By.Id("go-to-bikes")).Click();
+            driver.Sleep();
+
+            return new AdminBikesPage(driver);
         }
 
         private IWebElement GetStationsHeader()
