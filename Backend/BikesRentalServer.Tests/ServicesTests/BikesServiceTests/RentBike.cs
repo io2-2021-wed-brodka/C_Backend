@@ -32,7 +32,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                     },
                 });
             BikesRepository.Setup(r => r.SetStatus(It.IsAny<int>(), BikeStatus.Rented)).Verifiable();
-            BikesRepository.Setup(r => r.Associate(It.IsAny<int>(), It.IsAny<User>()))
+            BikesRepository.Setup(r => r.AssociateWithUser(It.IsAny<int>(), It.IsAny<int>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
@@ -77,7 +77,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                         Id = 1,
                     },
                 });
-            BikesRepository.Setup(r => r.Associate(bikeId, It.IsAny<User>()))
+            BikesRepository.Setup(r => r.AssociateWithUser(bikeId, It.IsAny<int>()))
                 .Returns(new Bike
                 {
                     Id = bikeId,
@@ -145,7 +145,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                         Status = StationStatus.Active,
                     },
                 });
-            BikesRepository.Setup(r => r.Associate(It.IsAny<int>(), It.IsAny<User>())).Verifiable();
+            BikesRepository.Setup(r => r.AssociateWithUser(It.IsAny<int>(), It.IsAny<int>())).Verifiable();
 
             var bikesService = GetBikesService(user.Username);
             var result = bikesService.RentBike(bikeId.ToString());
@@ -218,14 +218,14 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                         Id = 1,
                     },
                 });
-            BikesRepository.Setup(r => r.Associate(It.IsAny<int>(), It.IsAny<Station>())).Verifiable();
+            BikesRepository.Setup(r => r.AssociateWithStation(It.IsAny<int>(), It.IsAny<int>())).Verifiable();
 
             var bikesService = GetBikesService(user.Username);
             var result = bikesService.RentBike(bikeId.ToString());
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
-            BikesRepository.Verify(r => r.Associate(It.IsAny<int>(), It.IsAny<Station>()), Times.Never);
+            BikesRepository.Verify(r => r.AssociateWithStation(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
@@ -252,7 +252,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
 
             UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>())).Returns(user);
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
-            BikesRepository.Setup(r => r.Associate(bikeId, It.IsAny<User>()))
+            BikesRepository.Setup(r => r.AssociateWithUser(bikeId, It.IsAny<int>()))
                 .Returns(new Bike
                 {
                     User = user,
@@ -309,7 +309,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
 
             UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>())).Returns(user);
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
-            BikesRepository.Setup(r => r.Associate(bikeId, It.IsAny<User>())).Verifiable();
+            BikesRepository.Setup(r => r.AssociateWithUser(bikeId, It.IsAny<int>())).Verifiable();
             ReservationsRepository.Setup(r => r.GetActiveReservation(bikeId))
                 .Returns(new Reservation
                 {
@@ -324,7 +324,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
             ReservationsRepository.Verify(r => r.Remove(It.IsAny<int>()), Times.Never);
-            BikesRepository.Verify(r => r.Associate(bikeId, It.IsAny<User>()), Times.Never);
+            BikesRepository.Verify(r => r.AssociateWithUser(bikeId, It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
@@ -340,14 +340,14 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                 },
             };
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
-            BikesRepository.Setup(r => r.Associate(It.IsAny<int>(), It.IsAny<User>())).Verifiable();
+            BikesRepository.Setup(r => r.AssociateWithUser(It.IsAny<int>(), It.IsAny<int>())).Verifiable();
 
             var bikesService = GetBikesService();
             var result = bikesService.RentBike(bike.Id.ToString());
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
-            BikesRepository.Verify(r => r.Associate(It.IsAny<int>(), It.IsAny<User>()), Times.Never);
+            BikesRepository.Verify(r => r.AssociateWithUser(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
@@ -356,6 +356,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             const int bikeId = 2;
             var user = new User
             {
+                Id = 1,
                 Status = UserStatus.Blocked,
             };
             UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>())).Returns(user).Verifiable();
@@ -369,14 +370,14 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                         Status = StationStatus.Active,
                     },
                 });
-            BikesRepository.Setup(r => r.Associate(It.IsAny<int>(), user)).Verifiable();
+            BikesRepository.Setup(r => r.AssociateWithUser(It.IsAny<int>(), user.Id)).Verifiable();
 
             var bikesService = GetBikesService();
             var result = bikesService.RentBike(bikeId.ToString());
 
             result.Status.Should().Be(Status.UserBlocked);
             result.Object.Should().BeNull();
-            BikesRepository.Verify(r => r.Associate(It.IsAny<int>(), user), Times.Never);
+            BikesRepository.Verify(r => r.AssociateWithUser(It.IsAny<int>(), user.Id), Times.Never);
         }
     }
 }

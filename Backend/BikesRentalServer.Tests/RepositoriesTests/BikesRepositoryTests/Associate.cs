@@ -39,7 +39,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            _bikesRepository.Associate(bike.Id, user);
+            _bikesRepository.AssociateWithUser(bike.Id, user.Id);
             
             bike.User.Should().BeEquivalentTo(user);
             bike.Station.Should().BeNull();
@@ -66,7 +66,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            _bikesRepository.Associate(bike.Id, station);
+            _bikesRepository.AssociateWithStation(bike.Id, station.Id);
             
             bike.Station.Should().BeEquivalentTo(station);
             bike.User.Should().BeNull();
@@ -87,7 +87,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            var result = _bikesRepository.Associate(bike.Id, user);
+            var result = _bikesRepository.AssociateWithUser(bike.Id, user.Id);
             
             result.Should().BeEquivalentTo(bike);
         }
@@ -107,7 +107,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            var result = _bikesRepository.Associate(bike.Id, station);
+            var result = _bikesRepository.AssociateWithStation(bike.Id, station.Id);
             
             result.Should().BeEquivalentTo(bike);
         }
@@ -116,8 +116,9 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
         public void AssociateNotExistingBikeWithUserShouldReturnNull()
         {
             const int id = 6;
+            var user = _dbContext.Users.Add(new User()).Entity;
 
-            var result = _bikesRepository.Associate(id, new User());
+            var result = _bikesRepository.AssociateWithUser(id, user.Id);
 
             result.Should().BeNull();
         }
@@ -126,8 +127,13 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
         public void AssociateNotExistingBikeWithStationShouldReturnNull()
         {
             const int id = 6;
+            var station = _dbContext.Stations.Add(new Station
+                {
+                    Name = "test",
+                })
+                .Entity;
 
-            var result = _bikesRepository.Associate(id, new Station());
+            var result = _bikesRepository.AssociateWithStation(id, station.Id);
 
             result.Should().BeNull();
         }
@@ -135,6 +141,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
         [Fact]
         public void AssociateWithNotExistingUserShouldReturnNull()
         {
+            const int userId = 7;
             var bike = _dbContext.Bikes.Add(new Bike
                 {
                     Status = BikeStatus.Available,
@@ -142,10 +149,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            var result = _bikesRepository.Associate(bike.Id, new User
-            {
-                Username = "null",
-            });
+            var result = _bikesRepository.AssociateWithUser(bike.Id, userId);
 
             result.Should().BeNull();
         }
@@ -153,6 +157,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
         [Fact]
         public void AssociateWithNotExistingStationShouldReturnNull()
         {
+            const int stationId = 7;
             var bike = _dbContext.Bikes.Add(new Bike
                 {
                     Status = BikeStatus.Available,
@@ -160,10 +165,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.BikesRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            var result = _bikesRepository.Associate(bike.Id, new Station
-            {
-                Name = "name",
-            });
+            var result = _bikesRepository.AssociateWithStation(bike.Id, stationId);
 
             result.Should().BeNull();
         }
