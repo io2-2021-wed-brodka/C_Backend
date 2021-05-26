@@ -133,14 +133,6 @@ namespace SeleniumTests2
             driver.Sleep();
         }
 
-        public AdminBikesPage GoToBikes()
-        {
-            driver.FindElement(By.Id("go-to-bikes")).Click();
-            driver.Sleep();
-
-            return new AdminBikesPage(driver);
-        }
-
         private IWebElement GetStationsHeader()
         {
             return driver.FindElement(By.Id("stations-header"));
