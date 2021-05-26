@@ -33,14 +33,6 @@ namespace SeleniumTests2
             }
         }
 
-        public RentalsPage GoToRentals()
-        {
-            driver.FindElement(By.Id("rentals")).Click();
-            driver.Sleep();
-
-            return new RentalsPage(driver);
-        }
-
         public void OpenBikesList(string stationName)
         {
             GetStationElement(stationName).Click();

@@ -45,5 +45,21 @@ namespace SeleniumTests2
         {
             return driver.FindElement(By.Id("user-site-navbar"));
         }
+
+        public RentalsPage GoToRentals()
+        {
+            driver.FindElement(By.Id("rentals")).Click();
+            driver.Sleep();
+
+            return new RentalsPage(driver);
+        }
+
+        public StationsPage GoToStations()
+        {
+            driver.FindElement(By.Id("stations")).Click();
+            driver.Sleep();
+
+            return new StationsPage(driver);
+        }
     }
 }
