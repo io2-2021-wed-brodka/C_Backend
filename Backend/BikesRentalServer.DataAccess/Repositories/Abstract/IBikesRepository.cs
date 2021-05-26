@@ -7,7 +7,7 @@ namespace BikesRentalServer.DataAccess.Repositories.Abstract
     {
         IEnumerable<Bike> GetBlocked();
         Bike SetStatus(int id, BikeStatus status);
-        Bike Associate(int id, User user);
-        Bike Associate(int id, Station station);
+        Bike AssociateWithUser(int bikeId, int userId);
+        Bike AssociateWithStation(int bikeId, int stationId);
     }
 }

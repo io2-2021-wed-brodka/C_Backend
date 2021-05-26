@@ -74,10 +74,11 @@ namespace BikesRentalServer.DataAccess.Repositories
             return bike;
         }
 
-        public Bike Associate(int id, User user)
+        public Bike AssociateWithUser(int bikeId, int userId)
         {
-            var bike = Get(id);
-            if (bike is null || !_dbContext.Users.Contains(user))
+            var bike = Get(bikeId);
+            var user = _dbContext.Users.SingleOrDefault(u => u.Id == userId);
+            if (bike is null || user is null)
                 return null;
 
             bike.Station = null;
@@ -87,10 +88,11 @@ namespace BikesRentalServer.DataAccess.Repositories
             return bike;
         }
 
-        public Bike Associate(int id, Station station)
+        public Bike AssociateWithStation(int bikeId, int stationId)
         {
-            var bike = Get(id);
-            if (bike is null || !_dbContext.Stations.Contains(station))
+            var bike = Get(bikeId);
+            var station = _dbContext.Stations.SingleOrDefault(u => u.Id == stationId);
+            if (bike is null || station is null)
                 return null;
 
             bike.User = null;
