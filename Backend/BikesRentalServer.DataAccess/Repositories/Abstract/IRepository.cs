@@ -8,7 +8,6 @@ namespace BikesRentalServer.DataAccess.Repositories.Abstract
         T Get(string id);
         T Get(int id);
         T Add(T entity);
-        T Remove(string id);
         T Remove(int id);
     }
 }
