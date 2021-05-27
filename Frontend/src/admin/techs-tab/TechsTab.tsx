@@ -1,5 +1,5 @@
 import React from 'react';
-import { mockedServices } from '../../common/services';
+import { mockedServices, useServices } from '../../common/services';
 import DataLoader from '../../common/components/DataLoader';
 import usePromise from '../../common/hooks/usePromise';
 import useRefresh from '../../common/hooks/useRefresh';
@@ -18,10 +18,17 @@ import ListItemIconSansPadding from '../../common/components/ListItemIconSansPad
 import PersonIcon from '@material-ui/icons/Person';
 
 const TechsTab = () => {
-  const [refreshState] = useRefresh();
+  const [refreshState, refresh] = useRefresh();
   const getTechs = mockedServices.getTechs;
+  const removeTech = useServices().removeTech;
   const data = usePromise(() => Promise.all([getTechs()]), [refreshState]);
   const snackbar = useSnackbar();
+
+  const onRemoveTech = (id: string) => {
+    removeTech(id)
+      .then(() => refresh())
+      .catch(err => snackbar.open(err.message));
+  };
 
   return (
     <>
@@ -47,6 +54,7 @@ const TechsTab = () => {
                         color={'primary'}
                         key="Remove"
                         id={`Remove-${tech.id}`}
+                        onClick={() => onRemoveTech(tech.id)}
                       >
                         Remove
                       </Button>
