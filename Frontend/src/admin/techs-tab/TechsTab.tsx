@@ -6,6 +6,7 @@ import useRefresh from '../../common/hooks/useRefresh';
 import { useSnackbar } from '../../common/hooks/useSnackbar';
 import SnackBar from '../../common/components/SnackBar';
 import {
+  Button,
   List,
   ListItem,
   ListItemSecondaryAction,
@@ -40,7 +41,16 @@ const TechsTab = () => {
                         <Typography variant="h6">{`${tech.name}`}</Typography>
                       }
                     />
-                    <ListItemSecondaryAction></ListItemSecondaryAction>
+                    <ListItemSecondaryAction>
+                      <Button
+                        variant="contained"
+                        color={'primary'}
+                        key="Remove"
+                        id={`Remove-${tech.id}`}
+                      >
+                        Remove
+                      </Button>
+                    </ListItemSecondaryAction>
                   </ListItem>
                 ))}
               </List>
