@@ -153,3 +153,9 @@ export const removeTech = (id: string) =>
   apiWithAuthConnection<void>(`${API}/techs/${id}`, {
     method: 'DELETE',
   });
+
+export const addTech = (name: string, password: string) =>
+  apiWithAuthConnection<Tech>(`${API}/techs`, {
+    method: 'POST',
+    data: { name, password },
+  });

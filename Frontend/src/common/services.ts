@@ -24,6 +24,7 @@ import {
   getBlockedUsers,
   getTechs,
   removeTech,
+  addTech,
 } from './api/endpoints';
 import { Bike, BikeStatus } from './api/models/bike';
 import { Station, StationStatus } from './api/models/station';
@@ -74,6 +75,7 @@ type AllServices = {
   getBlockedUsers: () => Promise<User[]>;
   getTechs: () => Promise<Tech[]>;
   removeTech: (id: string) => Promise<void>;
+  addTech: (name: string, password: string) => Promise<Tech>;
 };
 
 export const services: AllServices = {
@@ -104,6 +106,7 @@ export const services: AllServices = {
   getBlockedUsers: getBlockedUsers,
   getTechs: getTechs,
   removeTech: removeTech,
+  addTech: addTech,
 };
 
 export const mockedServices: AllServices = {
@@ -163,6 +166,7 @@ export const mockedServices: AllServices = {
   getBlockedUsers: () => delay(mockedUsers),
   getTechs: () => delay(mockedTechs),
   removeTech: () => delay<void>(undefined),
+  addTech: (name: string) => delay<Tech>({ id: '666', name: name }),
 };
 
 export const ServicesContext = createContext(services);
