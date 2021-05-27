@@ -6,13 +6,14 @@ import { apiWithAuthConnection } from '../authentication/api-with-authentication
 import { ReservedBike } from './models/reservedBike';
 import { LoginResponse } from './models/login-response';
 import { User } from './models/user';
-
+import { Tech } from './models/tech';
 const API = 'http://localhost:8080';
 
 export type StationsResponse = { stations: Station[] };
 export type BikesResponse = { bikes: Bike[] };
 export type ReservedBikesResponse = { bikes: ReservedBike[] };
 export type UsersResponse = { users: User[] };
+export type TechsResponse = { techs: Tech[] };
 
 export const signIn = (login: string, password: string) =>
   apiConnection<LoginResponse>(`${API}/login`, {
@@ -141,3 +142,5 @@ export const getBlockedUsers = () =>
   apiWithAuthConnection<UsersResponse>(`${API}/users/blocked`).then(
     res => res.users,
   );
+export const getTechs = () =>
+  apiWithAuthConnection<TechsResponse>(`${API}/techs`).then(res => res.techs);

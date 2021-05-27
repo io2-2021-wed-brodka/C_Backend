@@ -15,6 +15,7 @@ import StationsTab from './stations-tab/StationsTab';
 
 import './AdminApp.css';
 import UsersTab from './users-tab/UsersTab';
+import TechsTab from './techs-tab/TechsTab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -50,6 +51,7 @@ const AdminApp = () => {
                   <Layout>
                     <Route path="/stations" component={StationsTab} />
                     <Route path="/users" component={UsersTab} />
+                    <Route path="/techs" component={TechsTab} />
                   </Layout>
                 </>
               )}
