@@ -1,5 +1,5 @@
 import React from 'react';
-import { mockedServices, useServices } from '../../common/services';
+import { mockedServices } from '../../common/services';
 import DataLoader from '../../common/components/DataLoader';
 import usePromise from '../../common/hooks/usePromise';
 import useRefresh from '../../common/hooks/useRefresh';
@@ -17,8 +17,7 @@ import ListItemIconSansPadding from '../../common/components/ListItemIconSansPad
 import PersonIcon from '@material-ui/icons/Person';
 
 const TechsTab = () => {
-  const [refreshState, refresh] = useRefresh();
-  //const getTechs = useServices().getUsers;
+  const [refreshState] = useRefresh();
   const getTechs = mockedServices.getTechs;
   const data = usePromise(() => Promise.all([getTechs()]), [refreshState]);
   const snackbar = useSnackbar();
@@ -28,7 +27,7 @@ const TechsTab = () => {
       <Typography variant="h4">Techs</Typography>
       <Paper>
         <DataLoader data={data}>
-          {([techs, blockedUsers]) =>
+          {([techs]) =>
             !!techs.length && (
               <List dense={true}>
                 {techs.map(tech => (
