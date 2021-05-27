@@ -145,5 +145,11 @@ export const getBlockedUsers = () =>
   apiWithAuthConnection<UsersResponse>(`${API}/users/blocked`).then(
     res => res.users,
   );
+
 export const getTechs = () =>
   apiWithAuthConnection<TechsResponse>(`${API}/techs`).then(res => res.techs);
+
+export const removeTech = (id: string) =>
+  apiWithAuthConnection<void>(`${API}/techs/${id}`, {
+    method: 'DELETE',
+  });
