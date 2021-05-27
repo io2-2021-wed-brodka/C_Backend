@@ -16,6 +16,8 @@ import {
 } from '@material-ui/core';
 import ListItemIconSansPadding from '../../common/components/ListItemIconSansPadding';
 import PersonIcon from '@material-ui/icons/Person';
+import AddTechForm from './AddTechForm';
+import { addTech } from '../../common/api/endpoints';
 
 const TechsTab = () => {
   const [refreshState, refresh] = useRefresh();
@@ -23,6 +25,12 @@ const TechsTab = () => {
   const removeTech = useServices().removeTech;
   const data = usePromise(() => Promise.all([getTechs()]), [refreshState]);
   const snackbar = useSnackbar();
+
+  const onAddTech = (name: string, password: string) => {
+    addTech(name, password)
+      .then(() => refresh())
+      .catch(err => snackbar.open(err.message));
+  };
 
   const onRemoveTech = (id: string) => {
     removeTech(id)
@@ -33,6 +41,7 @@ const TechsTab = () => {
   return (
     <>
       <Typography variant="h4">Techs</Typography>
+      <AddTechForm onAdd={onAddTech} />
       <Paper>
         <DataLoader data={data}>
           {([techs]) =>
