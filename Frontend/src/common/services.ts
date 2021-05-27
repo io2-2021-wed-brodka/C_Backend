@@ -22,6 +22,7 @@ import {
   removeReservation,
   getUsers,
   getBlockedUsers,
+  getTechs,
 } from './api/endpoints';
 import { Bike, BikeStatus } from './api/models/bike';
 import { Station, StationStatus } from './api/models/station';
@@ -41,6 +42,8 @@ import { mockedReservedBikes } from './mocks/reservedBikes';
 import { LoginResponse, UserRole } from './api/models/login-response';
 import { User } from './api/models/user';
 import { mockedUsers } from './mocks/users';
+import { Tech } from './api/models/tech';
+import { mockedTechs } from './mocks/techs';
 
 type AllServices = {
   signIn: (login: string, password: string) => Promise<LoginResponse>;
@@ -68,6 +71,7 @@ type AllServices = {
   unblockUser: (id: string) => Promise<void>;
   getUsers: () => Promise<User[]>;
   getBlockedUsers: () => Promise<User[]>;
+  getTechs: () => Promise<Tech[]>;
 };
 
 export const services: AllServices = {
@@ -96,6 +100,7 @@ export const services: AllServices = {
   unblockUser: unblockUser,
   getUsers: getUsers,
   getBlockedUsers: getBlockedUsers,
+  getTechs: getTechs,
 };
 
 export const mockedServices: AllServices = {
@@ -153,6 +158,7 @@ export const mockedServices: AllServices = {
   unblockUser: () => delay<void>(undefined),
   getUsers: () => delay(mockedUsers),
   getBlockedUsers: () => delay(mockedUsers),
+  getTechs: () => delay(mockedTechs),
 };
 
 export const ServicesContext = createContext(services);
