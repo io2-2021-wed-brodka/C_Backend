@@ -1,11 +1,12 @@
 import React from 'react';
-import { mockedServices } from '../../common/services';
+import { mockedServices, useServices } from '../../common/services';
 import DataLoader from '../../common/components/DataLoader';
 import usePromise from '../../common/hooks/usePromise';
 import useRefresh from '../../common/hooks/useRefresh';
 import { useSnackbar } from '../../common/hooks/useSnackbar';
 import SnackBar from '../../common/components/SnackBar';
 import {
+  Button,
   List,
   ListItem,
   ListItemSecondaryAction,
@@ -15,19 +16,35 @@ import {
 } from '@material-ui/core';
 import ListItemIconSansPadding from '../../common/components/ListItemIconSansPadding';
 import PersonIcon from '@material-ui/icons/Person';
+import AddTechForm from './AddTechForm';
 
 const TechsTab = () => {
-  const [refreshState] = useRefresh();
+  const [refreshState, refresh] = useRefresh();
   const getTechs = mockedServices.getTechs;
-  const data = usePromise(() => Promise.all([getTechs()]), [refreshState]);
+  const addTech = useServices().addTech;
+  const removeTech = useServices().removeTech;
+  const data = usePromise(getTechs, [refreshState]);
   const snackbar = useSnackbar();
+
+  const onAddTech = (name: string, password: string) => {
+    addTech(name, password)
+      .then(() => refresh())
+      .catch(err => snackbar.open(err.message));
+  };
+
+  const onRemoveTech = (id: string) => {
+    removeTech(id)
+      .then(() => refresh())
+      .catch(err => snackbar.open(err.message));
+  };
 
   return (
     <>
       <Typography variant="h4">Techs</Typography>
+      <AddTechForm onAdd={onAddTech} />
       <Paper>
         <DataLoader data={data}>
-          {([techs]) =>
+          {techs =>
             !!techs.length && (
               <List dense={true}>
                 {techs.map(tech => (
@@ -40,7 +57,17 @@ const TechsTab = () => {
                         <Typography variant="h6">{`${tech.name}`}</Typography>
                       }
                     />
-                    <ListItemSecondaryAction></ListItemSecondaryAction>
+                    <ListItemSecondaryAction>
+                      <Button
+                        variant="contained"
+                        color={'primary'}
+                        key="Remove"
+                        id={`remove-${tech.id}`}
+                        onClick={() => onRemoveTech(tech.id)}
+                      >
+                        Remove
+                      </Button>
+                    </ListItemSecondaryAction>
                   </ListItem>
                 ))}
               </List>
