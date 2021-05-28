@@ -166,7 +166,7 @@ export const mockedServices: AllServices = {
   getBlockedUsers: () => delay(mockedUsers),
   getTechs: () => delay(mockedTechs),
   removeTech: () => delay<void>(undefined),
-  addTech: (name: string) => delay<Tech>({ id: '666', name: name }),
+  addTech: (name: string) => delay<Tech>({ id: '666', name }),
 };
 
 export const ServicesContext = createContext(services);

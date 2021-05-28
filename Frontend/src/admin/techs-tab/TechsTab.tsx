@@ -17,13 +17,13 @@ import {
 import ListItemIconSansPadding from '../../common/components/ListItemIconSansPadding';
 import PersonIcon from '@material-ui/icons/Person';
 import AddTechForm from './AddTechForm';
-import { addTech } from '../../common/api/endpoints';
 
 const TechsTab = () => {
   const [refreshState, refresh] = useRefresh();
   const getTechs = mockedServices.getTechs;
+  const addTech = useServices().addTech;
   const removeTech = useServices().removeTech;
-  const data = usePromise(() => Promise.all([getTechs()]), [refreshState]);
+  const data = usePromise(getTechs, [refreshState]);
   const snackbar = useSnackbar();
 
   const onAddTech = (name: string, password: string) => {
@@ -44,7 +44,7 @@ const TechsTab = () => {
       <AddTechForm onAdd={onAddTech} />
       <Paper>
         <DataLoader data={data}>
-          {([techs]) =>
+          {techs =>
             !!techs.length && (
               <List dense={true}>
                 {techs.map(tech => (
@@ -62,7 +62,7 @@ const TechsTab = () => {
                         variant="contained"
                         color={'primary'}
                         key="Remove"
-                        id={`Remove-${tech.id}`}
+                        id={`remove-${tech.id}`}
                         onClick={() => onRemoveTech(tech.id)}
                       >
                         Remove
