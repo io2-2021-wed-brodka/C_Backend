@@ -125,7 +125,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.MalfunctionsRepositoryTests
             _dbContext.SaveChanges();
 
             var initialMalfunctionCount = _dbContext.Malfunctions.Count();
-            var result = _malfunctionsRepository.Remove(malfunction.Id);
+            var result = _malfunctionsRepository.Remove(id);
             
             _dbContext.Malfunctions.Count().Should().Be(initialMalfunctionCount);
             result.Should().BeNull();

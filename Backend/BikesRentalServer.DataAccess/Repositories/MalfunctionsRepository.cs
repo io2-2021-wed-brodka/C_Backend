@@ -25,7 +25,7 @@ namespace BikesRentalServer.DataAccess.Repositories
             if (!int.TryParse(id, out var iid))
                 return null;
 
-            return Get(id);
+            return Get(iid);
         }
 
         public Malfunction Add(Malfunction entity)
