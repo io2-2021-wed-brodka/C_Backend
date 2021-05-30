@@ -69,8 +69,7 @@ const Navigation = ({ pathname }: Props) => {
       >
         {tabs.map(
           ({ name, url, canDisplay }) =>
-            canDisplay &&
-            canDisplay() && (
+            (canDisplay ? canDisplay() : true) && (
               <Tab
                 label={name}
                 key={name}

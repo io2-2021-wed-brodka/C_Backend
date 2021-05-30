@@ -1,4 +1,3 @@
-import { BearerToken } from './../api/models/bearer-token';
 import { signIn, signUp } from './../api/endpoints';
 import { UserRole } from '../api/models/login-response';
 
@@ -11,7 +10,7 @@ export const saveUserDataInLocalStorage = (
   login: string,
   role: UserRole,
 ) => {
-  localStorage.setItem(localStorageTokenKey, JSON.stringify(token));
+  localStorage.setItem(localStorageTokenKey, token);
   localStorage.setItem(localStorageLoginKey, login);
   localStorage.setItem(localStorageRoleKey, role);
 };
@@ -23,12 +22,8 @@ export const removeUserDataFromLocalStorage = () => {
 };
 
 export const getTokenFromLocalStorage = () => {
-  const tokenInJSON = localStorage.getItem(localStorageTokenKey);
-
-  if (tokenInJSON) {
-    return JSON.parse(tokenInJSON) as BearerToken;
-  }
-  return null;
+  const token = localStorage.getItem(localStorageTokenKey);
+  return token;
 };
 
 export const getLoginFromLocalStorage = () =>
