@@ -27,6 +27,7 @@ import {
   addTech,
   getMalfunctions,
   addMalfunction,
+  removeMalfunction,
 } from './api/endpoints';
 import { Bike, BikeStatus } from './api/models/bike';
 import { Station, StationStatus } from './api/models/station';
@@ -84,6 +85,7 @@ type AllServices = {
   addTech: (name: string, password: string) => Promise<Tech>;
   getMalfunctions: () => Promise<Malfunction[]>;
   addMalfunction: (bikeId: string, description: string) => Promise<Malfunction>;
+  removeMalfunction: (id: string) => Promise<void>;
 };
 
 export const services: AllServices = {
@@ -118,6 +120,7 @@ export const services: AllServices = {
   addTech: addTech,
   getMalfunctions: getMalfunctions,
   addMalfunction: addMalfunction,
+  removeMalfunction: removeMalfunction,
 };
 
 export const mockedServices: AllServices = {
@@ -182,6 +185,7 @@ export const mockedServices: AllServices = {
   getMalfunctions: () => delay<Malfunction[]>(mockedMalfunctions),
   addMalfunction: (bikeId, description) =>
     delay<Malfunction>({ id: '1', reportingUserId: '1', bikeId, description }),
+  removeMalfunction: () => delay<void>(undefined),
 };
 
 export const ServicesContext = createContext(services);

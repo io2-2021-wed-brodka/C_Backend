@@ -172,3 +172,8 @@ export const getMalfunctions = () =>
   apiWithAuthConnection<MalfunctionsResponse>(`${API}/malfunctions`).then(
     res => res.malfunctions,
   );
+
+export const removeMalfunction = (id: string) =>
+  apiWithAuthConnection<void>(`${API}/malfunctions/${id}`, {
+    method: 'DELETE',
+  });

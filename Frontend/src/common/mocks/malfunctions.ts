@@ -17,6 +17,7 @@ export const mockedMalfunctions: Malfunction[] = [
     id: '3',
     bikeId: '3',
     reportingUserId: '4',
-    description: 'I can only ride this bike backwards',
+    description:
+      'I can only ride this bike backwards. That is kind of problematic because I cannot see what is behind me and I crash very often.',
   },
 ];

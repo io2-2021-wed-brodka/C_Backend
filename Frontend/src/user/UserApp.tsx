@@ -22,6 +22,7 @@ import ReservationsTab from './reservations-tab/ReservationsTab';
 import BikesTab from './bikes-tab/BikesTab';
 import usePromise from '../common/hooks/usePromise';
 import { UserRole } from '../common/api/models/login-response';
+import MalfunctionsTab from './malfunctions-tab/MalfunctionsTab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -85,6 +86,10 @@ const UserApp = () => {
                       {role?.results === UserRole.Tech && (
                         <>
                           <Route path="/bikes" component={BikesTab} />
+                          <Route
+                            path="/malfunctions"
+                            component={MalfunctionsTab}
+                          />
                         </>
                       )}
                     </Container>
