@@ -1,6 +1,9 @@
 import React from 'react';
 import { createStyles, makeStyles, Paper, Tab, Tabs } from '@material-ui/core';
 import { Link, useHistory } from 'react-router-dom';
+import { useServices } from '../common/services';
+import usePromise from '../common/hooks/usePromise';
+import { UserRole } from '../common/api/models/login-response';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -9,21 +12,6 @@ const useStyles = makeStyles(() =>
     },
   }),
 );
-
-const tabs = [
-  {
-    name: 'Stations',
-    url: '/stations',
-  },
-  {
-    name: 'Rentals',
-    url: '/rentals',
-  },
-  {
-    name: 'Reservations',
-    url: '/reservations',
-  },
-];
 
 const useNavigation = () => {
   const history = useHistory();
@@ -43,6 +31,32 @@ type Props = {
 const Navigation = ({ pathname }: Props) => {
   const classes = useStyles();
   const handleTabChange = useNavigation();
+  const role = usePromise(useServices().getRole);
+
+  const tabs = [
+    {
+      name: 'Stations',
+      url: '/stations',
+    },
+    {
+      name: 'Rentals',
+      url: '/rentals',
+    },
+    {
+      name: 'Reservations',
+      url: '/reservations',
+    },
+    {
+      name: 'Bikes',
+      url: '/bikes',
+      canDisplay: () => role.results == UserRole.Tech,
+    },
+    {
+      name: 'Malfunctions',
+      url: '/malfunctions',
+      canDisplay: () => role.results == UserRole.Tech,
+    },
+  ];
 
   return (
     <Paper className={classes.root} elevation={0} square>
@@ -53,16 +67,20 @@ const Navigation = ({ pathname }: Props) => {
         textColor="primary"
         centered
       >
-        {tabs.map(({ name, url }) => (
-          <Tab
-            label={name}
-            key={name}
-            component={Link}
-            to={url}
-            value={url}
-            id={name.toLowerCase()}
-          ></Tab>
-        ))}
+        {tabs.map(
+          ({ name, url, canDisplay }) =>
+            canDisplay &&
+            canDisplay() && (
+              <Tab
+                label={name}
+                key={name}
+                component={Link}
+                to={url}
+                value={url}
+                id={name.toLowerCase()}
+              ></Tab>
+            ),
+        )}
       </Tabs>
     </Paper>
   );
