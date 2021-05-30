@@ -7,7 +7,6 @@ namespace BikesRentalServer.DataAccess.Repositories.Abstract
         IEnumerable<T> GetAll();
         T Get(string id);
         T Add(T entity);
-        T Remove(string id);
-        T Remove(T entity);
+        T Remove(int id);
     }
 }

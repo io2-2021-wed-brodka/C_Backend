@@ -36,7 +36,7 @@ namespace BikesRentalServer.Services
             var bikes = _bikesRepository.GetAll();
             return ServiceActionResult.Success(bikes.Select(bike =>
             {
-                var reservation = _reservationsRepository.GetActiveReservation(bike.Id.ToString());
+                var reservation = _reservationsRepository.GetActiveReservation(bike.Id);
                 return new Bike
                 {
                     Description = bike.Description,
@@ -54,7 +54,7 @@ namespace BikesRentalServer.Services
             var bike = _bikesRepository.Get(id);
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
-            var reservation = _reservationsRepository.GetActiveReservation(id);
+            var reservation = _reservationsRepository.GetActiveReservation(bike.Id);
             return ServiceActionResult.Success(new Bike
             {
                 Description = bike.Description,
@@ -82,7 +82,7 @@ namespace BikesRentalServer.Services
                 Description = bike.Description,
                 Id = bike.Id,
                 Station = bike.Station,
-                Status = _reservationsRepository.GetActiveReservation(bike.Id.ToString()) is null ? bike.Status : BikeStatus.Reserved,
+                Status = _reservationsRepository.GetActiveReservation(bike.Id) is null ? bike.Status : BikeStatus.Reserved,
                 User = bike.User,
                 StationId = bike.StationId,
             });
@@ -98,13 +98,13 @@ namespace BikesRentalServer.Services
             if (bike.User is not null)
                 throw new InvalidOperationException("Trying to remove rented bike");
 
-            bike = _bikesRepository.Remove(bike);
+            bike = _bikesRepository.Remove(bike.Id);
             return ServiceActionResult.Success(new Bike
             {
                 Description = bike.Description,
                 Id = bike.Id,
                 Station = bike.Station,
-                Status = _reservationsRepository.GetActiveReservation(bike.Id.ToString()) is null ? bike.Status : BikeStatus.Reserved,
+                Status = _reservationsRepository.GetActiveReservation(bike.Id) is null ? bike.Status : BikeStatus.Reserved,
                 User = bike.User,
                 StationId = bike.StationId,
             });
@@ -146,17 +146,17 @@ namespace BikesRentalServer.Services
             if (user.RentedBikes.Count >= 4)
                 return ServiceActionResult.InvalidState<Bike>("Rental limit exceeded");
 
-            var reservation = _reservationsRepository.GetActiveReservation(id);
+            var reservation = _reservationsRepository.GetActiveReservation(bike.Id);
             if (reservation is not null )
             {
                 if (reservation.User.Id != user.Id)
                     return ServiceActionResult.InvalidState<Bike>("Bike is reserved by different user");
 
-                _reservationsRepository.Remove(reservation);
+                _reservationsRepository.Remove(reservation.Id);
             }
 
-            _bikesRepository.SetStatus(id, BikeStatus.Rented);
-            bike = _bikesRepository.Associate(id, user);
+            _bikesRepository.SetStatus(bike.Id, BikeStatus.Rented);
+            bike = _bikesRepository.AssociateWithUser(bike.Id, user.Id);
             return ServiceActionResult.Success(new Bike
             {
                 Description = bike.Description,
@@ -182,8 +182,8 @@ namespace BikesRentalServer.Services
             if (bike.User.Username != _userContext.Username)
                 return ServiceActionResult.InvalidState<Bike>("Bike not rented by calling user");
 
-            _bikesRepository.SetStatus(bikeId, BikeStatus.Available);
-            bike = _bikesRepository.Associate(bikeId, station);
+            _bikesRepository.SetStatus(bike.Id, BikeStatus.Available);
+            bike = _bikesRepository.AssociateWithStation(bike.Id, station.Id);
             return ServiceActionResult.Success(new Bike
             {
                 Description = bike.Description,
@@ -225,10 +225,10 @@ namespace BikesRentalServer.Services
                 case BikeStatus.Rented:
                     return ServiceActionResult.InvalidState<Bike>("Bike is rented");
                 default:
-                    bike = _bikesRepository.SetStatus(id, BikeStatus.Blocked);
-                    var reservation = _reservationsRepository.GetActiveReservation(bike.Id.ToString());
+                    bike = _bikesRepository.SetStatus(bike.Id, BikeStatus.Blocked);
+                    var reservation = _reservationsRepository.GetActiveReservation(bike.Id);
                     if (reservation is not null)
-                        _reservationsRepository.Remove(reservation);
+                        _reservationsRepository.Remove(reservation.Id);
                     return ServiceActionResult.Success(new Bike
                     {
                         Description = bike.Description,
@@ -249,7 +249,7 @@ namespace BikesRentalServer.Services
             if (bike.Status is BikeStatus.Available)
                 return ServiceActionResult.InvalidState<Bike>("Bike not blocked");
 
-            bike = _bikesRepository.SetStatus(id, BikeStatus.Available);
+            bike = _bikesRepository.SetStatus(bike.Id, BikeStatus.Available);
             return ServiceActionResult.Success(new Bike
             {
                 Description = bike.Description,
@@ -268,7 +268,7 @@ namespace BikesRentalServer.Services
         public ServiceActionResult<IEnumerable<Bike>> GetReservedBikes()
         {
             var user = _usersRepository.GetByUsername(_userContext.Username);
-            var reservations = _reservationsRepository.GetActiveReservations(user.Id.ToString());
+            var reservations = _reservationsRepository.GetActiveReservations(user.Id);
             var reservedBikes = reservations.Select(reservation => reservation.Bike);
             return ServiceActionResult.Success(reservedBikes.Select(bike => new Bike
             {
@@ -294,14 +294,14 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.InvalidState<Reservation>("Bike is rented");
             if (bike.Station.Status is StationStatus.Blocked)
                 return ServiceActionResult.InvalidState<Reservation>("Station is blocked");
-            if (_reservationsRepository.GetActiveReservation(id) is not null)
+            if (_reservationsRepository.GetActiveReservation(bike.Id) is not null)
                 return ServiceActionResult.InvalidState<Reservation>("Reservation for bike exists");
 
             var user = _usersRepository.GetByUsername(_userContext.Username);
             if (user.Status is UserStatus.Blocked)
                 return ServiceActionResult.UserBlocked<Reservation>("User is blocked");
 
-            bike = _bikesRepository.SetStatus(id, BikeStatus.Reserved);
+            bike = _bikesRepository.SetStatus(bike.Id, BikeStatus.Reserved);
             var reservation = _reservationsRepository.Add(new Reservation
             {
                 User = user,
@@ -325,12 +325,12 @@ namespace BikesRentalServer.Services
             if (bike is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Bike not found");
 
-            var reservation = _reservationsRepository.GetActiveReservation(bikeId);
+            var reservation = _reservationsRepository.GetActiveReservation(bike.Id);
             if (reservation is null)
                 return ServiceActionResult.InvalidState<Bike>("Bike is not reserved");
 
-            _bikesRepository.SetStatus(bikeId, BikeStatus.Available);
-            _reservationsRepository.Remove(reservation);
+            _bikesRepository.SetStatus(bike.Id, BikeStatus.Available);
+            _reservationsRepository.Remove(reservation.Id);
             return ServiceActionResult.Success(new Bike
             {
                 Description = reservation.Bike.Description,

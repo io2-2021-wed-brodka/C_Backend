@@ -25,7 +25,7 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<IEnumerable<User>> GetAllUsers()
         {
-            var users = _usersRepository.GetAll().Where(user => user.Role == UserRole.User);
+            var users = _usersRepository.GetAll().Where(user => user.Role is UserRole.User);
             return ServiceActionResult.Success(users.Select(user => new User
             {
                 Id = user.Id,
@@ -80,6 +80,16 @@ namespace BikesRentalServer.Services
             });
         }
 
+        public ServiceActionResult<User> RemoveUser(string id, UserRole supposedRole)
+        {
+            var user = _usersRepository.Get(id);
+            if (user is null || user.Role != supposedRole)
+                return ServiceActionResult.EntityNotFound<User>($"{supposedRole} not found");
+
+            user = _usersRepository.Remove(user.Id);
+            return ServiceActionResult.Success(user);
+        }
+
         public ServiceActionResult<string> GenerateBearerToken(User user)
         {
             var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(user.Username));
@@ -105,9 +115,9 @@ namespace BikesRentalServer.Services
             }));
         }
 
-        public ServiceActionResult<User> BlockUser(string userId)
+        public ServiceActionResult<User> BlockUser(string id)
         {
-            var user = _usersRepository.Get(userId);
+            var user = _usersRepository.Get(id);
             if (user is null)
                 return ServiceActionResult.EntityNotFound<User>("User doesn't exist");
             if (user.Status is UserStatus.Blocked)
@@ -117,10 +127,10 @@ namespace BikesRentalServer.Services
             user.Reservations.CopyTo(reservations);
             foreach (var reservation in reservations)
             {
-                _reservationsRepository.Remove(reservation);
-                _bikesRepository.SetStatus(reservation.Bike.Id.ToString(), BikeStatus.Available);
+                _reservationsRepository.Remove(reservation.Id);
+                _bikesRepository.SetStatus(reservation.Bike.Id, BikeStatus.Available);
             }
-            user = _usersRepository.SetStatus(userId, UserStatus.Blocked);
+            user = _usersRepository.SetStatus(user.Id, UserStatus.Blocked);
 
             // We don't touch user's rented bikes here. He won't be able to rent new ones, he can return only.
 
@@ -136,15 +146,15 @@ namespace BikesRentalServer.Services
             });
         }
 
-        public ServiceActionResult<User> UnblockUser(string userId)
+        public ServiceActionResult<User> UnblockUser(string id)
         {
-            var user = _usersRepository.Get(userId);
+            var user = _usersRepository.Get(id);
             if (user is null)
                 return ServiceActionResult.EntityNotFound<User>("User doesn't exist");
             if (user.Status is UserStatus.Active)
                 return ServiceActionResult.InvalidState<User>("User already unblocked");
 
-            user = _usersRepository.SetStatus(userId, UserStatus.Active);
+            user = _usersRepository.SetStatus(user.Id, UserStatus.Active);
             return ServiceActionResult.Success(new User
             {
                 Id = user.Id,

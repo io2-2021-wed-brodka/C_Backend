@@ -10,7 +10,8 @@ namespace BikesRentalServer.Services.Abstract
         ServiceActionResult<IEnumerable<User>> GetAllUsers();
         ServiceActionResult<User> GetUserByUsernameAndPassword(string username, string password);
         ServiceActionResult<User> AddUser(string username, string password);
-        
+        ServiceActionResult<User> RemoveUser(string id, UserRole supposedRole);
+
         ServiceActionResult<string> GenerateBearerToken(User user);
 
         #endregion
@@ -18,8 +19,8 @@ namespace BikesRentalServer.Services.Abstract
         #region Blocking
 
         ServiceActionResult<IEnumerable<User>> GetBlockedUsers();
-        ServiceActionResult<User> BlockUser(string userId);
-        ServiceActionResult<User> UnblockUser(string userId);
+        ServiceActionResult<User> BlockUser(string id);
+        ServiceActionResult<User> UnblockUser(string id);
         
         #endregion
     }

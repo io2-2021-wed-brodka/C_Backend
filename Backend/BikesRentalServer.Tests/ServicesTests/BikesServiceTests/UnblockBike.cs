@@ -13,7 +13,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
         {
             const int bikeId = 123;
 
-            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<BikeStatus>(s => s == BikeStatus.Available)))
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<int>(), It.Is<BikeStatus>(s => s == BikeStatus.Available)))
                 .Returns(new Bike
                 {
                     Id = bikeId,
@@ -40,7 +40,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
         [Fact]
         public void UnlockNotExistingBikeShouldReturnEntityNotFound()
         {
-            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())).Verifiable();
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<int>(), It.IsAny<BikeStatus>())).Verifiable();
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Bike)null);
 
             var bikesService = GetBikesService();
@@ -48,14 +48,14 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
-            BikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
+            BikesRepository.Verify(r => r.SetStatus(It.IsAny<int>(), It.IsAny<BikeStatus>()), Times.Never);
         }
 
         [Fact]
         public void UnlockNotBlockedBikeShouldReturnInvalidState()
         {
             const int bikeId = 123;
-            BikesRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>())).Verifiable();
+            BikesRepository.Setup(r => r.SetStatus(It.IsAny<int>(), It.IsAny<BikeStatus>())).Verifiable();
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike
                 {
@@ -68,7 +68,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
-            BikesRepository.Verify(r => r.SetStatus(It.IsAny<string>(), It.IsAny<BikeStatus>()), Times.Never);
+            BikesRepository.Verify(r => r.SetStatus(It.IsAny<int>(), It.IsAny<BikeStatus>()), Times.Never);
         }
     }
 }

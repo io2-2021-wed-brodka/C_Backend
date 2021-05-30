@@ -24,7 +24,9 @@ namespace BikesRentalServer.DataAccess.Repositories
         {
             if (!int.TryParse(id, out var iid))
                 return null;
-            return _dbContext.Stations.Include(s => s.Bikes).SingleOrDefault(s => s.Id == iid);
+            return _dbContext.Stations
+                .Include(s => s.Bikes)
+                .SingleOrDefault(s => s.Id == iid);
         }
 
         public Station Add(Station entity)
@@ -36,7 +38,7 @@ namespace BikesRentalServer.DataAccess.Repositories
             return station;
         }
 
-        public Station Remove(string id)
+        public Station Remove(int id)
         {
             var station = Get(id);
             if (station is null)
@@ -48,28 +50,21 @@ namespace BikesRentalServer.DataAccess.Repositories
             return station;
         }
 
-        public Station Remove(Station entity)
-        {
-            if (!_dbContext.Stations.Contains(entity))
-                return null;
-            
-            var station = _dbContext.Stations.Remove(entity).Entity;
-            _dbContext.SaveChanges();
-
-            return station;
-        }
-
         public IEnumerable<Station> GetActive()
         {
-            return _dbContext.Stations.Where(s => s.Status == StationStatus.Active).Include(s => s.Bikes);
+            return _dbContext.Stations
+                .Where(s => s.Status == StationStatus.Active)
+                .Include(s => s.Bikes);
         }
         
         public IEnumerable<Station> GetBlocked()
         {
-            return _dbContext.Stations.Where(s => s.Status == StationStatus.Blocked).Include(s => s.Bikes);
+            return _dbContext.Stations
+                .Where(s => s.Status == StationStatus.Blocked)
+                .Include(s => s.Bikes);
         }
 
-        public Station SetStatus(string id, StationStatus status)
+        public Station SetStatus(int id, StationStatus status)
         {
             var station = Get(id);
             if (station is null)
@@ -80,5 +75,7 @@ namespace BikesRentalServer.DataAccess.Repositories
 
             return station;
         }
+
+        private Station Get(int id) => Get(id.ToString());
     }
 }

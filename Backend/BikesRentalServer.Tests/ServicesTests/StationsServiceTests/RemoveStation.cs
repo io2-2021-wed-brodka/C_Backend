@@ -21,7 +21,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
             };
 
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
-            StationsRepository.Setup(r => r.Remove(It.Is<string>(id => id == station.Id.ToString()))).Returns(station).Verifiable();
+            StationsRepository.Setup(r => r.Remove(It.Is<int>(id => id == station.Id))).Returns(station).Verifiable();
             
             var stationsService = GetStationsService();
             var result = stationsService.RemoveStation(station.Id.ToString());
@@ -42,7 +42,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
             };
 
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Station)null);
-            StationsRepository.Setup(r => r.Remove(It.Is<string>(id => id == station.Id.ToString()))).Returns(station).Verifiable();
+            StationsRepository.Setup(r => r.Remove(It.Is<int>(id => id == station.Id))).Returns(station).Verifiable();
 
             var stationsService = GetStationsService();
             var result = stationsService.RemoveStation("3");

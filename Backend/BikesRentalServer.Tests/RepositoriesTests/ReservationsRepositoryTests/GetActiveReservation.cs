@@ -87,7 +87,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.ReservationsRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            var result = _reservationsRepository.GetActiveReservation(bike.Id.ToString());
+            var result = _reservationsRepository.GetActiveReservation(bike.Id);
             
             result.Should().BeEquivalentTo(reservation);
         }
@@ -152,7 +152,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.ReservationsRepositoryTests
             });
             _dbContext.SaveChanges();
 
-            var result = _reservationsRepository.GetActiveReservation(bike.Id.ToString());
+            var result = _reservationsRepository.GetActiveReservation(bike.Id);
             
             result.Should().BeNull();
         }
@@ -160,17 +160,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.ReservationsRepositoryTests
         [Fact]
         public void GetActiveReservationOfNotExistingBikeShouldReturnNull()
         {
-            const string id = "9";
-
-            var result = _reservationsRepository.GetActiveReservation(id);
-
-            result.Should().BeNull();
-        }
-
-        [Fact]
-        public void GetActiveReservationUsingInvalidIdShouldReturnNull()
-        {
-            const string id = "invalid";
+            const int id = 9;
 
             var result = _reservationsRepository.GetActiveReservation(id);
 
