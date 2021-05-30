@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
-using BikesRentalServer.WebApi.Dtos.Responses;
+using System.Collections.Generic;
+using System.Linq;
 using OpenQA.Selenium;
 
 namespace SeleniumTests2
@@ -58,6 +58,11 @@ namespace SeleniumTests2
             driver.Sleep();
         }
 
+        public int GetBikesCount()
+        {
+            return GetBikeElements().Count;
+        }
+
         private IWebElement GetStationElement(string stationName)
         {
             return driver.FindElement(By.Id($"station-{stationName}"));
@@ -71,6 +76,11 @@ namespace SeleniumTests2
         private IWebElement GetRentButton(string bikeId)
         {
             return driver.FindElement(By.Id($"rent-{bikeId}"));
+        }
+
+        private List<IWebElement> GetBikeElements()
+        {
+            return driver.FindElements(By.CssSelector("[id^=bike-]")).ToList();
         }
     }
 }

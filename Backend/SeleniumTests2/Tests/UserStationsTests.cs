@@ -25,9 +25,6 @@ namespace SeleniumTests2.Tests
                 await Api.AddBike(station.Id, adminToken),
                 await Api.AddBike(station.Id, adminToken),
                 await Api.AddBike(station.Id, adminToken),
-                await Api.AddBike(station.Id, adminToken),
-                await Api.AddBike(station.Id, adminToken),
-                await Api.AddBike(station.Id, adminToken),
                 await Api.AddBike(station.Id, adminToken)
             };
 
