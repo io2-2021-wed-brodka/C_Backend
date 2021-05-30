@@ -32,9 +32,10 @@ import { delay } from './mocks/mockedApiResponse';
 import { BearerToken } from './api/models/bearer-token';
 import {
   signInAndSaveToken,
-  saveTokenAndLoginInLocalStorage,
+  saveUserDataInLocalStorage,
   signUpAndSaveToken,
   getLoginFromLocalStorage,
+  getRoleFromLocalStorage,
 } from './authentication/token-functions';
 import { ReservedBike } from './api/models/reservedBike';
 import { mockedReservedBikes } from './mocks/reservedBikes';
@@ -46,6 +47,7 @@ type AllServices = {
   signIn: (login: string, password: string) => Promise<LoginResponse>;
   signUp: (login: string, password: string) => Promise<BearerToken>;
   getLogin: () => Promise<string>;
+  getRole: () => Promise<UserRole | null>;
   getActiveStations: () => Promise<Station[]>;
   getAllStations: () => Promise<Station[]>;
   getBikes: () => Promise<Bike[]>;
@@ -74,6 +76,7 @@ export const services: AllServices = {
   signIn: signInAndSaveToken,
   signUp: signUpAndSaveToken,
   getLogin: getLoginFromLocalStorage,
+  getRole: getRoleFromLocalStorage,
   getActiveStations: getActiveStations,
   getAllStations: getAllStations,
   getBikes: getBikes,
@@ -101,17 +104,18 @@ export const services: AllServices = {
 export const mockedServices: AllServices = {
   signIn: login => {
     return delay({ token: login, role: UserRole.User }).then(user => {
-      saveTokenAndLoginInLocalStorage({ token: user.token }, login);
+      saveUserDataInLocalStorage(user.token, login, UserRole.User);
       return user;
     });
   },
   signUp: login => {
     return delay({ token: login }).then(bearerToken => {
-      saveTokenAndLoginInLocalStorage(bearerToken, login);
+      saveUserDataInLocalStorage(bearerToken.token, login, UserRole.User);
       return bearerToken;
     });
   },
   getLogin: getLoginFromLocalStorage,
+  getRole: getRoleFromLocalStorage,
   getActiveStations: () => delay(mockedStations),
   getAllStations: () => delay(mockedStations),
   getBikes: () => delay(mockedBikes),
