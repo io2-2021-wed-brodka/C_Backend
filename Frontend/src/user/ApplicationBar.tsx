@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import { clearTokenAndLoginFromLocalStorage } from './../common/authentication/token-functions';
+import { removeUserDataFromLocalStorage } from './../common/authentication/token-functions';
 import { useHistory } from 'react-router-dom';
 import { useServices } from '../common/services';
 import usePromise from '../common/hooks/usePromise';
@@ -45,7 +45,7 @@ const ApplicationBar = () => {
   };
 
   const logout = () => {
-    clearTokenAndLoginFromLocalStorage();
+    removeUserDataFromLocalStorage();
     history.push('/');
   };
 
