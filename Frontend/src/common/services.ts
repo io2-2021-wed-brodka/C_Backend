@@ -25,6 +25,8 @@ import {
   getTechs,
   removeTech,
   addTech,
+  getMalfunctions,
+  addMalfunction,
 } from './api/endpoints';
 import { Bike, BikeStatus } from './api/models/bike';
 import { Station, StationStatus } from './api/models/station';
@@ -47,6 +49,8 @@ import { User } from './api/models/user';
 import { mockedUsers } from './mocks/users';
 import { Tech } from './api/models/tech';
 import { mockedTechs } from './mocks/techs';
+import { Malfunction } from './api/models/malfunction';
+import { mockedMalfunctions } from './mocks/malfunctions';
 
 type AllServices = {
   signIn: (login: string, password: string) => Promise<LoginResponse>;
@@ -78,6 +82,8 @@ type AllServices = {
   getTechs: () => Promise<Tech[]>;
   removeTech: (id: string) => Promise<void>;
   addTech: (name: string, password: string) => Promise<Tech>;
+  getMalfunctions: () => Promise<Malfunction[]>;
+  addMalfunction: (bikeId: string, description: string) => Promise<Malfunction>;
 };
 
 export const services: AllServices = {
@@ -110,6 +116,8 @@ export const services: AllServices = {
   getTechs: getTechs,
   removeTech: removeTech,
   addTech: addTech,
+  getMalfunctions: getMalfunctions,
+  addMalfunction: addMalfunction,
 };
 
 export const mockedServices: AllServices = {
@@ -171,6 +179,9 @@ export const mockedServices: AllServices = {
   getTechs: () => delay(mockedTechs),
   removeTech: () => delay<void>(undefined),
   addTech: (name: string) => delay<Tech>({ id: '666', name }),
+  getMalfunctions: () => delay<Malfunction[]>(mockedMalfunctions),
+  addMalfunction: (bikeId, description) =>
+    delay<Malfunction>({ id: '1', reportingUserId: '1', bikeId, description }),
 };
 
 export const ServicesContext = createContext(services);
