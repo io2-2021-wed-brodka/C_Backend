@@ -68,6 +68,31 @@ namespace BikesRentalServer.Services
                 Role = UserRole.User,
                 Status = UserStatus.Active,
             });
+
+            return ServiceActionResult.Success(new User
+            {
+                Id = user.Id,
+                Reservations = user.Reservations,
+                Role = user.Role,
+                Status = user.Status,
+                Username = user.Username,
+                PasswordHash = user.PasswordHash,
+                RentedBikes = user.RentedBikes,
+            });
+        }
+
+        public ServiceActionResult<User> AddTech(string username, string password)
+        {
+            if (_usersRepository.GetByUsername(username) is not null)
+                return ServiceActionResult.InvalidState<User>("Username already taken");
+
+            var user = _usersRepository.Add(new User
+            {
+                Username = username,
+                PasswordHash = Toolbox.ComputeHash(password),
+                Role = UserRole.Tech,
+                Status = UserStatus.Active,
+            });
             return ServiceActionResult.Success(new User
             {
                 Id = user.Id,
