@@ -197,5 +197,32 @@ namespace SeleniumTests2.Tests
             var stationsPage = await LoginAsSomeUser();
             stationsPage.HasStation(stationName).Should().BeTrue();
         }
+
+        [Fact]
+        public async Task BikesCountsShouldBeDisplayed()
+        {
+            var stationName = GetUniqueString();
+            var login = GetUniqueString();
+            var password = "23456";
+            var userToken = await Api.SignUp(login, password);
+            var adminToken = await Api.LogInAsAdmin();
+            var station = await Api.AddStation(stationName, adminToken);
+            var bike1 = await Api.AddBike(station.Id, adminToken);
+            var bike2 = await Api.AddBike(station.Id, adminToken);
+            var bike3 = await Api.AddBike(station.Id, adminToken);
+            var bike4 = await Api.AddBike(station.Id, adminToken);
+
+            await Api.ReserveBike(bike2.Id, userToken.Token);
+            await Api.RentBike(bike1.Id, userToken.Token);
+            await Api.ReportMalfunction(bike1.Id, "It does not work", userToken.Token);
+            await Api.ReturnBike(bike1.Id, station.Id, userToken.Token);
+
+
+            Driver.OpenAdminTab();
+            var stationsPage = LoginAsAdmin();
+            stationsPage.GetActiveBikesCount(stationName).Should().Be(3);
+            stationsPage.GetBrokenBikesCount(stationName).Should().Be(1);
+            stationsPage.GetReservedBikesCount(stationName).Should().Be(1);
+        }
     }
 }

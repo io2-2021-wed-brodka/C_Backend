@@ -87,6 +87,26 @@ namespace SeleniumTests2
             return client.PostRequest<GetBikeResponse>("bikes/rented", body, adminToken);
         }
 
+        public static Task<GetBikeResponse> ReturnBike(this RestClient client, string bikeId, string stationId, string adminToken)
+        {
+            var body = new GiveBikeBackRequest
+            {
+                Id = bikeId,
+            };
+
+            return client.PostRequest<GetBikeResponse>($"stations/{stationId}/bikes", body, adminToken);
+        }
+
+        public static Task<GetReservedBikeResponse> ReserveBike(this RestClient client, string bikeId, string adminToken)
+        {
+            var body = new ReserveBikeRequest
+            {
+                Id = bikeId
+            };
+
+            return client.PostRequest<GetReservedBikeResponse>("bikes/reserved", body, adminToken);
+        }
+
         public static Task<GetBikeResponse> BlockBike(this RestClient client, string bikeId, string adminToken)
         {
             var body = new BlockBikeRequest

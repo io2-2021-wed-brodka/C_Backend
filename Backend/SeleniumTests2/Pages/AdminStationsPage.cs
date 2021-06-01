@@ -134,6 +134,27 @@ namespace SeleniumTests2
             driver.Sleep();
         }
 
+        public int GetActiveBikesCount(string stationName)
+        {
+            return int.Parse(
+                driver.FindElement(By.Id($"chip-active-{stationName}"))
+                    .GetAttribute("data-count"));
+        }
+
+        public int GetBrokenBikesCount(string stationName)
+        {
+            return int.Parse(
+                driver.FindElement(By.Id($"chip-malfunctions-{stationName}"))
+                    .GetAttribute("data-count"));
+        }
+
+        public int GetReservedBikesCount(string stationName)
+        {
+            return int.Parse(
+                driver.FindElement(By.Id($"chip-reserved-{stationName}"))
+                    .GetAttribute("data-count"));
+        }
+
         private IWebElement GetStationsHeader()
         {
             return driver.FindElement(By.Id("stations-header"));

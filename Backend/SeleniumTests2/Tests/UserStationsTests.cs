@@ -31,6 +31,20 @@ namespace SeleniumTests2.Tests
             var stationsPage = await LoginAsSomeUser();
             stationsPage.OpenBikesList(station.Name);
             bikes.All(bike => stationsPage.HasBike(bike.Id)).Should().BeTrue();
-        }                                                        
+        }
+
+        [Fact]
+        public async Task ActiveBikesCountShouldBeDisplayed()
+        {
+            var stationName = GetUniqueString();
+            var adminToken = await Api.LogInAsAdmin();
+            var station = await Api.AddStation(stationName, adminToken);
+            await Api.AddBike(station.Id, adminToken);
+            await Api.AddBike(station.Id, adminToken);
+            await Api.AddBike(station.Id, adminToken);
+
+            var stationsPage = await LoginAsSomeUser();
+            stationsPage.GetActiveBikesCount(stationName).Should().Be(3);
+        }
     }                                                            
 }
