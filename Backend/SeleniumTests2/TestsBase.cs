@@ -18,6 +18,7 @@ namespace SeleniumTests2
         protected IWebDriver Driver { get; set; }
         
         private static bool _warmedUp;
+        public static int TestNo = 0;
 
         protected TestsBase(ITestOutputHelper output)
         {
@@ -38,6 +39,7 @@ namespace SeleniumTests2
 
         public void Dispose()
         {
+            TestNo++;
             Driver.Quit();
         }
 
