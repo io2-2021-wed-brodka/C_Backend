@@ -95,5 +95,16 @@ namespace SeleniumTests2
 
             return client.PostRequest<GetBikeResponse>("bikes/blocked", body, adminToken);
         }
+
+        public static Task<GetTechResponse> AddTech(this RestClient client, string login, string password, string adminToken)
+        {
+            var body = new AddTechRequest
+            {
+                Name = login,
+                Password = password
+            };
+            
+            return client.PostRequest<GetTechResponse>("techs", body, adminToken);
+        }
     }
 }
