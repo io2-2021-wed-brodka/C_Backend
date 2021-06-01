@@ -23,6 +23,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                 Id = 1,
                 Status = StationStatus.Active,
                 Bikes = new List<Bike>(),
+                BikeLimit = Station.DefaultBikeLimit,
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
@@ -62,6 +63,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                 Id = 1,
                 Status = StationStatus.Active,
                 Bikes = new List<Bike>(),
+                BikeLimit = Station.DefaultBikeLimit,
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
@@ -130,6 +132,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                 Id = stationId,
                 Status = StationStatus.Active,
                 Bikes = new List<Bike>(),
+                BikeLimit = Station.DefaultBikeLimit,
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Bike)null);

@@ -17,6 +17,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             {
                 Id = stationId,
                 Bikes = new List<Bike>(),
+                BikeLimit = Station.DefaultBikeLimit,
             });
             BikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Returns(new Bike()).Verifiable();
             
@@ -35,6 +36,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             {
                 Id = stationId,
                 Bikes = new List<Bike>(),
+                BikeLimit = Station.DefaultBikeLimit,
             });
             BikesRepository.Setup(r => r.Add(It.IsAny<Bike>()))
                 .Returns(new Bike
@@ -42,6 +44,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                     Station = new Station
                     {
                         Id = stationId,
+                        BikeLimit = Station.DefaultBikeLimit,
                     },
                 })
                 .Verifiable();
