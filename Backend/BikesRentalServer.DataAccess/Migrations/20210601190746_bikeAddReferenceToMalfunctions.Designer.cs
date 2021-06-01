@@ -3,14 +3,16 @@ using System;
 using BikesRentalServer.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BikesRentalServer.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210601190746_bikeAddReferenceToMalfunctions")]
+    partial class bikeAddReferenceToMalfunctions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -144,9 +146,6 @@ namespace BikesRentalServer.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("BikeLimit")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
@@ -161,21 +160,18 @@ namespace BikesRentalServer.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            BikeLimit = 0,
                             Name = "Wenus",
                             Status = 0
                         },
                         new
                         {
                             Id = 2,
-                            BikeLimit = 0,
                             Name = "Planeta Małp",
                             Status = 0
                         },
                         new
                         {
                             Id = 3,
-                            BikeLimit = 0,
                             Name = "Mars",
                             Status = 0
                         });
