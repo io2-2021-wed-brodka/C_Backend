@@ -26,8 +26,8 @@ const StationsTab = () => {
     stationFilterType.All,
   );
 
-  const onAddStation = (name: string) => {
-    addStation(name)
+  const onAddStation = (name: string, bikesLimit?: number) => {
+    addStation(name, bikesLimit)
       .then(() => refresh())
       .catch(err => snackbar.open(err.message));
   };
