@@ -12,7 +12,7 @@ import ApplicationBar from './ApplicationBar';
 import Navigation from './Navigation';
 import './UserApp.css';
 import StationsTab from './stations-tab/StationsTab';
-import { services, ServicesContext, useServices } from '../common/services';
+import { services, ServicesContext } from '../common/services';
 import RentalsTab from './rentals-tab/RentalsTab';
 import LoginPage from '../common/components/LoginPage';
 import { getTokenFromLocalStorage } from '../common/authentication/token-functions';
@@ -20,8 +20,6 @@ import pinkTheme from '../common/theme';
 import RegistrationPage from './registration/RegistrationPage';
 import ReservationsTab from './reservations-tab/ReservationsTab';
 import BikesTab from './bikes-tab/BikesTab';
-import usePromise from '../common/hooks/usePromise';
-import { UserRole } from '../common/api/models/login-response';
 import MalfunctionsTab from './malfunctions-tab/MalfunctionsTab';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -47,7 +45,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const UserApp = () => {
   const classes = useStyles();
-  const role = usePromise(useServices().getRole);
 
   return (
     <ThemeProvider theme={pinkTheme}>
@@ -83,15 +80,8 @@ const UserApp = () => {
                       <Route path="/stations" component={StationsTab} />
                       <Route path="/rentals" component={RentalsTab} />
                       <Route path="/reservations" component={ReservationsTab} />
-                      {role?.results === UserRole.Tech && (
-                        <>
-                          <Route path="/bikes" component={BikesTab} />
-                          <Route
-                            path="/malfunctions"
-                            component={MalfunctionsTab}
-                          />
-                        </>
-                      )}
+                      <Route path="/bikes" component={BikesTab} />
+                      <Route path="/malfunctions" component={MalfunctionsTab} />
                     </Container>
                   </>
                 )}

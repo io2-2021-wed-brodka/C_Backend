@@ -67,6 +67,19 @@ namespace SeleniumTests2
             return new StationsPage(Driver);
         }
 
+        protected async Task<StationsPage> LoginAsSomeTech()
+        {
+            var login = GetUniqueString();
+            const string password = "23456";
+            var adminToken = await Api.LogInAsAdmin();
+            await Api.AddTech(login, password, adminToken);
+            var loginPage = new LoginPage(Driver);
+
+            loginPage.LogIn(login, password);
+
+            return new StationsPage(Driver);
+        }
+
         private void SetTestNameInTabTitle(ITestOutputHelper output)
         {
             var type = output.GetType();
