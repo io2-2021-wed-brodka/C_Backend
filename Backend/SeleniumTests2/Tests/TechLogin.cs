@@ -46,7 +46,7 @@ namespace SeleniumTests2.Tests
             loginPage.LogIn(login, password);
             
             var stationsPage = new StationsPage(Driver);
-            stationsPage.GoToTechMalfunctionsPage();
+            stationsPage.GoToTechMalfunctions();
         }
 
         [Fact]

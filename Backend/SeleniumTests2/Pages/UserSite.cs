@@ -62,7 +62,7 @@ namespace SeleniumTests2
             return new StationsPage(driver);
         }
 
-        public TechBikesPage GoToTechBikesPage()
+        public TechBikesPage GoToTechBikes()
         {
             driver.FindElement(By.Id("bikes")).Click();
             driver.Sleep();
@@ -70,7 +70,7 @@ namespace SeleniumTests2
             return new TechBikesPage(driver);
         }
 
-        public TechMalfunctionsPage GoToTechMalfunctionsPage()
+        public TechMalfunctionsPage GoToTechMalfunctions()
         {
             driver.FindElement(By.Id("malfunctions")).Click();
             driver.Sleep();
