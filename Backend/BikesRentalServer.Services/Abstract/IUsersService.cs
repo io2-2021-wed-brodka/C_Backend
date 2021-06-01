@@ -8,6 +8,7 @@ namespace BikesRentalServer.Services.Abstract
         #region Basics
         
         ServiceActionResult<IEnumerable<User>> GetAllUsers();
+        ServiceActionResult<IEnumerable<User>> GetAllTechs();
         ServiceActionResult<User> GetUserByUsernameAndPassword(string username, string password);
         ServiceActionResult<User> AddUser(string username, string password);
         ServiceActionResult<User> AddTech(string username, string password);
