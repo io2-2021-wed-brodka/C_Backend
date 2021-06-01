@@ -35,12 +35,7 @@ namespace BikesRentalServer.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
-        public Malfunction Remove(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Malfunction Remove(Malfunction entity)
+        public Malfunction Remove(int id)
         {
             throw new NotImplementedException();
         }
