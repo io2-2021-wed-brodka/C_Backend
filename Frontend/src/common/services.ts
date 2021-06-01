@@ -88,13 +88,31 @@ type AllServices = {
   removeMalfunction: (id: string) => Promise<void>;
 };
 
+const getAllStationsWithCounts = async () => {
+  const [stations, malfunctions, bikes] = await Promise.all([
+    getAllStations(),
+    getMalfunctions(),
+    getBikes(),
+  ]);
+
+  return stations.map(station => ({
+    ...station,
+    malfunctionsCount: bikes
+      .filter(b => b.station?.id == station.id)
+      .filter(b => malfunctions.some(m => m.bikeId == b.id)).length,
+    reservationsCount: bikes
+      .filter(b => b.station?.id == station.id)
+      .filter(b => b.status == BikeStatus.Reserved).length,
+  }));
+};
+
 export const services: AllServices = {
   signIn: signInAndSaveToken,
   signUp: signUpAndSaveToken,
   getLogin: getLoginFromLocalStorage,
   getRole: getRoleFromLocalStorage,
   getActiveStations: getActiveStations,
-  getAllStations: getAllStations,
+  getAllStations: getAllStationsWithCounts,
   getBikes: getBikes,
   getBikesOnStation: getBikesByStation,
   getReservedBikes: getReservedBikes,

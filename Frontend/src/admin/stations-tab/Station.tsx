@@ -4,6 +4,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Button,
+  Chip,
   createStyles,
   Divider,
   makeStyles,
@@ -41,10 +42,21 @@ type Props = {
   name: string;
   id: string;
   status: StationStatus;
+  reservationsCount?: number;
+  malfunctionsCount?: number;
+  activeBikesCount: number;
   forceRefresh?: () => void;
 };
 
-const Station = ({ name, id, status, forceRefresh }: Props) => {
+const Station = ({
+  name,
+  id,
+  status,
+  forceRefresh,
+  malfunctionsCount,
+  reservationsCount,
+  activeBikesCount,
+}: Props) => {
   const classes = useStyles();
   const [refreshState, refresh] = useRefresh();
   const snackbar = useSnackbar();
@@ -88,6 +100,24 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
     <Accordion onChange={handleChange} id={`station-${name}`}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography className={classes.heading}>{name}</Typography>
+        <Chip
+          id={`chip-reserved-${name}`}
+          label={`Reserv.: ${reservationsCount}`}
+          color="primary"
+          variant="outlined"
+        />
+        <Chip
+          id={`chip-malfunctions-${name}`}
+          label={`Mal.: ${malfunctionsCount}`}
+          color="primary"
+          variant="outlined"
+        />
+        <Chip
+          id={`chip-active-${name}`}
+          label={`Act. bikes: ${activeBikesCount}`}
+          color="primary"
+          variant="outlined"
+        />
       </AccordionSummary>
       <AccordionDetails className={classes.accordionDetails}>
         {hasBeenOpened && (
