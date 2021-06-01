@@ -38,7 +38,7 @@ namespace BikesRentalServer.DataAccess.Repositories
             return _dbContext.Users.Include(u => u.RentedBikes)
                 .Include(u => u.Reservations)
                 .ThenInclude(r => r.Bike)
-                .SingleOrDefault(u => u.Id == iid && u.Role == UserRole.User);
+                .SingleOrDefault(u => u.Id == iid);
         }
 
         public User Add(User entity)
