@@ -19,6 +19,8 @@ import { getTokenFromLocalStorage } from '../common/authentication/token-functio
 import pinkTheme from '../common/theme';
 import RegistrationPage from './registration/RegistrationPage';
 import ReservationsTab from './reservations-tab/ReservationsTab';
+import BikesTab from './bikes-tab/BikesTab';
+import MalfunctionsTab from './malfunctions-tab/MalfunctionsTab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -70,7 +72,7 @@ const UserApp = () => {
                 render={({ location }) => (
                   <>
                     {!getTokenFromLocalStorage() && <Redirect to={'/login'} />}
-                    <AppBar position="sticky">
+                    <AppBar position="sticky" id="user-site-navbar">
                       <ApplicationBar />
                       <Navigation pathname={location.pathname} />
                     </AppBar>
@@ -78,6 +80,8 @@ const UserApp = () => {
                       <Route path="/stations" component={StationsTab} />
                       <Route path="/rentals" component={RentalsTab} />
                       <Route path="/reservations" component={ReservationsTab} />
+                      <Route path="/bikes" component={BikesTab} />
+                      <Route path="/malfunctions" component={MalfunctionsTab} />
                     </Container>
                   </>
                 )}

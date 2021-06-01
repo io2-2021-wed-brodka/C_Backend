@@ -37,6 +37,10 @@ const StationBikesList = ({ stationId, refresh }: Props) => {
           .then(() => internalRefresh())
           .catch(err => snackbar.open(err.message));
       },
+      id:
+        status === BikeStatus.Blocked
+          ? `unblock-bike-${id}`
+          : `block-bike-${id}`,
     },
     {
       label: 'Remove',
@@ -46,13 +50,21 @@ const StationBikesList = ({ stationId, refresh }: Props) => {
           .then(() => internalRefresh())
           .catch(err => snackbar.open(err.message));
       },
+      id: `remove-bike-${id}`,
     },
   ];
 
   return (
     <>
       <DataLoader data={data}>
-        {bikes => <BikesList bikes={bikes} bikeActions={bikeActions} />}
+        {bikes => (
+          <BikesList
+            bikes={bikes}
+            bikeActions={bikeActions}
+            showStatus={true}
+            showLocation={false}
+          />
+        )}
       </DataLoader>
       <SnackBar {...snackbar.props} />
     </>

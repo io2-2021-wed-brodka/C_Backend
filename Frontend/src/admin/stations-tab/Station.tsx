@@ -85,7 +85,7 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
   };
 
   return (
-    <Accordion onChange={handleChange}>
+    <Accordion onChange={handleChange} id={`station-${name}`}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography className={classes.heading}>{name}</Typography>
       </AccordionSummary>
@@ -97,6 +97,7 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
                 variant="contained"
                 color={'secondary'}
                 onClick={onAddBike}
+                id="add-bike"
               >
                 Add bike
               </Button>{' '}
@@ -105,6 +106,7 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
                   variant="contained"
                   color={'default'}
                   onClick={onBlockStation}
+                  id={`block-station-${name}`}
                 >
                   Block
                 </Button>
@@ -114,6 +116,7 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
                   variant="contained"
                   color={'default'}
                   onClick={onUnblockStation}
+                  id={`unblock-station-${name}`}
                 >
                   Unblock
                 </Button>
@@ -122,6 +125,7 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
                 variant="contained"
                 color={'primary'}
                 onClick={onRemoveStation}
+                id={`remove-station-${name}`}
               >
                 Remove
               </Button>

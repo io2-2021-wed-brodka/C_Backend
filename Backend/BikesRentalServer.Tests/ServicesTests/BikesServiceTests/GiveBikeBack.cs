@@ -30,7 +30,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                     Status = BikeStatus.Available,
                     User = user,
                 });
-            BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), station))
+            BikesRepository.Setup(r => r.AssociateWithStation(It.IsAny<int>(), station.Id))
                 .Returns(new Bike
                 {
                     Id = bikeId,
@@ -68,7 +68,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                     Status = BikeStatus.Available,
                     User = user,
                 });
-            BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), It.Is<Station>(s => s.Id == station.Id)))
+            BikesRepository.Setup(r => r.AssociateWithStation(It.IsAny<int>(), station.Id))
                 .Returns(new Bike
                 {
                     Id = bikeId,
@@ -103,14 +103,14 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                     Status = BikeStatus.Available,
                     User = user,
                 });
-            BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>())).Verifiable();
+            BikesRepository.Setup(r => r.AssociateWithStation(It.IsAny<int>(), It.IsAny<int>())).Verifiable();
 
             var bikesService = GetBikesService(user.Username);
             var result = bikesService.GiveBikeBack(bikeId.ToString(), "1");
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
-            BikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>()), Times.Never);
+            BikesRepository.Verify(r => r.AssociateWithStation(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
@@ -129,14 +129,14 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Bike)null);
-            BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), station)).Verifiable();
+            BikesRepository.Setup(r => r.AssociateWithStation(It.IsAny<int>(), station.Id)).Verifiable();
             
             var bikesService = GetBikesService(thisUser.Username);
             var result = bikesService.GiveBikeBack("123", stationId.ToString());
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
-            BikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>()), Times.Never);
+            BikesRepository.Verify(r => r.AssociateWithStation(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
@@ -165,14 +165,14 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                     Id = bikeId,
                     User = otherUser,
                 });
-            BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), station)).Verifiable();
+            BikesRepository.Setup(r => r.AssociateWithStation(It.IsAny<int>(), station.Id)).Verifiable();
 
             var bikesService = GetBikesService(user.Username);
             var result = bikesService.GiveBikeBack(bikeId.ToString(), station.Id.ToString());
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
-            BikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<Station>()), Times.Never);
+            BikesRepository.Verify(r => r.AssociateWithStation(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
@@ -191,14 +191,14 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                 {
                     Id = bikeId,
                 });
-            BikesRepository.Setup(r => r.Associate(It.IsAny<string>(), It.IsAny<User>())).Verifiable();
+            BikesRepository.Setup(r => r.AssociateWithUser(It.IsAny<int>(), It.IsAny<int>())).Verifiable();
 
             var bikesService = GetBikesService();
             var result = bikesService.GiveBikeBack(bikeId.ToString(), stationId.ToString());
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
-            BikesRepository.Verify(r => r.Associate(It.IsAny<string>(), It.IsAny<User>()), Times.Never);
+            BikesRepository.Verify(r => r.AssociateWithUser(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
         }
     }
 }

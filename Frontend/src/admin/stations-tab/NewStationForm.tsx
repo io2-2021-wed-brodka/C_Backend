@@ -39,12 +39,18 @@ const NewStationForm = ({ onAdd }: Props) => {
   return (
     <form className={classes.topBar} onSubmit={submitHandler}>
       <TextField
+        id="new-station-name-input"
         label="New station's name"
         className={classes.input}
         value={name}
         onChange={e => setName(e.target.value)}
       />
-      <Button variant="contained" color={'secondary'} type={'submit'}>
+      <Button
+        id="new-station-submit-button"
+        variant="contained"
+        color={'secondary'}
+        type={'submit'}
+      >
         Add station
       </Button>
     </form>

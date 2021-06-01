@@ -17,14 +17,21 @@ namespace BikesRentalServer.DataAccess.Repositories
         
         public IEnumerable<Bike> GetAll()
         {
-            return _dbContext.Bikes.Include(b => b.Station).ThenInclude(s => s.Bikes).Include(b => b.User);
+            return _dbContext.Bikes
+                .Include(b => b.Station)
+                .ThenInclude(s => s.Bikes)
+                .Include(b => b.User);
         }
 
         public Bike Get(string id)
         {
             if (!int.TryParse(id, out var iid))
                 return null;
-            return _dbContext.Bikes.Include(b => b.Station).ThenInclude(s => s.Bikes).Include(b => b.User).SingleOrDefault(b => b.Id == iid);
+            return _dbContext.Bikes
+                .Include(b => b.Station)
+                .ThenInclude(s => s.Bikes)
+                .Include(b => b.User)
+                .SingleOrDefault(b => b.Id == iid);
         }
 
         public Bike Add(Bike entity)
@@ -35,7 +42,7 @@ namespace BikesRentalServer.DataAccess.Repositories
             return bike;
         }
 
-        public Bike Remove(string id)
+        public Bike Remove(int id)
         {
             var bike = Get(id);
             if (bike is null)
@@ -47,23 +54,15 @@ namespace BikesRentalServer.DataAccess.Repositories
             return bike;
         }
 
-        public Bike Remove(Bike entity)
-        {
-            if (!_dbContext.Bikes.Contains(entity))
-                return null;
-            
-            var bike = _dbContext.Bikes.Remove(entity).Entity;
-            _dbContext.SaveChanges();
-
-            return bike;
-        }
-
         public IEnumerable<Bike> GetBlocked()
         {
-            return _dbContext.Bikes.Where(b => b.Status == BikeStatus.Blocked).Include(b => b.Station).Include(b => b.User);
+            return _dbContext.Bikes
+                .Where(b => b.Status == BikeStatus.Blocked)
+                .Include(b => b.Station)
+                .Include(b => b.User);
         }
 
-        public Bike SetStatus(string id, BikeStatus status)
+        public Bike SetStatus(int id, BikeStatus status)
         {
             var bike = Get(id);
             if (bike is null)
@@ -75,10 +74,11 @@ namespace BikesRentalServer.DataAccess.Repositories
             return bike;
         }
 
-        public Bike Associate(string id, User user)
+        public Bike AssociateWithUser(int bikeId, int userId)
         {
-            var bike = Get(id);
-            if (bike is null || !_dbContext.Users.Contains(user))
+            var bike = Get(bikeId);
+            var user = _dbContext.Users.SingleOrDefault(u => u.Id == userId);
+            if (bike is null || user is null)
                 return null;
 
             bike.Station = null;
@@ -88,10 +88,11 @@ namespace BikesRentalServer.DataAccess.Repositories
             return bike;
         }
 
-        public Bike Associate(string id, Station station)
+        public Bike AssociateWithStation(int bikeId, int stationId)
         {
-            var bike = Get(id);
-            if (bike is null || !_dbContext.Stations.Contains(station))
+            var bike = Get(bikeId);
+            var station = _dbContext.Stations.SingleOrDefault(u => u.Id == stationId);
+            if (bike is null || station is null)
                 return null;
 
             bike.User = null;
@@ -100,5 +101,7 @@ namespace BikesRentalServer.DataAccess.Repositories
 
             return bike;
         }
+
+        private Bike Get(int id) => Get(id.ToString());
     }
 }

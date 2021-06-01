@@ -40,3 +40,9 @@ export const mockedBikesByStations: { [key: string]: Bike[] } = {
     { id: '3234', status: BikeStatus.Available },
   ],
 };
+
+export const mockedBikes: Bike[] = [
+  { id: '555', status: BikeStatus.Available },
+  { id: '6508', status: BikeStatus.Available },
+  { id: '421', status: BikeStatus.Rented },
+];

@@ -20,7 +20,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.StationsRepositoryTests
         }
 
         [Fact]
-        public void RemoveUsingIdShouldRemoveStation()
+        public void RemoveShouldRemoveStation()
         {
             var station = _dbContext.Stations.Add(new Station
                 {
@@ -29,14 +29,14 @@ namespace BikesRentalServer.Tests.RepositoriesTests.StationsRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            _stationsRepository.Remove(station.Id.ToString());
+            _stationsRepository.Remove(station.Id);
 
             _dbContext.Stations.Count().Should().Be(0);
             _dbContext.Stations.SingleOrDefault(x => x.Id == station.Id).Should().BeNull();
         }
 
         [Fact]
-        public void RemoveUsingEntityShouldRemoveStation()
+        public void RemoveShouldReturnRemovedStation()
         {
             var station = _dbContext.Stations.Add(new Station
                 {
@@ -45,78 +45,15 @@ namespace BikesRentalServer.Tests.RepositoriesTests.StationsRepositoryTests
                 .Entity;
             _dbContext.SaveChanges();
 
-            _stationsRepository.Remove(station);
-
-            _dbContext.Stations.Count().Should().Be(0);
-            _dbContext.Stations.SingleOrDefault(x => x.Id == station.Id).Should().BeNull();
-        }
-
-        [Fact]
-        public void RemoveUsingIdShouldReturnRemovedStation()
-        {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Name = "station",
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-
-            var result = _stationsRepository.Remove(station.Id.ToString());
+            var result = _stationsRepository.Remove(station.Id);
 
             result.Should().BeEquivalentTo(station);
-        }
-
-        [Fact]
-        public void RemoveUsingEntityShouldReturnRemovedStation()
-        {
-            var station = _dbContext.Stations.Add(new Station
-                {
-                    Name = "station",
-                })
-                .Entity;
-            _dbContext.SaveChanges();
-
-            var result = _stationsRepository.Remove(station);
-
-            result.Should().BeEquivalentTo(station);
-        }
-
-        [Fact]
-        public void RemoveUsingInvalidIdShouldRemoveNothingAndReturnNull()
-        {
-            const string id = "invalid id";
-            _dbContext.Stations.AddRange(new []
-            {
-                new Station
-                {
-                    Name = "station1",
-                },
-                new Station
-                {
-                    Name = "station2",
-                },
-                new Station
-                {
-                    Name = "station3",
-                },
-                new Station
-                {
-                    Name = "station5",
-                },
-            });
-            _dbContext.SaveChanges();
-
-            var initialStationCount = _dbContext.Stations.Count();
-            var result = _stationsRepository.Remove(id);
-
-            _dbContext.Stations.Count().Should().Be(initialStationCount);
-            result.Should().BeNull();
         }
 
         [Fact]
         public void RemoveUsingIdOfNotExistingStationShouldRemoveNothingAndReturnNull()
         {
-            const string id = "5";
+            const int id = 5;
             _dbContext.Stations.AddRange(new []
             {
                 new Station
@@ -140,41 +77,6 @@ namespace BikesRentalServer.Tests.RepositoriesTests.StationsRepositoryTests
 
             var initialStationCount = _dbContext.Stations.Count();
             var result = _stationsRepository.Remove(id);
-
-            _dbContext.Stations.Count().Should().Be(initialStationCount);
-            result.Should().BeNull();
-        }
-
-        [Fact]
-        public void RemoveNotExistingStationShouldRemoveNothingAndReturnNull()
-        {
-            _dbContext.Stations.AddRange(new []
-            {
-                new Station
-                {
-                    Name = "station1",
-                },
-                new Station
-                {
-                    Name = "station2",
-                },
-                new Station
-                {
-                    Name = "station3",
-                },
-                new Station
-                {
-                    Name = "station5",
-                },
-            });
-            _dbContext.SaveChanges();
-
-            var initialStationCount = _dbContext.Stations.Count();
-            var result = _stationsRepository.Remove(new Station
-            {
-                Id = 6,
-                Name = "other",
-            });
 
             _dbContext.Stations.Count().Should().Be(initialStationCount);
             result.Should().BeNull();

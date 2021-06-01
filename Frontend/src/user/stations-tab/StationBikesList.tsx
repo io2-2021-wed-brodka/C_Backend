@@ -36,6 +36,7 @@ const StationBikesList = ({ stationId }: Props) => {
           })
           .catch(err => snackbar.open(err.message));
       },
+      id: `reserve-${id}`,
     },
     {
       label: 'Rent',
@@ -48,13 +49,21 @@ const StationBikesList = ({ stationId }: Props) => {
           })
           .catch(err => snackbar.open(err.message));
       },
+      id: `rent-${id}`,
     },
   ];
 
   return (
     <>
       <DataLoader data={data}>
-        {bikes => <BikesList bikes={bikes} bikeActions={bikeActions} />}
+        {bikes => (
+          <BikesList
+            bikes={bikes}
+            bikeActions={bikeActions}
+            showStatus={false}
+            showLocation={false}
+          />
+        )}
       </DataLoader>
       <SnackBar {...snackbar.props} />
     </>

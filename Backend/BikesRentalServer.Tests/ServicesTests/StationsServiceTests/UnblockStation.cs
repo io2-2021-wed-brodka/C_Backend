@@ -24,7 +24,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
                 Id = 23,
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(stationBlocked);
-            StationsRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<StationStatus>(s => s == StationStatus.Active))).Returns(station).Verifiable();
+            StationsRepository.Setup(r => r.SetStatus(It.IsAny<int>(), It.Is<StationStatus>(s => s == StationStatus.Active))).Returns(station).Verifiable();
 
             var stationsService = GetStationsService();
             var result = stationsService.UnblockStation(station.Id.ToString());

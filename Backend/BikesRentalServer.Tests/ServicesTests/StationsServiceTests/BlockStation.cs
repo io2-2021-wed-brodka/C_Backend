@@ -18,7 +18,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
                 Id = 23,
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
-            StationsRepository.Setup(r => r.SetStatus(It.IsAny<string>(), It.Is<StationStatus>(s => s == StationStatus.Blocked)))
+            StationsRepository.Setup(r => r.SetStatus(It.IsAny<int>(), It.Is<StationStatus>(s => s == StationStatus.Blocked)))
                 .Returns(new Station
                 {
                     Name = "Trailer Park",

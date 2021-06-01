@@ -5,6 +5,7 @@ import {
   blockBike,
   blockStation,
   blockUser,
+  getBikes,
   getBikesByStation,
   getReservedBikes,
   getRentedBikes,
@@ -21,30 +22,45 @@ import {
   removeReservation,
   getUsers,
   getBlockedUsers,
+  getTechs,
+  removeTech,
+  addTech,
+  getMalfunctions,
+  addMalfunction,
+  removeMalfunction,
 } from './api/endpoints';
 import { Bike, BikeStatus } from './api/models/bike';
 import { Station, StationStatus } from './api/models/station';
 import { mockedStations } from './mocks/stations';
-import { mockedBikesByStations } from './mocks/bikes';
+import { mockedBikesByStations, mockedBikes } from './mocks/bikes';
 import { mockedRentedBikes } from './mocks/rentals';
 import { delay } from './mocks/mockedApiResponse';
 import { BearerToken } from './api/models/bearer-token';
 import {
   signInAndSaveToken,
-  saveTokenInLocalStorage,
+  saveUserDataInLocalStorage,
   signUpAndSaveToken,
+  getLoginFromLocalStorage,
+  getRoleFromLocalStorage,
 } from './authentication/token-functions';
 import { ReservedBike } from './api/models/reservedBike';
 import { mockedReservedBikes } from './mocks/reservedBikes';
 import { LoginResponse, UserRole } from './api/models/login-response';
 import { User } from './api/models/user';
 import { mockedUsers } from './mocks/users';
+import { Tech } from './api/models/tech';
+import { mockedTechs } from './mocks/techs';
+import { Malfunction } from './api/models/malfunction';
+import { mockedMalfunctions } from './mocks/malfunctions';
 
 type AllServices = {
   signIn: (login: string, password: string) => Promise<LoginResponse>;
   signUp: (login: string, password: string) => Promise<BearerToken>;
+  getLogin: () => Promise<string>;
+  getRole: () => Promise<UserRole | null>;
   getActiveStations: () => Promise<Station[]>;
   getAllStations: () => Promise<Station[]>;
+  getBikes: () => Promise<Bike[]>;
   getBikesOnStation: (stationId: string) => Promise<Bike[]>;
   getRentedBikes: () => Promise<Bike[]>;
   getReservedBikes: () => Promise<ReservedBike[]>;
@@ -64,13 +80,22 @@ type AllServices = {
   unblockUser: (id: string) => Promise<void>;
   getUsers: () => Promise<User[]>;
   getBlockedUsers: () => Promise<User[]>;
+  getTechs: () => Promise<Tech[]>;
+  removeTech: (id: string) => Promise<void>;
+  addTech: (name: string, password: string) => Promise<Tech>;
+  getMalfunctions: () => Promise<Malfunction[]>;
+  addMalfunction: (bikeId: string, description: string) => Promise<Malfunction>;
+  removeMalfunction: (id: string) => Promise<void>;
 };
 
 export const services: AllServices = {
   signIn: signInAndSaveToken,
   signUp: signUpAndSaveToken,
+  getLogin: getLoginFromLocalStorage,
+  getRole: getRoleFromLocalStorage,
   getActiveStations: getActiveStations,
   getAllStations: getAllStations,
+  getBikes: getBikes,
   getBikesOnStation: getBikesByStation,
   getReservedBikes: getReservedBikes,
   getRentedBikes: getRentedBikes,
@@ -90,23 +115,32 @@ export const services: AllServices = {
   unblockUser: unblockUser,
   getUsers: getUsers,
   getBlockedUsers: getBlockedUsers,
+  getTechs: getTechs,
+  removeTech: removeTech,
+  addTech: addTech,
+  getMalfunctions: getMalfunctions,
+  addMalfunction: addMalfunction,
+  removeMalfunction: removeMalfunction,
 };
 
 export const mockedServices: AllServices = {
   signIn: login => {
     return delay({ token: login, role: UserRole.User }).then(user => {
-      saveTokenInLocalStorage({ token: user.token });
+      saveUserDataInLocalStorage(user.token, login, UserRole.User);
       return user;
     });
   },
   signUp: login => {
     return delay({ token: login }).then(bearerToken => {
-      saveTokenInLocalStorage(bearerToken);
+      saveUserDataInLocalStorage(bearerToken.token, login, UserRole.User);
       return bearerToken;
     });
   },
+  getLogin: getLoginFromLocalStorage,
+  getRole: getRoleFromLocalStorage,
   getActiveStations: () => delay(mockedStations),
   getAllStations: () => delay(mockedStations),
+  getBikes: () => delay(mockedBikes),
   getBikesOnStation: stationId => delay(mockedBikesByStations[stationId]),
   getRentedBikes: () => delay(mockedRentedBikes),
   getReservedBikes: () => delay(mockedReservedBikes),
@@ -145,6 +179,13 @@ export const mockedServices: AllServices = {
   unblockUser: () => delay<void>(undefined),
   getUsers: () => delay(mockedUsers),
   getBlockedUsers: () => delay(mockedUsers),
+  getTechs: () => delay(mockedTechs),
+  removeTech: () => delay<void>(undefined),
+  addTech: (name: string) => delay<Tech>({ id: '666', name }),
+  getMalfunctions: () => delay<Malfunction[]>(mockedMalfunctions),
+  addMalfunction: (bikeId, description) =>
+    delay<Malfunction>({ id: '1', reportingUserId: '1', bikeId, description }),
+  removeMalfunction: () => delay<void>(undefined),
 };
 
 export const ServicesContext = createContext(services);

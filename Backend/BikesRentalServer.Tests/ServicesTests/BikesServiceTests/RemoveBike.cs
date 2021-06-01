@@ -19,7 +19,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                     Id = bikeId,
                     Status = BikeStatus.Blocked,
                 });
-            BikesRepository.Setup(r => r.Remove(It.IsAny<Bike>())).Verifiable();
+            BikesRepository.Setup(r => r.Remove(It.IsAny<int>())).Returns(new Bike()).Verifiable();
 
             var bikesService = GetBikesService();
             var result = bikesService.RemoveBike(bikeId.ToString());
@@ -33,14 +33,14 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
         {
             const int bikeId = 1234;
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Bike)null);
-            BikesRepository.Setup(r => r.Remove(It.IsAny<Bike>())).Verifiable();
+            BikesRepository.Setup(r => r.Remove(It.IsAny<int>())).Verifiable();
 
             var bikesService = GetBikesService();
             var result = bikesService.RemoveBike(bikeId.ToString());
 
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
-            BikesRepository.Verify(r => r.Remove(It.IsAny<Bike>()), Times.Never);
+            BikesRepository.Verify(r => r.Remove(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
@@ -52,14 +52,14 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                 Id = bikeId,
                 Status = BikeStatus.Available,
             });
-            BikesRepository.Setup(r => r.Remove(It.IsAny<Bike>())).Verifiable();
+            BikesRepository.Setup(r => r.Remove(It.IsAny<int>())).Verifiable();
 
             var bikesService = GetBikesService();
             var result = bikesService.RemoveBike(bikeId.ToString());
 
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
-            BikesRepository.Verify(r => r.Remove(It.IsAny<Bike>()), Times.Never);
+            BikesRepository.Verify(r => r.Remove(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
@@ -75,13 +75,13 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                 Status = BikeStatus.Blocked,
             };
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
-            BikesRepository.Setup(r => r.Remove(It.IsAny<Bike>())).Verifiable();
+            BikesRepository.Setup(r => r.Remove(It.IsAny<int>())).Verifiable();
             
             var bikesService = GetBikesService();
             Action action = () => bikesService.RemoveBike(bike.Id.ToString());
 
             action.Should().Throw<InvalidOperationException>();
-            BikesRepository.Verify(r => r.Remove(It.IsAny<Bike>()), Times.Never);
+            BikesRepository.Verify(r => r.Remove(It.IsAny<int>()), Times.Never);
         }
     }
 }

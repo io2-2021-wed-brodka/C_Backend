@@ -28,6 +28,74 @@ namespace BikesRentalServer.DataAccess
                     Username = "admin",
                     PasswordHash = Toolbox.ComputeHash("admin"),
                 });
+
+            if (!Database.IsSqlite())
+                return;
+
+            var station1 = new Station
+            {
+                Id = 1,
+                Name = "Wenus",
+                Status = StationStatus.Active,
+            };
+
+            var station2 = new Station
+            {
+                Id = 2,
+                Name = "Planeta Małp",
+                Status = StationStatus.Active,
+            };
+
+            var station3 = new Station
+            {
+                Id = 3,
+                Name = "Mars",
+                Status = StationStatus.Active,
+            };
+
+            modelBuilder.Entity<Station>().HasData(
+                station1,
+                station2,
+                station3
+            );
+
+            modelBuilder.Entity<Bike>()
+                .HasData(new Bike
+                {
+                    Id = 1,
+                    StationId = 2,
+                    Status = BikeStatus.Available,
+                },
+                new Bike
+                {
+                    Id = 2,
+                    StationId = 3,
+                    Status = BikeStatus.Available,
+                },
+                new Bike
+                {
+                    Id = 3,
+                    StationId = 1,
+                    Status = BikeStatus.Available,
+                },
+                new Bike
+                {
+                    Id = 4,
+                    StationId = 1,
+                    Status = BikeStatus.Available,
+                },
+                new Bike
+                {
+                    Id = 5,
+                    StationId = 2,
+                    Status = BikeStatus.Available,
+                },
+                new Bike
+                {
+                    Id = 6,
+                    StationId = 3,
+                    Status = BikeStatus.Available,
+                });
         }
     }
 }

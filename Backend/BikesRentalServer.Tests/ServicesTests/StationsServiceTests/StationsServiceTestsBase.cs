@@ -9,13 +9,14 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
     public class StationsServiceTestsBase
     {
         protected Mock<IStationsRepository> StationsRepository { get; } = new Mock<IStationsRepository>();
+        protected Mock<IReservationsRepository> ReservationsRepository { get; } = new Mock<IReservationsRepository>();
         
         protected IStationsService GetStationsService(string userName = "maklowitz", UserRole role = UserRole.Admin)
         {
             var userContext = new UserContext();
             userContext.SetOnce(userName, role);
 
-            return new Services.StationsService(StationsRepository.Object, userContext);
+            return new Services.StationsService(StationsRepository.Object, ReservationsRepository.Object, userContext);
         }
     }
 }

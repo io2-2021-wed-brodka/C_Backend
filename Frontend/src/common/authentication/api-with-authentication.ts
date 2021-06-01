@@ -11,7 +11,7 @@ export const apiWithAuthConnection = <T>(
     return Promise.reject(new Error('No token saved locally. Please sign in.'));
   }
   return apiConnection(url, {
-    headers: { Authorization: `Bearer ${bearerToken?.token}` },
+    headers: { Authorization: `Bearer ${bearerToken}` },
     ...params,
   });
 };
