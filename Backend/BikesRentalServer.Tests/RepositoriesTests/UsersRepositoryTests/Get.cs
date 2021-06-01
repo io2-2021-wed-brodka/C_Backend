@@ -38,7 +38,7 @@ namespace BikesRentalServer.Tests.RepositoriesTests.UsersRepositoryTests
         [Fact]
         public void GetShouldReturnNullIfNoUsersWithProvidedId()
         {
-            const string id = "1";
+            const string id = "100";
 
             var result = _usersRepository.Get(id);
 
