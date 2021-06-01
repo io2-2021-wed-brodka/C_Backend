@@ -73,7 +73,7 @@ namespace BikesRentalServer.Services
             var station = _stationsRepository.Get(stationId);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Station does not exist");
-            if (station.Bikes.Count >= 10)
+            if (station.Bikes.Count >= Station.BikeLimit)
                 return ServiceActionResult.InvalidState<Bike>("Bike limit exceeded");
 
             var bike = _bikesRepository.Add(new Bike
@@ -150,7 +150,7 @@ namespace BikesRentalServer.Services
             var user = _usersRepository.GetByUsername(_userContext.Username);
             if (user.Status is UserStatus.Blocked)
                 return ServiceActionResult.UserBlocked<Bike>("User is blocked");
-            if (user.RentedBikes.Count >= 4)
+            if (user.RentedBikes.Count >= User.RentalLimit)
                 return ServiceActionResult.InvalidState<Bike>("Rental limit exceeded");
 
             var reservation = _reservationsRepository.GetActiveReservation(bike.Id);
@@ -183,7 +183,7 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.EntityNotFound<Bike>("Station not found");
             if (station.Status is StationStatus.Blocked)
                 return ServiceActionResult.InvalidState<Bike>("Station is blocked");
-            if (station.Bikes.Count >= 10)
+            if (station.Bikes.Count >= Station.BikeLimit)
                 return ServiceActionResult.InvalidState<Bike>("Bike limit exceeded");
 
             var bike = _bikesRepository.Get(bikeId);
@@ -315,7 +315,7 @@ namespace BikesRentalServer.Services
             var user = _usersRepository.GetByUsername(_userContext.Username);
             if (user.Status is UserStatus.Blocked)
                 return ServiceActionResult.UserBlocked<Reservation>("User is blocked");
-            if (user.Reservations.Count >= 3)
+            if (user.Reservations.Count >= User.ReservationLimit)
                 return ServiceActionResult.InvalidState<Reservation>("Reservation limit exceeded");
 
             bike = _bikesRepository.SetStatus(bike.Id, BikeStatus.Reserved);

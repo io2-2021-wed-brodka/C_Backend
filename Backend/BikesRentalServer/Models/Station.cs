@@ -4,6 +4,8 @@ namespace BikesRentalServer.Models
 {
     public class Station
     {
+        public const int BikeLimit = 10;
+        
         public int Id { get; set; }
         public StationStatus Status { get; set; }
         public string Name { get; set; }
