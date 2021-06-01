@@ -80,10 +80,10 @@ export const reserveBike = (bikeId: string) =>
     data: { id: bikeId },
   });
 
-export const addStation = (name: string) =>
+export const addStation = (name: string, bikesLimit?: number) =>
   apiWithAuthConnection<Station>(`${API}/stations`, {
     method: 'POST',
-    data: { name },
+    data: bikesLimit ? { name, bikesLimit } : { name },
   });
 
 export const addBike = (stationId: string) =>

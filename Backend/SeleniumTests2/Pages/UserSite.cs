@@ -69,5 +69,34 @@ namespace SeleniumTests2
 
             return new StationsPage(driver);
         }
+
+        public TechBikesPage GoToTechBikes()
+        {
+            driver.FindElement(By.Id("bikes")).Click();
+            driver.Sleep();
+
+            return new TechBikesPage(driver);
+        }
+
+        public TechMalfunctionsPage GoToTechMalfunctions()
+        {
+            driver.FindElement(By.Id("malfunctions")).Click();
+            driver.Sleep();
+
+            return new TechMalfunctionsPage(driver);
+        }
+
+        public bool AreTechTabsVisible()
+        {
+            try
+            {
+                driver.FindElement(By.Id("malfunctions"));
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

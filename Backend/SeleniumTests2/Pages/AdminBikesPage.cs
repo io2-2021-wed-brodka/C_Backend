@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.OpenApi.Models;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 
 namespace SeleniumTests2.Pages
 {

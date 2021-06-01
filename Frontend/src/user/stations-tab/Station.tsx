@@ -3,6 +3,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Chip,
   createStyles,
   makeStyles,
   Theme,
@@ -13,15 +14,14 @@ import StationBikesList from './StationBikesList';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    heading: {
-      fontSize: theme.typography.pxToRem(15),
-      fontWeight: theme.typography.fontWeightRegular,
-    },
     accordionDetails: {
       padding: 0,
     },
     div: {
       width: '100%',
+    },
+    listItem: {
+      marginRight: theme.spacing(0.5),
     },
   }),
 );
@@ -29,9 +29,10 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = {
   name: string;
   id: string;
+  activeBikesCount: number;
 };
 
-const Station = ({ name, id }: Props) => {
+const Station = ({ name, id, activeBikesCount }: Props) => {
   const classes = useStyles();
   const [hasBeenOpened, setHasBeenOpened] = useState(false);
 
@@ -44,7 +45,16 @@ const Station = ({ name, id }: Props) => {
   return (
     <Accordion onChange={handleChange} id={`station-${name}`}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography className={classes.heading}>{name}</Typography>
+        <Typography className={classes.listItem} variant="h6">
+          {name}
+        </Typography>
+        <Chip
+          id={`chip-active-${name}`}
+          label={activeBikesCount}
+          color="secondary"
+          className={classes.listItem}
+          data-count={activeBikesCount}
+        />
       </AccordionSummary>
       <AccordionDetails className={classes.accordionDetails}>
         {hasBeenOpened && (

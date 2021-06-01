@@ -2,6 +2,7 @@ using RestSharp;
 using BikesRentalServer.WebApi.Dtos.Responses;
 using System.Threading.Tasks;
 using BikesRentalServer.WebApi.Dtos.Requests;
+using System.Linq;
 
 namespace SeleniumTests2
 {
@@ -46,11 +47,12 @@ namespace SeleniumTests2
             return client.PostRequest<LogInResponse>("register", body);
         }
 
-        public static Task<GetStationResponse> AddStation(this RestClient client, string stationName, string adminToken)
+        public static Task<GetStationResponse> AddStation(this RestClient client, string stationName, string adminToken, int? bikesLimit = null)
         {
             var body = new AddStationRequest
             {
-                Name = stationName
+                Name = stationName,
+                BikesLimit = bikesLimit
             };
             
             return client.PostRequest<GetStationResponse>("stations", body, adminToken);
@@ -84,6 +86,16 @@ namespace SeleniumTests2
             };
 
             return client.PostRequest<GetBikeResponse>("bikes/rented", body, adminToken);
+        }
+
+        public static Task<GetBikeResponse> ReturnBike(this RestClient client, string bikeId, string stationId, string adminToken)
+        {
+            var body = new GiveBikeBackRequest
+            {
+                Id = bikeId,
+            };
+
+            return client.PostRequest<GetBikeResponse>($"stations/{stationId}/bikes", body, adminToken);
         }
 
         public static Task<GetReservedBikeResponse> ReserveBike(this RestClient client, string bikeId, string adminToken)
@@ -121,12 +133,37 @@ namespace SeleniumTests2
             return client.GetRequest<GetAllUsersResponse>("users", adminToken);
         }
 
-        public static async Task<string> GetUserId(this RestClient client, string UserName, string adminToken)
+        public static async Task<string> GetUserId(this RestClient client, string userName, string adminToken)
         {
             var users = await client.GetUsers(adminToken);
-            foreach (var user in users.Users)
-                if (user.Name == UserName) return user.Id;
-            return "";
+            return users.Users.FirstOrDefault(u => u.Name == userName)?.Id ?? "";
+        }
+
+        public static Task<GetTechResponse> AddTech(this RestClient client, string login, string password, string adminToken)
+        {
+            var body = new AddTechRequest
+            {
+                Name = login,
+                Password = password
+            };
+            
+            return client.PostRequest<GetTechResponse>("techs", body, adminToken);
+        }
+
+        public static Task<GetAllMalfunctionsResponse> GetMalfunctions(this RestClient client, string adminToken)
+        {
+            return client.GetRequest<GetAllMalfunctionsResponse>("malfunctions", adminToken);
+        }
+
+        public static Task<GetMalfunctionResponse> ReportMalfunction(this RestClient client, string bikeId, string description, string adminToken)
+        {
+            var body = new AddMalfunctionRequest
+            {
+                Id = bikeId,
+                Description = description
+            };
+            
+            return client.PostRequest<GetMalfunctionResponse>("malfunctions", body, adminToken);
         }
     }
 }

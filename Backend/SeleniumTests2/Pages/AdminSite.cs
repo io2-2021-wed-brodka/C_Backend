@@ -1,4 +1,3 @@
-using System;
 using OpenQA.Selenium;
 using SeleniumTests2.Pages;
 
@@ -37,6 +36,14 @@ namespace SeleniumTests2
             driver.Sleep();
 
             return new AdminBikesPage(driver);
+        }
+
+        public AdminTechsPage GoToTechs()
+        {
+            driver.FindElement(By.Id("go-to-techs")).Click();
+            driver.Sleep();
+
+            return new AdminTechsPage(driver);
         }
 
         private IWebElement GetLogOutButton()

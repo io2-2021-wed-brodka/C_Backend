@@ -23,6 +23,14 @@ namespace BikesRentalServer.DataAccess.Repositories
                 .Where(u => u.Role == UserRole.User);
         }
 
+        public IEnumerable<User> GetAllTechs()
+        {
+            return _dbContext.Users
+                .Include(u => u.RentedBikes)
+                .Include(u => u.Reservations)
+                .Where(u => u.Role == UserRole.Tech);
+        }
+
         public User Get(string id)
         {
             if (!int.TryParse(id, out var iid))
@@ -30,7 +38,7 @@ namespace BikesRentalServer.DataAccess.Repositories
             return _dbContext.Users.Include(u => u.RentedBikes)
                 .Include(u => u.Reservations)
                 .ThenInclude(r => r.Bike)
-                .SingleOrDefault(u => u.Id == iid && u.Role == UserRole.User);
+                .SingleOrDefault(u => u.Id == iid);
         }
 
         public User Add(User entity)

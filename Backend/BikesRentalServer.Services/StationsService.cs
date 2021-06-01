@@ -31,6 +31,7 @@ namespace BikesRentalServer.Services
                 Id = station.Id,
                 Name = station.Name,
                 Status = station.Status,
+                BikeLimit = station.BikeLimit,
             }));
         }
 
@@ -46,6 +47,7 @@ namespace BikesRentalServer.Services
                 Id = station.Id,
                 Name = station.Name,
                 Status = station.Status,
+                BikeLimit = station.BikeLimit,
             } );
         }
         
@@ -69,12 +71,16 @@ namespace BikesRentalServer.Services
             }));
         }
   
-        public ServiceActionResult<Station> AddStation(string name)
+        public ServiceActionResult<Station> AddStation(string name, int bikeLimit)
         {
+            if (bikeLimit <= 0)
+                return ServiceActionResult.InvalidState<Station>("Invalid bike limit");
+            
             var station = _stationsRepository.Add(new Station
             {
                 Name = name,
                 Status = StationStatus.Active,
+                BikeLimit = bikeLimit,
             });
             return ServiceActionResult.Success(new Station
             {
@@ -82,6 +88,7 @@ namespace BikesRentalServer.Services
                 Id = station.Id,
                 Name = station.Name,
                 Status = station.Status,
+                BikeLimit = station.BikeLimit,
             });
         }
 
@@ -102,6 +109,7 @@ namespace BikesRentalServer.Services
                 Id = station.Id,
                 Name = station.Name,
                 Status = station.Status,
+                BikeLimit = station.BikeLimit,
             });
         }
         
@@ -118,6 +126,7 @@ namespace BikesRentalServer.Services
                 Id = station.Id,
                 Name = station.Name,
                 Status = station.Status,
+                BikeLimit = station.BikeLimit,
             }));
         }
 
@@ -130,6 +139,7 @@ namespace BikesRentalServer.Services
                 Id = station.Id,
                 Name = station.Name,
                 Status = station.Status,
+                BikeLimit = station.BikeLimit,
             }));
         }
 
@@ -148,6 +158,7 @@ namespace BikesRentalServer.Services
                 Id = station.Id,
                 Name = station.Name,
                 Status = station.Status,
+                BikeLimit = station.BikeLimit,
             });
         }
 
@@ -166,6 +177,7 @@ namespace BikesRentalServer.Services
                 Id = station.Id,
                 Name = station.Name,
                 Status = station.Status,
+                BikeLimit = station.BikeLimit,
             });
         }
         

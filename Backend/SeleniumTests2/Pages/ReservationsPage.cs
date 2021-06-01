@@ -18,15 +18,15 @@ namespace SeleniumTests2
             }
         }
 
-        public void CancelReservation(string bikeId)
+        public void RentBike(string bikeId)
         {
-            // to_do
+            GetRentBikeButton(bikeId).Click();
             driver.Sleep();
         }
 
-        public void RentBike(string bikeId)
+        public void CancelBike(string bikeId)
         {
-            GetRentButton(bikeId).Click();
+            GetCancelButton(bikeId).Click();
             driver.Sleep();
         }
 
@@ -34,7 +34,7 @@ namespace SeleniumTests2
         {
             try
             {
-                GetRentButton(bikeId);
+                GetRentBikeButton(bikeId);
                 return true;
             }
             catch
@@ -43,9 +43,14 @@ namespace SeleniumTests2
             }
         }
 
-        private IWebElement GetRentButton(string bikeId)
+        public IWebElement GetRentBikeButton(string bikeId)
         {
             return driver.FindElement(By.Id($"rent-{bikeId}"));
+        }
+
+        public IWebElement GetCancelButton(string bikeId)
+        {
+            return driver.FindElement(By.Id($"cancel-{bikeId}"));
         }
     }
 }

@@ -18,7 +18,7 @@ namespace BikesRentalServer.Tests.ServicesTests.StationsServiceTests
             StationsRepository.Setup(r => r.Add(It.IsAny<Station>())).Returns(station).Verifiable();
             
             var stationsService = GetStationsService();
-            var result = stationsService.AddStation(station.Name);
+            var result = stationsService.AddStation(station.Name, Station.DefaultBikeLimit);
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().NotBeNull();

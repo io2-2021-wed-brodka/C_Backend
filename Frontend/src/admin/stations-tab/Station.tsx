@@ -4,6 +4,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Button,
+  Chip,
   createStyles,
   Divider,
   makeStyles,
@@ -20,10 +21,6 @@ import { StationStatus } from '../../common/api/models/station';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    heading: {
-      fontSize: theme.typography.pxToRem(15),
-      fontWeight: theme.typography.fontWeightRegular,
-    },
     accordionDetails: {
       padding: 0,
     },
@@ -34,6 +31,9 @@ const useStyles = makeStyles((theme: Theme) =>
     div: {
       width: '100%',
     },
+    listItem: {
+      marginRight: theme.spacing(0.5),
+    },
   }),
 );
 
@@ -41,10 +41,21 @@ type Props = {
   name: string;
   id: string;
   status: StationStatus;
+  reservationsCount?: number;
+  malfunctionsCount?: number;
+  activeBikesCount: number;
   forceRefresh?: () => void;
 };
 
-const Station = ({ name, id, status, forceRefresh }: Props) => {
+const Station = ({
+  name,
+  id,
+  status,
+  forceRefresh,
+  malfunctionsCount,
+  reservationsCount,
+  activeBikesCount,
+}: Props) => {
   const classes = useStyles();
   const [refreshState, refresh] = useRefresh();
   const snackbar = useSnackbar();
@@ -87,7 +98,30 @@ const Station = ({ name, id, status, forceRefresh }: Props) => {
   return (
     <Accordion onChange={handleChange} id={`station-${name}`}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography className={classes.heading}>{name}</Typography>
+        <Typography className={classes.listItem} variant="h6">
+          {name}
+        </Typography>
+        <Chip
+          id={`chip-reserved-${name}`}
+          label={`Reserv.: ${reservationsCount}`}
+          color="default"
+          className={classes.listItem}
+          data-count={reservationsCount}
+        />
+        <Chip
+          id={`chip-malfunctions-${name}`}
+          label={`Mal.: ${malfunctionsCount}`}
+          color="primary"
+          className={classes.listItem}
+          data-count={malfunctionsCount}
+        />
+        <Chip
+          id={`chip-active-${name}`}
+          label={`Act. bikes: ${activeBikesCount}`}
+          color="secondary"
+          className={classes.listItem}
+          data-count={activeBikesCount}
+        />
       </AccordionSummary>
       <AccordionDetails className={classes.accordionDetails}>
         {hasBeenOpened && (

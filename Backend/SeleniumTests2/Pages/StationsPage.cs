@@ -69,6 +69,13 @@ namespace SeleniumTests2
             return GetBikeElements().Count;
         }
 
+        public int GetActiveBikesCount(string stationName)
+        {
+            return int.Parse(
+                driver.FindElement(By.Id($"chip-active-{stationName}"))
+                    .GetAttribute("data-count"));
+        }
+
         private IWebElement GetStationElement(string stationName)
         {
             return driver.FindElement(By.Id($"station-{stationName}"));

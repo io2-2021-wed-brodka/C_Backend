@@ -18,6 +18,7 @@ namespace SeleniumTests2
         protected IWebDriver Driver { get; set; }
         
         private static bool _warmedUp;
+        public static int TestNo = 0;
 
         protected TestsBase(ITestOutputHelper output)
         {
@@ -38,6 +39,7 @@ namespace SeleniumTests2
 
         public void Dispose()
         {
+            TestNo++;
             Driver.Quit();
         }
 
@@ -67,13 +69,26 @@ namespace SeleniumTests2
             return new StationsPage(Driver);
         }
 
+        protected async Task<StationsPage> LoginAsSomeTech()
+        {
+            var login = GetUniqueString();
+            const string password = "23456";
+            var adminToken = await Api.LogInAsAdmin();
+            await Api.AddTech(login, password, adminToken);
+            var loginPage = new LoginPage(Driver);
+
+            loginPage.LogIn(login, password);
+
+            return new StationsPage(Driver);
+        }
+
         private void SetTestNameInTabTitle(ITestOutputHelper output)
         {
             var type = output.GetType();
             var testMember = type.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
             var test = (ITest)testMember.GetValue(output);
             var displayName = string.Join('.', test.DisplayName.Split('.').Skip(3).ToArray());
-            Driver.SetTabTitle(displayName);
+            Driver.SetTabTitle($"{TestNo}: {displayName}");
         }
     }
 }
