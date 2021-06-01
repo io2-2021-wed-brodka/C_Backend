@@ -63,7 +63,8 @@ namespace BikesRentalServer.WebApi.Controllers
                     ReservationsCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Reserved),
                     BikesLimit = response.Object.BikeLimit,
                 }),
-                Status.EntityNotFound or Status.InvalidState or Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
+                Status.InvalidState => UnprocessableEntity(response.Message),
+                Status.EntityNotFound or Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
         }
 

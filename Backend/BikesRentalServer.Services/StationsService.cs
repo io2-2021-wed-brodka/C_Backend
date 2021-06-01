@@ -73,6 +73,9 @@ namespace BikesRentalServer.Services
   
         public ServiceActionResult<Station> AddStation(string name, int bikeLimit)
         {
+            if (bikeLimit <= 0)
+                return ServiceActionResult.InvalidState<Station>("Invalid bike limit");
+            
             var station = _stationsRepository.Add(new Station
             {
                 Name = name,
