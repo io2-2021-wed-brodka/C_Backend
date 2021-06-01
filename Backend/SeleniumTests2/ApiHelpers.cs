@@ -40,5 +40,14 @@ namespace SeleniumTests2
             var response = await client.ExecutePostAsync<T>(request);
             return response.Data;
         }
+
+        public static async Task<T> GetRequest<T>(this RestClient client, string endpoint, string token)
+        {
+            var request = new RestRequest(endpoint, DataFormat.Json);
+            request.AddHeader("Authorization", $"Bearer {token}");
+
+            var response = await client.ExecuteGetAsync<T>(request);
+            return response.Data;
+        }
     }
 }

@@ -43,6 +43,7 @@ const MalfunctionDialog = ({ bikeId, close, onReportMalfunction }: Props) => {
         />
         <DialogActions>
           <Button
+            id="report-malfunction"
             onClick={() => onReportMalfunction(description)}
             disabled={!description}
           >

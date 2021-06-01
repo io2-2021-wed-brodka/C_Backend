@@ -106,5 +106,10 @@ namespace SeleniumTests2
             
             return client.PostRequest<GetTechResponse>("techs", body, adminToken);
         }
+
+        public static Task<GetMalfunctionsResponse> GetMalfunctions(this RestClient client, string adminToken)
+        {
+            return client.GetRequest<GetMalfunctionsResponse>("malfunctions", adminToken);
+        }
     }
 }

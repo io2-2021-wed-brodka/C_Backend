@@ -45,6 +45,7 @@ const RentalsTab = () => {
   const onReportMalfunction = (description: string) => {
     addMalfunction(reportedBikeId, description).then(() => {
       setMalfunctionDialogIsOpen(false);
+      snackbar.open('Reported malfunction');
     });
   };
 
