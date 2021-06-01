@@ -32,7 +32,7 @@ namespace BikesRentalServer.WebApi.Controllers
             {
                 Status.Success => NoContent(),
                 Status.EntityNotFound => NotFound(response.Message),
-                Status.InvalidState or Status.UserBlocked or _ => throw new InvalidOperationException(response.Message),
+                Status.InvalidState or Status.UserBlocked or _ => throw new InvalidOperationException($"Unexpected result: {response.Status} - {response.Message}"),
             };
         }
 
