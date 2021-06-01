@@ -1,8 +1,8 @@
-﻿using System;
+﻿using BikesRentalServer.DataAccess.Repositories.Abstract;
 using BikesRentalServer.Infrastructure;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
-using BikesRentalServer.DataAccess.Repositories.Abstract;
+using System;
 
 namespace BikesRentalServer.Services
 {
@@ -13,10 +13,13 @@ namespace BikesRentalServer.Services
         private readonly IBikesRepository _bikesRepository;
         private readonly IUsersRepository _usersRepository;
 
-        public MalfunctionsService(UserContext userContext, IMalfunctionsRepository malfunctionRepository, IBikesRepository bikesRepository, IUsersRepository usersRepository)
+        public MalfunctionsService(UserContext userContext,
+                                   IMalfunctionsRepository malfunctionRepository,
+                                   IBikesRepository bikesRepository,
+                                   IUsersRepository usersRepository)
         {
-            _malfunctionRepository = malfunctionRepository;
             _userContext = userContext;
+            _malfunctionRepository = malfunctionRepository;
             _bikesRepository = bikesRepository;
             _usersRepository = usersRepository;
         }
@@ -25,20 +28,20 @@ namespace BikesRentalServer.Services
         public ServiceActionResult<Malfunction> AddMalfunction(string bikeId, string description)
         {
             var bike = _bikesRepository.Get(bikeId);
-            if (bike == null)
+            if (bike is null)
                 return ServiceActionResult.EntityNotFound<Malfunction>("Bike not found");
             var user = _usersRepository.GetByUsername(_userContext.Username);
 
-            if(bike.User == null || (bike.User.Username != _userContext.Username))
+            if (bike.User is null || bike.User.Username != _userContext.Username)
                 return ServiceActionResult.InvalidState<Malfunction>("Bike not rented by calling user");
 
-            var malfunction = _malfunctionRepository.Add(new Malfunction()
+            var malfunction = _malfunctionRepository.Add(new Malfunction
             {
                 Bike = bike,
                 ReportingUser = user,
                 Description = description,
                 State = MalfunctionState.NotFixed, 
-                DetectionDate = DateTime.Now
+                DetectionDate = DateTime.Now,
             });
             return ServiceActionResult.Success(malfunction);
         }
@@ -47,7 +50,7 @@ namespace BikesRentalServer.Services
         {
             var malfunction = _malfunctionRepository.Get(id);
             if (malfunction is null)
-                return ServiceActionResult.EntityNotFound<Malfunction>("Bike not found");
+                return ServiceActionResult.EntityNotFound<Malfunction>("Malfunction not found");
 
             return ServiceActionResult.Success(malfunction);
         }

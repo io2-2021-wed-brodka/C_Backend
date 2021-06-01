@@ -1,15 +1,9 @@
 ﻿using BikesRentalServer.DataAccess;
-using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BikesRentalServer.DataAccess.Repositories;
 using BikesRentalServer.Models;
 using BikesRentalServer.Tests.Mock;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using Xunit;
 
 namespace BikesRentalServer.Tests.RepositoriesTests.MalfunctionsRepositoryTests
@@ -37,8 +31,6 @@ namespace BikesRentalServer.Tests.RepositoriesTests.MalfunctionsRepositoryTests
         public void AddShouldReturnAddedMalfunction()
         {
             const string description = "there is no wheel in this bicycle";
-            string bikeId = "1";
-            string reportingUserId = "1";
             var user = _dbContext.Users.Add(new User()).Entity;
             var bike = _dbContext.Bikes.Add(new Bike()).Entity;
             _dbContext.SaveChanges();
