@@ -40,7 +40,7 @@ namespace SeleniumTests2.Tests
         }
 
         [Fact]
-        public async Task NewStationLimitShouldWorkForAdmin()
+        public void NewStationLimitShouldWorkForAdmin()
         {
             var stationName = GetUniqueString();
 
@@ -56,6 +56,37 @@ namespace SeleniumTests2.Tests
             adminStationsPage.AddBikeToOpenedStation();
             adminStationsPage.ContainsSnackbar().Should().BeTrue();
             adminStationsPage.GetBikesCount().Should().Be(2);
+        }
+
+        [Fact]
+        public async Task NewStationLimitShouldWorkForUser()
+        {
+            var login = GetUniqueString();
+            var password = "234";
+            var stationName = GetUniqueString();
+            var station2Name = GetUniqueString();
+            var adminToken = await Api.LogInAsAdmin();
+            var station = await Api.AddStation(stationName, adminToken, 2);
+            var station2 = await Api.AddStation(station2Name, adminToken, 3);
+            var bike1 = await Api.AddBike(station2.Id, adminToken);
+            var bike2 = await Api.AddBike(station2.Id, adminToken);
+            var bike3 = await Api.AddBike(station2.Id, adminToken);
+            var user = await Api.SignUp(login, password);
+            await Api.RentBike(bike1.Id, user.Token);
+            await Api.RentBike(bike2.Id, user.Token);
+            await Api.RentBike(bike3.Id, user.Token);
+            
+            new LoginPage(Driver).LogIn(login, password);
+            var stationsPage = new StationsPage(Driver);
+            var rentalsPage = stationsPage.GoToRentals();
+
+            rentalsPage.ReturnBike(bike1.Id, station.Id);
+            rentalsPage.HasBike(bike1.Id).Should().BeFalse();
+            rentalsPage.ReturnBike(bike2.Id, station.Id);
+            rentalsPage.HasBike(bike2.Id).Should().BeFalse();
+            rentalsPage.ReturnBike(bike3.Id, station.Id);
+            rentalsPage.HasBike(bike3.Id).Should().BeTrue();
+            rentalsPage.ContainsSnackbar().Should().BeTrue();
         }
 
         [Fact]

@@ -34,19 +34,27 @@ const RentalsTab = () => {
 
   const selectStation = (station: Station) => {
     setStationsDialogIsOpen(false);
-    returnBike(station.id, returnedBikeId).then(() => {
-      refreshBikes();
-      snackbar.open(
-        `Returned bike #${returnedBikeId} on station ${station.name}`,
-      );
-    });
+    returnBike(station.id, returnedBikeId)
+      .then(() => {
+        refreshBikes();
+        snackbar.open(
+          `Returned bike #${returnedBikeId} on station ${station.name}`,
+        );
+      })
+      .catch(err => {
+        snackbar.open(err.message);
+      });
   };
 
   const onReportMalfunction = (description: string) => {
-    addMalfunction(reportedBikeId, description).then(() => {
-      setMalfunctionDialogIsOpen(false);
-      snackbar.open('Reported malfunction');
-    });
+    addMalfunction(reportedBikeId, description)
+      .then(() => {
+        setMalfunctionDialogIsOpen(false);
+        snackbar.open('Reported malfunction');
+      })
+      .catch(err => {
+        snackbar.open(err.message);
+      });
   };
 
   const bikeActions: BikeActionsForBike = ({ id }) => [

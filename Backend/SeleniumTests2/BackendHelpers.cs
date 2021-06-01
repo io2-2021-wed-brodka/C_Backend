@@ -46,11 +46,12 @@ namespace SeleniumTests2
             return client.PostRequest<LogInResponse>("register", body);
         }
 
-        public static Task<GetStationResponse> AddStation(this RestClient client, string stationName, string adminToken)
+        public static Task<GetStationResponse> AddStation(this RestClient client, string stationName, string adminToken, int? bikesLimit = null)
         {
             var body = new AddStationRequest
             {
-                Name = stationName
+                Name = stationName,
+                BikesLimit = bikesLimit
             };
             
             return client.PostRequest<GetStationResponse>("stations", body, adminToken);
