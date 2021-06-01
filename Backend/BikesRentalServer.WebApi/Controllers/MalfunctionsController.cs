@@ -1,4 +1,4 @@
-﻿using BikesRentalServer.Services;
+using BikesRentalServer.Services;
 using BikesRentalServer.Services.Abstract;
 using BikesRentalServer.WebApi.Authorization;
 using BikesRentalServer.WebApi.Authorization.Attributes;
@@ -13,13 +13,27 @@ namespace BikesRentalServer.WebApi.Controllers
     [Route("/[controller]")]
     [ApiController]
     [ServiceFilter(typeof(AuthorizationFilter))]
-    public class MalfunctionsController : Controller
+    public class MalfunctionsController : ControllerBase
     {
         private readonly IMalfunctionsService _malfunctionsService;
 
         public MalfunctionsController(IMalfunctionsService malfunctionsService)
         {
             _malfunctionsService = malfunctionsService;
+        }
+        
+        [HttpDelete("{id}")]
+        [AdminAuthorization]
+        [TechAuthorization]
+        public IActionResult RemoveMalfunction(string id)
+        {
+            var response = _malfunctionsService.RemoveMalfunction(id);
+            return response.Status switch
+            {
+                Status.Success => NoContent(),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState or Status.UserBlocked or _ => throw new InvalidOperationException(response.Message),
+            };
         }
 
         [HttpGet]
@@ -61,14 +75,6 @@ namespace BikesRentalServer.WebApi.Controllers
                 Status.InvalidState => UnprocessableEntity(response.Message),
                 Status.UserBlocked or _ => throw new InvalidOperationException($"Unexpected result: {response.Status} - {response.Message}")
             };
-        }
-
-        [HttpGet("{id}")]
-        [TechAuthorization]
-        [AdminAuthorization]
-        public ActionResult<GetMalfunctionResponse> GetMalfunction(string id)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using BikesRentalServer.DataAccess.Repositories.Abstract;
+using BikesRentalServer.DataAccess.Repositories.Abstract;
 using BikesRentalServer.Infrastructure;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
@@ -60,6 +60,16 @@ namespace BikesRentalServer.Services
             if (malfunction is null)
                 return ServiceActionResult.EntityNotFound<Malfunction>("Malfunction not found");
 
+            return ServiceActionResult.Success(malfunction);
+        }
+
+        public ServiceActionResult<Malfunction> RemoveMalfunction(string malfunctionId)
+        {
+            var malfunction = _malfunctionRepository.Get(malfunctionId);
+            if (malfunction is null)
+                return ServiceActionResult.EntityNotFound<Malfunction>("Malfunction not found");
+            
+            _malfunctionRepository.Remove(malfunction.Id);
             return ServiceActionResult.Success(malfunction);
         }
         

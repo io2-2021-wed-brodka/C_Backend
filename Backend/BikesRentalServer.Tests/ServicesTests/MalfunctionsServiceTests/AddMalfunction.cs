@@ -41,13 +41,13 @@ namespace BikesRentalServer.Tests.ServicesTests.MalfunctionsServiceTests
                     User = user,
                 });
             UsersRepository.Setup(r => r.GetByUsername(It.IsAny<string>())).Returns(user);
-            MalfunctionRepository.Setup(r => r.Add(It.IsAny<Malfunction>())).Returns(malfunction).Verifiable();
-            var malfunctionService = getMalfunctionsService(user.Username, user.Role);
+            MalfunctionsRepository.Setup(r => r.Add(It.IsAny<Malfunction>())).Returns(malfunction).Verifiable();
+            var malfunctionService = GetMalfunctionsService(user.Username, user.Role);
             var result = malfunctionService.AddMalfunction(bikeId.ToString(), description);
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().Be(malfunction);
-            MalfunctionRepository.Verify();
+            MalfunctionsRepository.Verify();
         }
 
         [Fact]
@@ -56,13 +56,13 @@ namespace BikesRentalServer.Tests.ServicesTests.MalfunctionsServiceTests
             const int bikeId = 2;
             const string description = "some description";
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Bike)null);
-            MalfunctionRepository.Setup(r => r.Add(It.IsAny<Malfunction>())).Verifiable();
+            MalfunctionsRepository.Setup(r => r.Add(It.IsAny<Malfunction>())).Verifiable();
 
-            var malfunctionsService = getMalfunctionsService();
+            var malfunctionsService = GetMalfunctionsService();
             var result = malfunctionsService.AddMalfunction(bikeId.ToString(), description);
             result.Status.Should().Be(Status.EntityNotFound);
             result.Object.Should().BeNull();
-            MalfunctionRepository.Verify(r => r.Add(It.IsAny<Malfunction>()), Times.Never);
+            MalfunctionsRepository.Verify(r => r.Add(It.IsAny<Malfunction>()), Times.Never);
 
         }
 
@@ -87,11 +87,11 @@ namespace BikesRentalServer.Tests.ServicesTests.MalfunctionsServiceTests
                     Id = bikeId,
                     User = otherUser,
                 });
-            var malfunctionService = getMalfunctionsService(user.Username);
+            var malfunctionService = GetMalfunctionsService(user.Username);
             var result = malfunctionService.AddMalfunction(bikeId.ToString(), description);
             result.Status.Should().Be(Status.InvalidState);
             result.Object.Should().BeNull();
-            MalfunctionRepository.Verify(r => r.Add(It.IsAny<Malfunction>()), Times.Never);
+            MalfunctionsRepository.Verify(r => r.Add(It.IsAny<Malfunction>()), Times.Never);
         }
     }
 }

@@ -71,7 +71,6 @@ namespace BikesRentalServer.WebApi
             services.AddTransient<IBikesService, BikesService>();
             services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IMalfunctionsService, MalfunctionsService>();
-            
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
