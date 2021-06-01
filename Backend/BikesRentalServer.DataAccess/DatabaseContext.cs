@@ -58,6 +58,9 @@ namespace BikesRentalServer.DataAccess
                 station2,
                 station3
             );
+            modelBuilder.Entity<Station>()
+                .Property(s => s.BikeLimit)
+                .HasDefaultValue(10);
 
             modelBuilder.Entity<Bike>()
                 .HasData(new Bike
