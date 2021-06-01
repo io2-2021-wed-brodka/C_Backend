@@ -1,9 +1,5 @@
-﻿using System;
+﻿using BikesRentalServer.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BikesRentalServer.Models;
 
 namespace BikesRentalServer.Services.Abstract
 {
@@ -11,8 +7,10 @@ namespace BikesRentalServer.Services.Abstract
     {
         #region Basics
 
-        ServiceActionResult<Malfunction> AddMalfunction(string bikeId, string description);
+        ServiceActionResult<IEnumerable<Malfunction>> GetAllMalfunctions();
+
         ServiceActionResult<Malfunction> GetMalfunction(string id);
+        ServiceActionResult<Malfunction> AddMalfunction(string bikeId, string description);
 
         #endregion
     }

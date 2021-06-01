@@ -3,6 +3,7 @@ using BikesRentalServer.Infrastructure;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;
 using System;
+using System.Collections.Generic;
 
 namespace BikesRentalServer.Services
 {
@@ -25,6 +26,13 @@ namespace BikesRentalServer.Services
         }
 
         #region basics
+
+        public ServiceActionResult<IEnumerable<Malfunction>> GetAllMalfunctions()
+        {
+            var result = _malfunctionRepository.GetAll();
+            return ServiceActionResult.Success(result);
+        }
+        
         public ServiceActionResult<Malfunction> AddMalfunction(string bikeId, string description)
         {
             var bike = _bikesRepository.Get(bikeId);
@@ -54,6 +62,7 @@ namespace BikesRentalServer.Services
 
             return ServiceActionResult.Success(malfunction);
         }
+        
         #endregion
     }
 }
