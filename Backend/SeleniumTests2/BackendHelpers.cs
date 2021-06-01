@@ -120,7 +120,7 @@ namespace SeleniumTests2
                 Description = description
             };
             
-            return client.PostRequest<GetMalfunctionResponse>("malfunction", body, adminToken);
+            return client.PostRequest<GetMalfunctionResponse>("malfunctions", body, adminToken);
         }
     }
 }

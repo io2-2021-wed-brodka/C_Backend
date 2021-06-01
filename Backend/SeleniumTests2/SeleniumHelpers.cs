@@ -49,7 +49,7 @@ namespace SeleniumTests2
 
         public static void SetTabTitle(this IWebDriver driver, string title)
         {
-            ((IJavaScriptExecutor)driver).ExecuteScript($"document.getElementById('test-helper').innerText = \"{TestsBase.TestNo}: {title}\";");
+            ((IJavaScriptExecutor)driver).ExecuteScript($"document.getElementById('test-helper').innerText = \"{title}\";");
         }
     }
 }
