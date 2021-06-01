@@ -31,12 +31,12 @@ namespace SeleniumTests2.Tests
             rentalsPage.ContainsSnackbar().Should().BeTrue();
             rentalsPage.LogOut();
 
-            var malfunctionsResponse = await Api.GetMalfunctions(adminToken);
+            /*var malfunctionsResponse = await Api.GetMalfunctions(adminToken);
             var malfunction = malfunctionsResponse.Malfunctions.Single(malfunction => malfunction.Description == malfunctionMessage);
 
             stationsPage = await LoginAsSomeTech();
             var malfunctionsPage = stationsPage.GoToTechMalfunctions();
-            malfunctionsPage.HasMalfunction(malfunction.Id).Should().BeTrue();
+            malfunctionsPage.HasMalfunction(malfunction.Id).Should().BeTrue();*/
         }
     }
 }
