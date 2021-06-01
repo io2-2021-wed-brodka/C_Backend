@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BikesRentalServer.DataAccess.Repositories.Abstract;
+﻿using BikesRentalServer.DataAccess.Repositories.Abstract;
 using BikesRentalServer.Infrastructure;
 using BikesRentalServer.Models;
 using BikesRentalServer.Services.Abstract;

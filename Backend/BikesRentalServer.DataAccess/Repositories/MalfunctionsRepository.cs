@@ -3,8 +3,6 @@ using BikesRentalServer.DataAccess.Repositories.Abstract;
 using BikesRentalServer.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 
 namespace BikesRentalServer.DataAccess.Repositories
 {
