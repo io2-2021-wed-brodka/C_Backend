@@ -7,6 +7,7 @@ using System;
 using BikesRentalServer.WebApi.Authorization.Attributes;
 using BikesRentalServer.WebApi.Dtos.Requests;
 using BikesRentalServer.WebApi.Dtos.Responses;
+using System.Linq;
 
 namespace BikesRentalServer.WebApi.Controllers
 {
@@ -49,6 +50,22 @@ namespace BikesRentalServer.WebApi.Controllers
                 Status.InvalidState => Conflict("Username already in use"),
                 Status.EntityNotFound or Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
+        }
+
+        [HttpGet]
+        [AdminAuthorization]
+        public ActionResult<GetAllUsersResponse> GetAllTechs()
+        {
+            var response = new GetAllUsersResponse
+            {
+                Users = _usersService.GetAllTechs().Object
+                    .Select(tech => new GetUserResponse
+                    {
+                        Id = tech.Id.ToString(),
+                        Name = tech.Username,
+                    }),
+            };
+            return Ok(response);
         }
     }
 }

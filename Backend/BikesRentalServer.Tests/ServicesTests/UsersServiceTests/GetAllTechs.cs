@@ -6,51 +6,51 @@ using Xunit;
 
 namespace BikesRentalServer.Tests.ServicesTests.UsersServiceTests
 {
-    public class GetAllUsers : UsersServiceTestsBase
+    public class GetAllTechs : UsersServiceTestsBase
     {
         [Fact]
-        public void GetAllShouldReturnEmptyListWhenNoUsers()
+        public void GetAllTechsShouldReturnEmptyListWhenNoTechs()
         {
-            UsersRepository.Setup(r => r.GetAll()).Returns(new List<User>());
+            UsersRepository.Setup(r => r.GetAllTechs()).Returns(new List<User>());
 
             var usersService = GetUsersService();
-            var result = usersService.GetAllUsers();
+            var result = usersService.GetAllTechs();
 
             result.Status.Should().Be(Status.Success);
             result.Object.Should().BeEmpty();
         }
 
         [Fact]
-        public void GetAllUsersMultipleUsersExists()
+        public void GetAllTechsReturnsAllExistingTechs()
         {
-            var users = new[]
+            var techs = new[]
             {
                 new User
                 {
-                    Role = UserRole.User,
+                    Role = UserRole.Tech,
                     Status = UserStatus.Active,
                     Username = "wojtek",
                 },
                 new User
                 {
-                    Role = UserRole.User,
+                    Role = UserRole.Tech,
                     Status = UserStatus.Active,
                     Username = "kasia",
                 },
                 new User
                 {
-                    Role = UserRole.User,
+                    Role = UserRole.Tech,
                     Status = UserStatus.Active,
                     Username = "kacper",
                 },
             };
-            UsersRepository.Setup(r => r.GetAll()).Returns(users);
+            UsersRepository.Setup(r => r.GetAllTechs()).Returns(techs);
 
             var usersService = GetUsersService();
-            var result = usersService.GetAllUsers();
+            var result = usersService.GetAllTechs();
 
             result.Status.Should().Be(Status.Success);
-            result.Object.Should().BeEquivalentTo(users);
+            result.Object.Should().BeEquivalentTo(techs);
         }
     }
 }
