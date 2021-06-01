@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -9,6 +10,24 @@ namespace SeleniumTests2.Tests
     {
         public TechBikeOperationsTests(ITestOutputHelper output) : base(output)
         { }
+
+        [Fact]
+        public async Task TechShouldSeeAllBikes()
+        {
+            var stationName = GetUniqueString();
+            var adminToken = await Api.LogInAsAdmin();
+            var station = await Api.AddStation(stationName, adminToken);
+            var bikesTasks = Enumerable.Range(0, 4).Select(_ => Api.AddBike(station.Id, adminToken)).ToArray();
+            Task.WaitAll(bikesTasks);
+
+            var stationsPage = await LoginAsSomeTech();
+            var techBikesPage = stationsPage.GoToTechBikes();
+
+            foreach(var bikeTask in bikesTasks)
+            {
+                techBikesPage.HasBike(bikeTask.Result.Id).Should().BeTrue();
+            }
+        }
 
         [Fact]
         public async Task TechBlockUnblockedBikeShouldSucceed()
