@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using BikesRentalServer.DataAccess.Repositories.Abstract;
+﻿using BikesRentalServer.DataAccess.Repositories.Abstract;
 using BikesRentalServer.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BikesRentalServer.DataAccess.Repositories
 {
