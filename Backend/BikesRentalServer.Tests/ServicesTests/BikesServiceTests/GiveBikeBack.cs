@@ -2,6 +2,7 @@ using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using FluentAssertions;
 using Moq;
+using System.Collections.Generic;
 using Xunit;
 
 namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
@@ -21,6 +22,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             {
                 Id = 1,
                 Status = StationStatus.Active,
+                Bikes = new List<Bike>(),
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
@@ -58,7 +60,8 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             var station = new Station
             {
                 Id = 1,
-                Status = StationStatus.Active
+                Status = StationStatus.Active,
+                Bikes = new List<Bike>(),
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
@@ -126,6 +129,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             {
                 Id = stationId,
                 Status = StationStatus.Active,
+                Bikes = new List<Bike>(),
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns((Bike)null);
@@ -156,7 +160,8 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             var station = new Station
             {
                 Id = 1,
-                Status = StationStatus.Active
+                Status = StationStatus.Active,
+                Bikes = new List<Bike>(),
             };
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(station);
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
@@ -185,6 +190,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                 {
                     Status = StationStatus.Blocked,
                     Id = stationId,
+                    Bikes = new List<Bike>(),
                 });
             BikesRepository.Setup(r => r.Get(It.IsAny<string>()))
                 .Returns(new Bike

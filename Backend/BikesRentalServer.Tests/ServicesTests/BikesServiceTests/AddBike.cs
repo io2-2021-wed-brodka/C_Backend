@@ -2,6 +2,7 @@ using BikesRentalServer.Models;
 using BikesRentalServer.Services;
 using FluentAssertions;
 using Moq;
+using System.Collections.Generic;
 using Xunit;
 
 namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
@@ -15,6 +16,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(new Station
             {
                 Id = stationId,
+                Bikes = new List<Bike>(),
             });
             BikesRepository.Setup(r => r.Add(It.IsAny<Bike>())).Returns(new Bike()).Verifiable();
             
@@ -32,6 +34,7 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
             StationsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(new Station
             {
                 Id = stationId,
+                Bikes = new List<Bike>(),
             });
             BikesRepository.Setup(r => r.Add(It.IsAny<Bike>()))
                 .Returns(new Bike
