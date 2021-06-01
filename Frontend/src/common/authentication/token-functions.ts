@@ -1,29 +1,29 @@
-import { BearerToken } from './../api/models/bearer-token';
 import { signIn, signUp } from './../api/endpoints';
+import { UserRole } from '../api/models/login-response';
 
 const localStorageTokenKey = 'token';
 const localStorageLoginKey = 'login';
+const localStorageRoleKey = 'role';
 
-export const saveTokenAndLoginInLocalStorage = (
-  token: BearerToken,
+export const saveUserDataInLocalStorage = (
+  token: string,
   login: string,
+  role: UserRole,
 ) => {
-  localStorage.setItem(localStorageTokenKey, JSON.stringify(token));
+  localStorage.setItem(localStorageTokenKey, token);
   localStorage.setItem(localStorageLoginKey, login);
+  localStorage.setItem(localStorageRoleKey, role);
 };
 
-export const clearTokenAndLoginFromLocalStorage = () => {
+export const removeUserDataFromLocalStorage = () => {
   localStorage.removeItem(localStorageTokenKey);
   localStorage.removeItem(localStorageLoginKey);
+  localStorage.removeItem(localStorageRoleKey);
 };
 
 export const getTokenFromLocalStorage = () => {
-  const tokenInJSON = localStorage.getItem(localStorageTokenKey);
-
-  if (tokenInJSON) {
-    return JSON.parse(tokenInJSON) as BearerToken;
-  }
-  return null;
+  const token = localStorage.getItem(localStorageTokenKey);
+  return token;
 };
 
 export const getLoginFromLocalStorage = () =>
@@ -31,16 +31,21 @@ export const getLoginFromLocalStorage = () =>
     resolve(localStorage.getItem(localStorageLoginKey) || '');
   }) as Promise<string>;
 
+export const getRoleFromLocalStorage = () =>
+  new Promise(resolve => {
+    resolve(localStorage.getItem(localStorageRoleKey) as UserRole);
+  }) as Promise<UserRole | null>;
+
 export const signInAndSaveToken = (login: string, password: string) => {
   return signIn(login, password).then(user => {
-    saveTokenAndLoginInLocalStorage({ token: user.token }, login);
+    saveUserDataInLocalStorage(user.token, login, user.role);
     return user;
   });
 };
 
 export const signUpAndSaveToken = (login: string, password: string) => {
   return signUp(login, password).then(bearerToken => {
-    saveTokenAndLoginInLocalStorage(bearerToken, login);
+    saveUserDataInLocalStorage(bearerToken.token, login, UserRole.User);
     return bearerToken;
   });
 };

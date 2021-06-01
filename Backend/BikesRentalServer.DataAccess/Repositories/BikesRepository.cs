@@ -20,7 +20,8 @@ namespace BikesRentalServer.DataAccess.Repositories
             return _dbContext.Bikes
                 .Include(b => b.Station)
                 .ThenInclude(s => s.Bikes)
-                .Include(b => b.User);
+                .Include(b => b.User)
+                .Include(b => b.Malfunctions);
         }
 
         public Bike Get(string id)
@@ -31,6 +32,7 @@ namespace BikesRentalServer.DataAccess.Repositories
                 .Include(b => b.Station)
                 .ThenInclude(s => s.Bikes)
                 .Include(b => b.User)
+                .Include(b => b.Malfunctions)
                 .SingleOrDefault(b => b.Id == iid);
         }
 
@@ -59,7 +61,8 @@ namespace BikesRentalServer.DataAccess.Repositories
             return _dbContext.Bikes
                 .Where(b => b.Status == BikeStatus.Blocked)
                 .Include(b => b.Station)
-                .Include(b => b.User);
+                .Include(b => b.User)
+                .Include(b => b.Malfunctions);
         }
 
         public Bike SetStatus(int id, BikeStatus status)

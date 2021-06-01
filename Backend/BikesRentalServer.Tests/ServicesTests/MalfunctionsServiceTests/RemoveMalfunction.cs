@@ -1,12 +1,14 @@
-﻿using BikesRentalServer.Models;
+using BikesRentalServer.DataAccess.Repositories;
+using BikesRentalServer.Models;
 using BikesRentalServer.Services;
+using BikesRentalServer.Tests.ServicesTests.MalfunctionsServiceTests;
 using FluentAssertions;
 using Moq;
 using Xunit;
 
 namespace BikesRentalServer.Tests.ServicesTests.TechsServiceTests
 {
-    public class RemoveMalfunction : TechsServiceTestsBase
+    public class RemoveMalfunction : MalfunctionsServiceTestsBase
     {
         [Fact]
         public void RemoveMalfunction_ShouldSucceed()
@@ -26,8 +28,8 @@ namespace BikesRentalServer.Tests.ServicesTests.TechsServiceTests
             BikesRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(bike);
             MalfunctionsRepository.Setup(r => r.Get(It.IsAny<string>())).Returns(malfunction);
 
-            var techsService = GetTechsService();
-            var result = techsService.RemoveMalfunction(malfunctionId.ToString());
+            var malfunctionsService = GetMalfunctionsService();
+            var result = malfunctionsService.RemoveMalfunction(malfunctionId.ToString());
 
             result.Status.Should().Be(Status.Success);
             MalfunctionsRepository.Verify();
@@ -40,8 +42,8 @@ namespace BikesRentalServer.Tests.ServicesTests.TechsServiceTests
         {
             const int malfunctionId = 123;
             
-            var techsService = GetTechsService();
-            var result = techsService.RemoveMalfunction(malfunctionId.ToString());
+            var malfunctionsService = GetMalfunctionsService();
+            var result = malfunctionsService.RemoveMalfunction(malfunctionId.ToString());
 
             result.Status.Should().Be(Status.EntityNotFound);
             MalfunctionsRepository.Verify();

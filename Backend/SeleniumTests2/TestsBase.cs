@@ -18,6 +18,7 @@ namespace SeleniumTests2
         protected IWebDriver Driver { get; set; }
         
         private static bool _warmedUp;
+        public static int TestNo = 0;
 
         protected TestsBase(ITestOutputHelper output)
         {
@@ -38,6 +39,7 @@ namespace SeleniumTests2
 
         public void Dispose()
         {
+            TestNo++;
             Driver.Quit();
         }
 
@@ -60,6 +62,19 @@ namespace SeleniumTests2
             var login = GetUniqueString();
             const string password = "23456";
             await Api.SignUp(login, password);
+            var loginPage = new LoginPage(Driver);
+
+            loginPage.LogIn(login, password);
+
+            return new StationsPage(Driver);
+        }
+
+        protected async Task<StationsPage> LoginAsSomeTech()
+        {
+            var login = GetUniqueString();
+            const string password = "23456";
+            var adminToken = await Api.LogInAsAdmin();
+            await Api.AddTech(login, password, adminToken);
             var loginPage = new LoginPage(Driver);
 
             loginPage.LogIn(login, password);

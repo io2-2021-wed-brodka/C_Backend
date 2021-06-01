@@ -3,6 +3,7 @@ using BikesRentalServer.Services;
 using FluentAssertions;
 using Moq;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
@@ -33,6 +34,10 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                 User = user,
                 ReservationDate = now,
                 ExpirationDate = now.AddMinutes(30),
+            };
+            user.Reservations = new List<Reservation>
+            {
+                reservation,
             };
             BikesRepository.Setup(r => r.Get(bikeId.ToString()))
                 .Returns(new Bike
@@ -88,6 +93,10 @@ namespace BikesRentalServer.Tests.ServicesTests.BikesServiceTests
                 User = user,
                 ReservationDate = DateTime.Now,
                 ExpirationDate = DateTime.Now.AddMinutes(30),
+            };
+            user.Reservations = new List<Reservation>
+            {
+                reservation,
             };
             BikesRepository.Setup(r => r.Get(bikeId.ToString()))
                 .Returns(new Bike

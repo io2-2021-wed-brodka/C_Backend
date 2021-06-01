@@ -1,4 +1,6 @@
-﻿namespace BikesRentalServer.Models
+﻿using System.Collections.Generic;
+
+namespace BikesRentalServer.Models
 {
     /// <summary>
     /// Represents bike.
@@ -32,6 +34,11 @@
         /// </summary>
         public Station Station { get; set; }
         public int? StationId { get; set; }
+        
+        /// <summary>
+        /// List of malfunctions related to bike.
+        /// </summary>
+        public List<Malfunction> Malfunctions { get; set; }
     }
 
     public enum BikeStatus

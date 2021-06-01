@@ -11,21 +11,29 @@ import { useSnackbar } from './../../common/hooks/useSnackbar';
 import SnackBar from '../../common/components/SnackBar';
 import StationsDialog from './StationsDialog';
 import { Station } from '../../common/api/models/station';
+import MalfunctionDialog from './MalfunctionDialog';
 
 const RentalsTab = () => {
   const [refreshBikesState, refreshBikes] = useRefresh();
   const data = usePromise(useServices().getRentedBikes, [refreshBikesState]);
   const returnBike = useServices().returnBike;
+  const addMalfunction = useServices().addMalfunction;
   const snackbar = useSnackbar();
-  const [dialogIsOpen, setDialogIsOpen] = useState(false);
+  const [stationsDialogIsOpen, setStationsDialogIsOpen] = useState(false);
+  const [malfunctionDialogIsOpen, setMalfunctionDialogIsOpen] = useState(false);
   const [returnedBikeId, setReturnedBikeId] = useState('');
+  const [reportedBikeId, setReportedBikeId] = useState('');
 
-  const handleDialogClose = () => {
-    setDialogIsOpen(false);
+  const handleStationsDialogClose = () => {
+    setStationsDialogIsOpen(false);
+  };
+
+  const handleMalfunctionDialogClose = () => {
+    setMalfunctionDialogIsOpen(false);
   };
 
   const selectStation = (station: Station) => {
-    setDialogIsOpen(false);
+    setStationsDialogIsOpen(false);
     returnBike(station.id, returnedBikeId).then(() => {
       refreshBikes();
       snackbar.open(
@@ -34,12 +42,19 @@ const RentalsTab = () => {
     });
   };
 
+  const onReportMalfunction = (description: string) => {
+    addMalfunction(reportedBikeId, description).then(() => {
+      setMalfunctionDialogIsOpen(false);
+    });
+  };
+
   const bikeActions: BikeActionsForBike = ({ id }) => [
     {
       label: 'Report',
       type: 'default',
       onClick: () => {
-        alert(id);
+        setReportedBikeId(id);
+        setMalfunctionDialogIsOpen(true);
       },
       id: `report-${id}`,
     },
@@ -48,7 +63,7 @@ const RentalsTab = () => {
       type: 'secondary',
       onClick: () => {
         setReturnedBikeId(id);
-        setDialogIsOpen(true);
+        setStationsDialogIsOpen(true);
       },
       id: `return-${id}`,
     },
@@ -70,10 +85,17 @@ const RentalsTab = () => {
       </Paper>
       <SnackBar {...snackbar.props} />
 
-      {dialogIsOpen && (
+      {stationsDialogIsOpen && (
         <StationsDialog
-          close={handleDialogClose}
+          close={handleStationsDialogClose}
           selectStation={selectStation}
+        />
+      )}
+      {malfunctionDialogIsOpen && (
+        <MalfunctionDialog
+          bikeId={reportedBikeId}
+          close={handleMalfunctionDialogClose}
+          onReportMalfunction={onReportMalfunction}
         />
       )}
     </>

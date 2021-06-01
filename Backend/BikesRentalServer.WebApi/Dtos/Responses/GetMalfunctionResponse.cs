@@ -1,7 +1,4 @@
-﻿using System;
-using BikesRentalServer.Models;
-
-namespace BikesRentalServer.WebApi.Dtos.Responses
+﻿namespace BikesRentalServer.WebApi.Dtos.Responses
 {
     public class GetMalfunctionResponse
     {

@@ -25,6 +25,9 @@ import {
   getTechs,
   removeTech,
   addTech,
+  getMalfunctions,
+  addMalfunction,
+  removeMalfunction,
 } from './api/endpoints';
 import { Bike, BikeStatus } from './api/models/bike';
 import { Station, StationStatus } from './api/models/station';
@@ -35,9 +38,10 @@ import { delay } from './mocks/mockedApiResponse';
 import { BearerToken } from './api/models/bearer-token';
 import {
   signInAndSaveToken,
-  saveTokenAndLoginInLocalStorage,
+  saveUserDataInLocalStorage,
   signUpAndSaveToken,
   getLoginFromLocalStorage,
+  getRoleFromLocalStorage,
 } from './authentication/token-functions';
 import { ReservedBike } from './api/models/reservedBike';
 import { mockedReservedBikes } from './mocks/reservedBikes';
@@ -46,11 +50,14 @@ import { User } from './api/models/user';
 import { mockedUsers } from './mocks/users';
 import { Tech } from './api/models/tech';
 import { mockedTechs } from './mocks/techs';
+import { Malfunction } from './api/models/malfunction';
+import { mockedMalfunctions } from './mocks/malfunctions';
 
 type AllServices = {
   signIn: (login: string, password: string) => Promise<LoginResponse>;
   signUp: (login: string, password: string) => Promise<BearerToken>;
   getLogin: () => Promise<string>;
+  getRole: () => Promise<UserRole | null>;
   getActiveStations: () => Promise<Station[]>;
   getAllStations: () => Promise<Station[]>;
   getBikes: () => Promise<Bike[]>;
@@ -60,7 +67,7 @@ type AllServices = {
   returnBike: (stationId: string, bikeId: string) => Promise<Bike>;
   rentBike: (bikeId: string) => Promise<Bike>;
   reserveBike: (bikeId: string) => Promise<ReservedBike>;
-  addStation: (name: string) => Promise<Station>;
+  addStation: (name: string, bikesLimit?: number) => Promise<Station>;
   addBike: (stationId: string) => Promise<Bike>;
   removeBike: (bikeId: string) => Promise<void>;
   removeReservation: (bikeId: string) => Promise<void>;
@@ -76,12 +83,16 @@ type AllServices = {
   getTechs: () => Promise<Tech[]>;
   removeTech: (id: string) => Promise<void>;
   addTech: (name: string, password: string) => Promise<Tech>;
+  getMalfunctions: () => Promise<Malfunction[]>;
+  addMalfunction: (bikeId: string, description: string) => Promise<Malfunction>;
+  removeMalfunction: (id: string) => Promise<void>;
 };
 
 export const services: AllServices = {
   signIn: signInAndSaveToken,
   signUp: signUpAndSaveToken,
   getLogin: getLoginFromLocalStorage,
+  getRole: getRoleFromLocalStorage,
   getActiveStations: getActiveStations,
   getAllStations: getAllStations,
   getBikes: getBikes,
@@ -107,22 +118,26 @@ export const services: AllServices = {
   getTechs: getTechs,
   removeTech: removeTech,
   addTech: addTech,
+  getMalfunctions: getMalfunctions,
+  addMalfunction: addMalfunction,
+  removeMalfunction: removeMalfunction,
 };
 
 export const mockedServices: AllServices = {
   signIn: login => {
     return delay({ token: login, role: UserRole.User }).then(user => {
-      saveTokenAndLoginInLocalStorage({ token: user.token }, login);
+      saveUserDataInLocalStorage(user.token, login, UserRole.User);
       return user;
     });
   },
   signUp: login => {
     return delay({ token: login }).then(bearerToken => {
-      saveTokenAndLoginInLocalStorage(bearerToken, login);
+      saveUserDataInLocalStorage(bearerToken.token, login, UserRole.User);
       return bearerToken;
     });
   },
   getLogin: getLoginFromLocalStorage,
+  getRole: getRoleFromLocalStorage,
   getActiveStations: () => delay(mockedStations),
   getAllStations: () => delay(mockedStations),
   getBikes: () => delay(mockedBikes),
@@ -167,6 +182,10 @@ export const mockedServices: AllServices = {
   getTechs: () => delay(mockedTechs),
   removeTech: () => delay<void>(undefined),
   addTech: (name: string) => delay<Tech>({ id: '666', name }),
+  getMalfunctions: () => delay<Malfunction[]>(mockedMalfunctions),
+  addMalfunction: (bikeId, description) =>
+    delay<Malfunction>({ id: '1', reportingUserId: '1', bikeId, description }),
+  removeMalfunction: () => delay<void>(undefined),
 };
 
 export const ServicesContext = createContext(services);

@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -9,6 +10,25 @@ namespace SeleniumTests2.Tests
     {
         public AdminBikeOperationsTests(ITestOutputHelper output) : base(output)
         { }
+
+        [Fact]
+        public async Task AdminShouldSeeAllBikes()
+        {
+            var stationName = GetUniqueString();
+            var adminToken = await Api.LogInAsAdmin();
+            var station = await Api.AddStation(stationName, adminToken);
+            var bikesTasks = Enumerable.Range(0, 4).Select(_ => Api.AddBike(station.Id, adminToken)).ToArray();
+            Task.WaitAll(bikesTasks);
+
+            Driver.OpenAdminTab();
+            var adminStationsPage = LoginAsAdmin();
+            var adminBikesPage = adminStationsPage.GoToBikes();
+
+            foreach(var bikeTask in bikesTasks)
+            {
+                adminBikesPage.HasBike(bikeTask.Result.Id).Should().BeTrue();
+            }
+        }
 
         [Fact]
         public async Task AdminAddNewBikeShouldSucceed()
@@ -26,6 +46,10 @@ namespace SeleniumTests2.Tests
 
             oldBikesCount.Should().Be(0);
             newBikesCount.Should().Be(1);
+            Driver.SwitchToUserTab();
+            var stationsPage = await LoginAsSomeUser();
+            stationsPage.OpenBikesList(stationName);
+            stationsPage.GetBikesCount().Should().Be(1);
         }
 
         [Fact]
@@ -49,6 +73,10 @@ namespace SeleniumTests2.Tests
             bikeBlockedBefore.Should().BeFalse();
             bikeExistsAfter.Should().BeTrue();
             bikeBlockedAfter.Should().BeTrue();
+            Driver.SwitchToUserTab();
+            var stationsPage = await LoginAsSomeUser();
+            stationsPage.OpenBikesList(stationName);
+            stationsPage.GetBikesCount().Should().Be(0);
         }
 
         [Fact]
@@ -73,6 +101,10 @@ namespace SeleniumTests2.Tests
             bikeBlockedBefore.Should().BeTrue();
             bikeExistsAfter.Should().BeTrue();
             bikeBlockedAfter.Should().BeFalse();
+            Driver.SwitchToUserTab();
+            var stationsPage = await LoginAsSomeUser();
+            stationsPage.OpenBikesList(stationName);
+            stationsPage.GetBikesCount().Should().Be(1);
         }
 
         [Fact]
@@ -93,6 +125,10 @@ namespace SeleniumTests2.Tests
 
             bikeExistsBefore.Should().BeTrue();
             bikeExistsAfter.Should().BeFalse();
+            Driver.SwitchToUserTab();
+            var stationsPage = await LoginAsSomeUser();
+            stationsPage.OpenBikesList(stationName);
+            stationsPage.GetBikesCount().Should().Be(0);
         }
 
         [Fact]
@@ -112,6 +148,7 @@ namespace SeleniumTests2.Tests
 
             bikeExistsBefore.Should().BeTrue();
             bikeExistsAfter.Should().BeTrue();
+            adminBikesPage.ContainsSnackbar().Should().BeTrue();
         }
     }
 }

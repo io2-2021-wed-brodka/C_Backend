@@ -10,7 +10,7 @@ namespace BikesRentalServer.Services.Abstract
         ServiceActionResult<IEnumerable<Station>> GetAllStations();
         ServiceActionResult<Station> GetStation(string id);
         ServiceActionResult<IEnumerable<Bike>> GetActiveBikesAtStation(string id);
-        ServiceActionResult<Station> AddStation(string name);
+        ServiceActionResult<Station> AddStation(string name, int bikeLimit);
         ServiceActionResult<Station> RemoveStation(string id);
         
         #endregion
