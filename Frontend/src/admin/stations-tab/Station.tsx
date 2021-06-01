@@ -21,10 +21,6 @@ import { StationStatus } from '../../common/api/models/station';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    heading: {
-      fontSize: theme.typography.pxToRem(15),
-      fontWeight: theme.typography.fontWeightRegular,
-    },
     accordionDetails: {
       padding: 0,
     },
@@ -34,6 +30,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     div: {
       width: '100%',
+    },
+    listItem: {
+      marginRight: theme.spacing(0.5),
     },
   }),
 );
@@ -99,24 +98,29 @@ const Station = ({
   return (
     <Accordion onChange={handleChange} id={`station-${name}`}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography className={classes.heading}>{name}</Typography>
+        <Typography className={classes.listItem} variant="h6">
+          {name}
+        </Typography>
         <Chip
           id={`chip-reserved-${name}`}
           label={`Reserv.: ${reservationsCount}`}
-          color="primary"
-          variant="outlined"
+          color="default"
+          className={classes.listItem}
+          data-count={reservationsCount}
         />
         <Chip
           id={`chip-malfunctions-${name}`}
           label={`Mal.: ${malfunctionsCount}`}
           color="primary"
-          variant="outlined"
+          className={classes.listItem}
+          data-count={malfunctionsCount}
         />
         <Chip
           id={`chip-active-${name}`}
           label={`Act. bikes: ${activeBikesCount}`}
-          color="primary"
-          variant="outlined"
+          color="secondary"
+          className={classes.listItem}
+          data-count={activeBikesCount}
         />
       </AccordionSummary>
       <AccordionDetails className={classes.accordionDetails}>
