@@ -279,7 +279,8 @@ namespace BikesRentalServer.Services
                 User = bike.User,
                 StationId = bike.StationId,
             }));
-        }
+        } // BARDZO CZERWONE I TAKIE TAM
+        // TODO: DUPCIA
 
         public ServiceActionResult<Reservation> ReserveBike(string id)
         {
