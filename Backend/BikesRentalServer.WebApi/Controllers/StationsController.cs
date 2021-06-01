@@ -41,6 +41,7 @@ namespace BikesRentalServer.WebApi.Controllers
                     ActiveBikesCount = station.Bikes.Count(b => b.Status is BikeStatus.Available),
                     MalfunctionsCount = station.Bikes.SelectMany(b => b.Malfunctions).Count(),
                     ReservationsCount = station.Bikes.Count(b => b.Status is BikeStatus.Reserved),
+                    BikesLimit = station.BikeLimit,
                 }),
             });
         }
@@ -49,7 +50,7 @@ namespace BikesRentalServer.WebApi.Controllers
         [AdminAuthorization]
         public ActionResult<GetStationResponse> AddStation(AddStationRequest request)
         {
-            var response = _stationsService.AddStation(request.Name);
+            var response = _stationsService.AddStation(request.Name, request.BikesLimit ?? Station.DefaultBikeLimit);
             return response.Status switch
             {
                 Status.Success => Created($"/stations/{response.Object.Id}", new GetStationResponse
@@ -60,6 +61,7 @@ namespace BikesRentalServer.WebApi.Controllers
                     ActiveBikesCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Available),
                     MalfunctionsCount = response.Object.Bikes.SelectMany(b => b.Malfunctions).Count(),
                     ReservationsCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Reserved),
+                    BikesLimit = response.Object.BikeLimit,
                 }),
                 Status.EntityNotFound or Status.InvalidState or Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
@@ -81,6 +83,7 @@ namespace BikesRentalServer.WebApi.Controllers
                     ActiveBikesCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Available),
                     MalfunctionsCount = response.Object.Bikes.SelectMany(b => b.Malfunctions).Count(),
                     ReservationsCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Reserved),
+                    BikesLimit = response.Object.BikeLimit,
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState or Status.UserBlocked or _ => throw new InvalidOperationException("Invalid status"),
@@ -123,6 +126,7 @@ namespace BikesRentalServer.WebApi.Controllers
                             ActiveBikesCount = bike.Station.Bikes.Count(b => b.Status is BikeStatus.Available),
                             MalfunctionsCount = bike.Station.Bikes.SelectMany(b => b.Malfunctions).Count(),
                             ReservationsCount = bike.Station.Bikes.Count(b => b.Status is BikeStatus.Reserved),
+                            BikesLimit = bike.Station.BikeLimit,
                         },
                         Status = bike.Status,
                     }),
@@ -153,6 +157,7 @@ namespace BikesRentalServer.WebApi.Controllers
                         ActiveBikesCount = response.Object.Station.Bikes.Count(b => b.Status is BikeStatus.Available),
                         MalfunctionsCount = response.Object.Station.Bikes.SelectMany(b => b.Malfunctions).Count(),
                         ReservationsCount = response.Object.Station.Bikes.Count(b => b.Status is BikeStatus.Reserved),
+                        BikesLimit = response.Object.Station.BikeLimit,
                     },
                     Status = response.Object.Status,
                 }),
@@ -178,6 +183,7 @@ namespace BikesRentalServer.WebApi.Controllers
                     ActiveBikesCount = station.Bikes.Count(b => b.Status is BikeStatus.Available),
                     MalfunctionsCount = station.Bikes.SelectMany(b => b.Malfunctions).Count(),
                     ReservationsCount = station.Bikes.Count(b => b.Status is BikeStatus.Reserved),
+                    BikesLimit = station.BikeLimit,
                 }),
             };
             return Ok(response);
@@ -197,6 +203,7 @@ namespace BikesRentalServer.WebApi.Controllers
                     ActiveBikesCount = station.Bikes.Count(b => b.Status is BikeStatus.Available),
                     MalfunctionsCount = station.Bikes.SelectMany(b => b.Malfunctions).Count(),
                     ReservationsCount = station.Bikes.Count(b => b.Status is BikeStatus.Reserved),
+                    BikesLimit = station.BikeLimit,
                 }),
             };
             return Ok(response);
@@ -217,6 +224,7 @@ namespace BikesRentalServer.WebApi.Controllers
                     ActiveBikesCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Available),
                     MalfunctionsCount = response.Object.Bikes.SelectMany(b => b.Malfunctions).Count(),
                     ReservationsCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Reserved),
+                    BikesLimit = response.Object.BikeLimit,
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
