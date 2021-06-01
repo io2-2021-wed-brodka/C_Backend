@@ -76,13 +76,5 @@ namespace BikesRentalServer.WebApi.Controllers
                 Status.UserBlocked or _ => throw new InvalidOperationException($"Unexpected result: {response.Status} - {response.Message}")
             };
         }
-
-        [HttpGet("{id}")]
-        [TechAuthorization]
-        [AdminAuthorization]
-        public ActionResult<GetMalfunctionResponse> GetMalfunction(string id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
