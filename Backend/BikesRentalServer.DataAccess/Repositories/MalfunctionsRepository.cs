@@ -3,6 +3,8 @@ using BikesRentalServer.DataAccess.Repositories.Abstract;
 using BikesRentalServer.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 
 namespace BikesRentalServer.DataAccess.Repositories
 {
@@ -15,11 +17,11 @@ namespace BikesRentalServer.DataAccess.Repositories
             _dbContext = dbContext;
         }
 
-        public Malfunction Add(Malfunction entity)
+        public IEnumerable<Malfunction> GetAll()
         {
-            var malfunctions = _dbContext.Malfunctions.Add(entity).Entity;
-            _dbContext.SaveChanges();
-            return malfunctions;
+            return _dbContext.Malfunctions
+                .Include(m => m.Bike)
+                .Include(m => m.ReportingUser);
         }
 
         public Malfunction Get(string id)
@@ -30,11 +32,11 @@ namespace BikesRentalServer.DataAccess.Repositories
             return Get(iid);
         }
 
-        public IEnumerable<Malfunction> GetAll()
+        public Malfunction Add(Malfunction entity)
         {
-            return _dbContext.Malfunctions
-                .Include(r => r.Bike)
-                .Include(r => r.ReportingUser);
+            var malfunctions = _dbContext.Malfunctions.Add(entity).Entity;
+            _dbContext.SaveChanges();
+            return malfunctions;
         }
 
         public Malfunction Remove(int id)
