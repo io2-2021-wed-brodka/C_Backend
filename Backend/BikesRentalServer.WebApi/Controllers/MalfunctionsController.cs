@@ -29,7 +29,8 @@ namespace BikesRentalServer.WebApi.Controllers
             return response.Status switch
             {
                 Status.Success => NoContent(),
-                Status.EntityNotFound or Status.InvalidState or Status.UserBlocked or _ => NotFound(response.Message),
+                Status.EntityNotFound => NotFound(response.Message),
+                Status.InvalidState or Status.UserBlocked or _ => throw new InvalidOperationException(response.Message),
             };
         }
     }
