@@ -39,6 +39,8 @@ namespace BikesRentalServer.WebApi.Controllers
                     Name = station.Name,
                     Status = station.Status,
                     ActiveBikesCount = station.Bikes.Count(b => b.Status is BikeStatus.Available),
+                    MalfunctionsCount = station.Bikes.SelectMany(b => b.Malfunctions).Count(),
+                    ReservationsCount = station.Bikes.Count(b => b.Status is BikeStatus.Reserved),
                 }),
             });
         }
@@ -56,6 +58,8 @@ namespace BikesRentalServer.WebApi.Controllers
                     Name = response.Object.Name,
                     Status = response.Object.Status,
                     ActiveBikesCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Available),
+                    MalfunctionsCount = response.Object.Bikes.SelectMany(b => b.Malfunctions).Count(),
+                    ReservationsCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Reserved),
                 }),
                 Status.EntityNotFound or Status.InvalidState or Status.UserBlocked or _ => throw new InvalidOperationException("Invalid state"),
             };
@@ -75,6 +79,8 @@ namespace BikesRentalServer.WebApi.Controllers
                     Name = response.Object.Name,
                     Status = response.Object.Status,
                     ActiveBikesCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Available),
+                    MalfunctionsCount = response.Object.Bikes.SelectMany(b => b.Malfunctions).Count(),
+                    ReservationsCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Reserved),
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState or Status.UserBlocked or _ => throw new InvalidOperationException("Invalid status"),
@@ -115,6 +121,8 @@ namespace BikesRentalServer.WebApi.Controllers
                             Name = bike.Station.Name,
                             Status = bike.Station.Status,
                             ActiveBikesCount = bike.Station.Bikes.Count(b => b.Status is BikeStatus.Available),
+                            MalfunctionsCount = bike.Station.Bikes.SelectMany(b => b.Malfunctions).Count(),
+                            ReservationsCount = bike.Station.Bikes.Count(b => b.Status is BikeStatus.Reserved),
                         },
                         Status = bike.Status,
                     }),
@@ -143,6 +151,8 @@ namespace BikesRentalServer.WebApi.Controllers
                         Name = response.Object.Station.Name,
                         Status = response.Object.Station.Status,
                         ActiveBikesCount = response.Object.Station.Bikes.Count(b => b.Status is BikeStatus.Available),
+                        MalfunctionsCount = response.Object.Station.Bikes.SelectMany(b => b.Malfunctions).Count(),
+                        ReservationsCount = response.Object.Station.Bikes.Count(b => b.Status is BikeStatus.Reserved),
                     },
                     Status = response.Object.Status,
                 }),
@@ -166,6 +176,8 @@ namespace BikesRentalServer.WebApi.Controllers
                     Name = station.Name,
                     Status = station.Status,
                     ActiveBikesCount = station.Bikes.Count(b => b.Status is BikeStatus.Available),
+                    MalfunctionsCount = station.Bikes.SelectMany(b => b.Malfunctions).Count(),
+                    ReservationsCount = station.Bikes.Count(b => b.Status is BikeStatus.Reserved),
                 }),
             };
             return Ok(response);
@@ -183,6 +195,8 @@ namespace BikesRentalServer.WebApi.Controllers
                     Name = station.Name,
                     Status = station.Status,
                     ActiveBikesCount = station.Bikes.Count(b => b.Status is BikeStatus.Available),
+                    MalfunctionsCount = station.Bikes.SelectMany(b => b.Malfunctions).Count(),
+                    ReservationsCount = station.Bikes.Count(b => b.Status is BikeStatus.Reserved),
                 }),
             };
             return Ok(response);
@@ -201,6 +215,8 @@ namespace BikesRentalServer.WebApi.Controllers
                     Name = response.Object.Name,
                     Status = response.Object.Status,
                     ActiveBikesCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Available),
+                    MalfunctionsCount = response.Object.Bikes.SelectMany(b => b.Malfunctions).Count(),
+                    ReservationsCount = response.Object.Bikes.Count(b => b.Status is BikeStatus.Reserved),
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),

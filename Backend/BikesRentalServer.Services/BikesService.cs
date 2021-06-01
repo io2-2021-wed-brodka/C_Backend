@@ -45,6 +45,7 @@ namespace BikesRentalServer.Services
                     Status = reservation is null ? bike.Status : BikeStatus.Reserved,
                     User = reservation is null ? bike.User : reservation.User,
                     StationId = bike.StationId,
+                    Malfunctions = bike.Malfunctions,
                 };
             }));
         }
@@ -63,6 +64,7 @@ namespace BikesRentalServer.Services
                 Status = reservation is null ? bike.Status : BikeStatus.Reserved,
                 User = reservation is null ? bike.User : reservation.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             });
         }
 
@@ -85,6 +87,7 @@ namespace BikesRentalServer.Services
                 Status = _reservationsRepository.GetActiveReservation(bike.Id) is null ? bike.Status : BikeStatus.Reserved,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             });
         }
 
@@ -107,6 +110,7 @@ namespace BikesRentalServer.Services
                 Status = _reservationsRepository.GetActiveReservation(bike.Id) is null ? bike.Status : BikeStatus.Reserved,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             });
         }
         
@@ -125,6 +129,7 @@ namespace BikesRentalServer.Services
                 Status = bike.Status,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             }));
         }
 
@@ -165,6 +170,7 @@ namespace BikesRentalServer.Services
                 Status = bike.Status,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             });
         }
 
@@ -192,6 +198,7 @@ namespace BikesRentalServer.Services
                 Status = bike.Status,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             });
         }
         
@@ -210,6 +217,7 @@ namespace BikesRentalServer.Services
                 Status = bike.Status,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             }));
         }
 
@@ -237,6 +245,7 @@ namespace BikesRentalServer.Services
                         Status = bike.Status,
                         User = bike.User,
                         StationId = bike.StationId,
+                        Malfunctions = bike.Malfunctions,
                     });
             }
         }
@@ -258,6 +267,7 @@ namespace BikesRentalServer.Services
                 Status = bike.Status,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             });
         }
         
@@ -278,6 +288,7 @@ namespace BikesRentalServer.Services
                 Status = BikeStatus.Reserved,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             }));
         }
 
@@ -339,6 +350,7 @@ namespace BikesRentalServer.Services
                 Status = reservation.Bike.Status,
                 User = reservation.Bike.User,
                 StationId = reservation.Bike.StationId,
+                Malfunctions = bike.Malfunctions,
             });
         }
 

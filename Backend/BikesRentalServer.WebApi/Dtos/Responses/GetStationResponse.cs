@@ -8,6 +8,8 @@ namespace BikesRentalServer.WebApi.Dtos.Responses
         public string Name { get; set; }
         public StationStatus Status { get; set; }
         public int ActiveBikesCount { get; set; }
+        public int ReservationsCount { get; set; }
+        public int MalfunctionsCount { get; set; }
     }
 
 }
