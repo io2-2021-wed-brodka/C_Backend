@@ -38,6 +38,14 @@ namespace SeleniumTests2
             return new AdminBikesPage(driver);
         }
 
+        public AdminTechsPage GoToTechs()
+        {
+            driver.FindElement(By.Id("go-to-techs")).Click();
+            driver.Sleep();
+
+            return new AdminTechsPage(driver);
+        }
+
         private IWebElement GetLogOutButton()
         {
             return driver.FindElement(By.Id("logout"));

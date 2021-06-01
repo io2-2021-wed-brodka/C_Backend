@@ -88,7 +88,7 @@ namespace SeleniumTests2
             var testMember = type.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
             var test = (ITest)testMember.GetValue(output);
             var displayName = string.Join('.', test.DisplayName.Split('.').Skip(3).ToArray());
-            Driver.SetTabTitle(displayName);
+            Driver.SetTabTitle($"{TestNo}: {displayName}");
         }
     }
 }

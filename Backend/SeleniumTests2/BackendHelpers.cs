@@ -46,11 +46,12 @@ namespace SeleniumTests2
             return client.PostRequest<LogInResponse>("register", body);
         }
 
-        public static Task<GetStationResponse> AddStation(this RestClient client, string stationName, string adminToken)
+        public static Task<GetStationResponse> AddStation(this RestClient client, string stationName, string adminToken, int? bikesLimit = null)
         {
             var body = new AddStationRequest
             {
-                Name = stationName
+                Name = stationName,
+                BikesLimit = bikesLimit
             };
             
             return client.PostRequest<GetStationResponse>("stations", body, adminToken);
@@ -86,6 +87,26 @@ namespace SeleniumTests2
             return client.PostRequest<GetBikeResponse>("bikes/rented", body, adminToken);
         }
 
+        public static Task<GetBikeResponse> ReturnBike(this RestClient client, string bikeId, string stationId, string adminToken)
+        {
+            var body = new GiveBikeBackRequest
+            {
+                Id = bikeId,
+            };
+
+            return client.PostRequest<GetBikeResponse>($"stations/{stationId}/bikes", body, adminToken);
+        }
+
+        public static Task<GetReservedBikeResponse> ReserveBike(this RestClient client, string bikeId, string adminToken)
+        {
+            var body = new ReserveBikeRequest
+            {
+                Id = bikeId
+            };
+
+            return client.PostRequest<GetReservedBikeResponse>("bikes/reserved", body, adminToken);
+        }
+
         public static Task<GetBikeResponse> BlockBike(this RestClient client, string bikeId, string adminToken)
         {
             var body = new BlockBikeRequest
@@ -105,6 +126,22 @@ namespace SeleniumTests2
             };
             
             return client.PostRequest<GetTechResponse>("techs", body, adminToken);
+        }
+
+        public static Task<GetAllMalfunctionsResponse> GetMalfunctions(this RestClient client, string adminToken)
+        {
+            return client.GetRequest<GetAllMalfunctionsResponse>("malfunctions", adminToken);
+        }
+
+        public static Task<GetMalfunctionResponse> ReportMalfunction(this RestClient client, string bikeId, string description, string adminToken)
+        {
+            var body = new AddMalfunctionRequest
+            {
+                Id = bikeId,
+                Description = description
+            };
+            
+            return client.PostRequest<GetMalfunctionResponse>("malfunctions", body, adminToken);
         }
     }
 }

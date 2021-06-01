@@ -40,7 +40,9 @@ const TechsTab = () => {
 
   return (
     <>
-      <Typography variant="h4">Techs</Typography>
+      <Typography variant="h4" id="techs-header">
+        Techs
+      </Typography>
       <AddTechForm onAdd={onAddTech} />
       <Paper>
         <DataLoader data={data}>
@@ -62,7 +64,7 @@ const TechsTab = () => {
                         variant="contained"
                         color={'primary'}
                         key="Remove"
-                        id={`remove-${tech.id}`}
+                        id={`remove-${tech.name}`}
                         onClick={() => onRemoveTech(tech.id)}
                       >
                         Remove
