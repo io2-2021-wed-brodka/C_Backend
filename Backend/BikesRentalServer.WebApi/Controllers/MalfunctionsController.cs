@@ -13,11 +13,11 @@ namespace BikesRentalServer.WebApi.Controllers
     [ServiceFilter(typeof(AuthorizationFilter))]
     public class MalfunctionsController : ControllerBase
     {
-        private readonly ITechsService _techsService;
+        private readonly IMalfunctionsService _malfunctionsService;
 
-        public MalfunctionsController(ITechsService techsService)
+        public MalfunctionsController(IMalfunctionsService malfunctionsService)
         {
-            _techsService = techsService;
+            _malfunctionsService = malfunctionsService;
         }
         
         [HttpDelete("{id}")]
@@ -25,7 +25,7 @@ namespace BikesRentalServer.WebApi.Controllers
         [TechAuthorization]
         public IActionResult RemoveMalfunction(string id)
         {
-            var response = _techsService.RemoveMalfunction(id);
+            var response = _malfunctionsService.RemoveMalfunction(id);
             return response.Status switch
             {
                 Status.Success => NoContent(),

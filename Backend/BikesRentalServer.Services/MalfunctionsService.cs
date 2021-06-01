@@ -4,16 +4,16 @@ using BikesRentalServer.Services.Abstract;
 
 namespace BikesRentalServer.Services
 {
-    public class TechsService : ITechsService
+    public class MalfunctionsService : IMalfunctionsService
     {
         private readonly IMalfunctionsRepository _malfunctionsRepository;
 
-        public TechsService(IMalfunctionsRepository malfunctionsRepository)
+        public MalfunctionsService(IMalfunctionsRepository malfunctionsRepository)
         {
             _malfunctionsRepository = malfunctionsRepository;
         }
 
-        #region Malfunctions
+        #region Basic
 
         public ServiceActionResult<Malfunction> RemoveMalfunction(string malfunctionId)
         {

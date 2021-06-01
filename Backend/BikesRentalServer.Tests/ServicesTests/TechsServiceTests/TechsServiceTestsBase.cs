@@ -11,9 +11,9 @@ namespace BikesRentalServer.Tests.ServicesTests.TechsServiceTests
         protected Mock<IBikesRepository> BikesRepository { get; } = new Mock<IBikesRepository>();
         protected Mock<IMalfunctionsRepository> MalfunctionsRepository { get; } = new Mock<IMalfunctionsRepository>();
         
-        protected ITechsService GetTechsService()
+        protected IMalfunctionsService GetTechsService()
         {
-            return new Services.TechsService(MalfunctionsRepository.Object);
+            return new Services.MalfunctionsService(MalfunctionsRepository.Object);
         }
     }
 }

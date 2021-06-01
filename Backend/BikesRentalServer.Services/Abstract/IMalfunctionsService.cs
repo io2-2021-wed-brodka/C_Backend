@@ -2,7 +2,7 @@
 
 namespace BikesRentalServer.Services.Abstract
 {
-    public interface ITechsService
+    public interface IMalfunctionsService
     {
         ServiceActionResult<Malfunction> RemoveMalfunction(string malfunctionId);
     }
