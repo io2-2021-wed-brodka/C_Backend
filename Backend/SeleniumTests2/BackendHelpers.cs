@@ -86,6 +86,16 @@ namespace SeleniumTests2
             return client.PostRequest<GetBikeResponse>("bikes/rented", body, adminToken);
         }
 
+        public static Task<GetReservedBikeResponse> ReserveBike(this RestClient client, string bikeId, string adminToken)
+        {
+            var body = new ReserveBikeRequest
+            {
+                Id = bikeId
+            };
+
+            return client.PostRequest<GetReservedBikeResponse>("bikes/reserved", body, adminToken);
+        }
+
         public static Task<GetBikeResponse> BlockBike(this RestClient client, string bikeId, string adminToken)
         {
             var body = new BlockBikeRequest
@@ -94,6 +104,29 @@ namespace SeleniumTests2
             };
 
             return client.PostRequest<GetBikeResponse>("bikes/blocked", body, adminToken);
+        }
+
+        public static Task<GetUserResponse> BlockUser(this RestClient client, string UserId, string adminToken)
+        {
+            var body = new BlockUserRequest
+            {
+                Id = UserId
+            };
+
+            return client.PostRequest<GetUserResponse>("users/blocked", body, adminToken);
+        }
+
+        public static Task<GetAllUsersResponse> GetUsers(this RestClient client, string adminToken)
+        {
+            return client.GetRequest<GetAllUsersResponse>("users", adminToken);
+        }
+
+        public static async Task<string> GetUserId(this RestClient client, string UserName, string adminToken)
+        {
+            var users = await client.GetUsers(adminToken);
+            foreach (var user in users.Users)
+                if (user.Name == UserName) return user.Id;
+            return "";
         }
     }
 }

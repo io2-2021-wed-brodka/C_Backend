@@ -54,6 +54,14 @@ namespace SeleniumTests2
             return new RentalsPage(driver);
         }
 
+        public ReservationsPage GoToReservations()
+        {
+            driver.FindElement(By.Id("reservations")).Click();
+            driver.Sleep();
+
+            return new ReservationsPage(driver);
+        }
+
         public StationsPage GoToStations()
         {
             driver.FindElement(By.Id("stations")).Click();
