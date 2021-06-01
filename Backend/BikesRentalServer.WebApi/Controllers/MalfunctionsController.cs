@@ -1,15 +1,11 @@
-﻿using BikesRentalServer.WebApi.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BikesRentalServer.Models;
-using BikesRentalServer.Services;
+﻿using BikesRentalServer.Services;
 using BikesRentalServer.Services.Abstract;
+using BikesRentalServer.WebApi.Authorization;
 using BikesRentalServer.WebApi.Authorization.Attributes;
 using BikesRentalServer.WebApi.Dtos.Requests;
 using BikesRentalServer.WebApi.Dtos.Responses;
+using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace BikesRentalServer.WebApi.Controllers
 {
@@ -25,14 +21,23 @@ namespace BikesRentalServer.WebApi.Controllers
             _malfunctionsService = malfunctionsService;
         }
 
-        [HttpPost]
+        [HttpGet]
         [TechAuthorization]
         [AdminAuthorization]
+        public ActionResult<GetAllMalfunctionsResponse> GetAllMalfunctions()
+        {
+            var response = _malfunctionsService.GetAllMalfunctions();
+            return Ok(response);
+        }
+        
+
+        [HttpPost]
         [UserAuthorization]
+        [TechAuthorization]
+        [AdminAuthorization]
         public ActionResult<GetMalfunctionResponse> AddMalfunction(AddMalfunctionRequest request)
         {
             var response = _malfunctionsService.AddMalfunction(request.Id, request.Description);
-
             return response.Status switch
             {
                 Status.Success => Created($"/malfunctions/{response.Object.Id}", new GetMalfunctionResponse
@@ -44,14 +49,13 @@ namespace BikesRentalServer.WebApi.Controllers
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
-                _ => throw new InvalidOperationException($"Unexpected result: {response.Status} - {response.Message}")
+                Status.UserBlocked or _ => throw new InvalidOperationException($"Unexpected result: {response.Status} - {response.Message}")
             };
         }
 
         [HttpGet("{id}")]
         [TechAuthorization]
         [AdminAuthorization]
-        [UserAuthorization]
         public ActionResult<GetMalfunctionResponse> GetMalfunction(string id)
         {
             throw new NotImplementedException();
