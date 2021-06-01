@@ -23,6 +23,14 @@ namespace BikesRentalServer.DataAccess.Repositories
                 .Where(u => u.Role == UserRole.User);
         }
 
+        public IEnumerable<User> GetAllTechs()
+        {
+            return _dbContext.Users
+                .Include(u => u.RentedBikes)
+                .Include(u => u.Reservations)
+                .Where(u => u.Role == UserRole.Tech);
+        }
+
         public User Get(string id)
         {
             if (!int.TryParse(id, out var iid))

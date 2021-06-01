@@ -25,7 +25,7 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<IEnumerable<User>> GetAllUsers()
         {
-            var users = _usersRepository.GetAll().Where(user => user.Role is UserRole.User);
+            var users = _usersRepository.GetAll();
             return ServiceActionResult.Success(users.Select(user => new User
             {
                 Id = user.Id,
@@ -37,7 +37,22 @@ namespace BikesRentalServer.Services
                 RentedBikes = user.RentedBikes,
             }));
         }
-        
+
+        public ServiceActionResult<IEnumerable<User>> GetAllTechs()
+        {
+            var techs = _usersRepository.GetAllTechs();
+            return ServiceActionResult.Success(techs.Select(tech => new User
+            {
+                Id = tech.Id,
+                Reservations = tech.Reservations,
+                Role = tech.Role,
+                Status = tech.Status,
+                Username = tech.Username,
+                PasswordHash = tech.PasswordHash,
+                RentedBikes = tech.RentedBikes,
+            }));
+        }
+
         public ServiceActionResult<User> GetUserByUsernameAndPassword(string username, string password)
         {
             var user = _usersRepository.GetByUsernameAndPassword(username, password);
