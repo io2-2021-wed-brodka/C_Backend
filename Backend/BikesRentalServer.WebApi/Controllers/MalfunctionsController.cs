@@ -6,6 +6,7 @@ using BikesRentalServer.WebApi.Dtos.Requests;
 using BikesRentalServer.WebApi.Dtos.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 
 namespace BikesRentalServer.WebApi.Controllers
 {
@@ -27,7 +28,16 @@ namespace BikesRentalServer.WebApi.Controllers
         public ActionResult<GetAllMalfunctionsResponse> GetAllMalfunctions()
         {
             var response = _malfunctionsService.GetAllMalfunctions();
-            return Ok(response);
+            return Ok(new GetAllMalfunctionsResponse
+            {
+                Malfunctions = response.Object.Select(malfunction => new GetMalfunctionResponse
+                {
+                    Description = malfunction.Description,
+                    Id = malfunction.Id.ToString(),
+                    BikeId = malfunction.Bike.Id.ToString(),
+                    ReportingUserId = malfunction.ReportingUser.Id.ToString(),
+                }),
+            });
         }
         
 
