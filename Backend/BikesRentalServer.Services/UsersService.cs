@@ -25,7 +25,7 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<IEnumerable<User>> GetAllUsers()
         {
-            var users = _usersRepository.GetAll().Where(u => u.Role == UserRole.User);
+            var users = _usersRepository.GetAll();
             return ServiceActionResult.Success(users.Select(user => new User
             {
                 Id = user.Id,
@@ -40,7 +40,7 @@ namespace BikesRentalServer.Services
 
         public ServiceActionResult<IEnumerable<User>> GetAllTechs()
         {
-            var techs = _usersRepository.GetAllTechs().Where(u => u.Role == UserRole.Tech);
+            var techs = _usersRepository.GetAllTechs();
             return ServiceActionResult.Success(techs.Select(tech => new User
             {
                 Id = tech.Id,
