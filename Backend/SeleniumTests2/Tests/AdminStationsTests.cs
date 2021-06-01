@@ -40,6 +40,25 @@ namespace SeleniumTests2.Tests
         }
 
         [Fact]
+        public async Task NewStationLimitShouldWorkForAdmin()
+        {
+            var stationName = GetUniqueString();
+
+            Driver.OpenAdminTab();
+            var adminStationsPage = LoginAsAdmin();
+
+            adminStationsPage.AddStation(stationName, 2);
+            adminStationsPage.ClickOnStation(stationName);
+            adminStationsPage.AddBikeToOpenedStation();
+            adminStationsPage.ContainsSnackbar().Should().BeFalse();
+            adminStationsPage.AddBikeToOpenedStation();
+            adminStationsPage.ContainsSnackbar().Should().BeFalse();
+            adminStationsPage.AddBikeToOpenedStation();
+            adminStationsPage.ContainsSnackbar().Should().BeTrue();
+            adminStationsPage.GetBikesCount().Should().Be(2);
+        }
+
+        [Fact]
         public async Task StationShouldNotBeRemovableWhenItHasBikes()
         {
             var stationName = GetUniqueString();

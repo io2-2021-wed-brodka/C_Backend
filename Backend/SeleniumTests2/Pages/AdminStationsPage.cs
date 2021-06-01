@@ -18,9 +18,12 @@ namespace SeleniumTests2
             GetNewStationSubmitButton();
         }
 
-        public void AddStation(string stationName)
+        public void AddStation(string stationName, int limit = 0)
         {
             GetNewStationNameInput().SendKeys(stationName);
+            if(limit > 0){
+                GetNewStationLimitInput().SendKeys(limit.ToString());
+            }
             GetNewStationSubmitButton().Click();
             driver.Sleep();
         }
@@ -141,6 +144,10 @@ namespace SeleniumTests2
             return driver.FindElement(By.Id("new-station-name-input"));
         }
 
+        private IWebElement GetNewStationLimitInput()
+        {
+            return driver.FindElement(By.Id("new-station-bikes-limit-input"));
+        }
         private IWebElement GetNewStationSubmitButton()
         {
             return driver.FindElement(By.Id("new-station-submit-button"));
