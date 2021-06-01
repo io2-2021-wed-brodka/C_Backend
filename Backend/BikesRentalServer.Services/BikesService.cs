@@ -311,6 +311,8 @@ namespace BikesRentalServer.Services
             var user = _usersRepository.GetByUsername(_userContext.Username);
             if (user.Status is UserStatus.Blocked)
                 return ServiceActionResult.UserBlocked<Reservation>("User is blocked");
+            if (user.Reservations.Count >= 3)
+                return ServiceActionResult.InvalidState<Reservation>("Reservation limit exceeded");
 
             bike = _bikesRepository.SetStatus(bike.Id, BikeStatus.Reserved);
             var reservation = _reservationsRepository.Add(new Reservation
