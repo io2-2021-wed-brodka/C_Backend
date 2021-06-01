@@ -1,5 +1,5 @@
 import React from 'react';
-import { mockedServices, useServices } from '../../common/services';
+import { useServices } from '../../common/services';
 import DataLoader from '../../common/components/DataLoader';
 import usePromise from '../../common/hooks/usePromise';
 import useRefresh from '../../common/hooks/useRefresh';
@@ -20,7 +20,7 @@ import AddTechForm from './AddTechForm';
 
 const TechsTab = () => {
   const [refreshState, refresh] = useRefresh();
-  const getTechs = mockedServices.getTechs;
+  const getTechs = useServices().getTechs;
   const addTech = useServices().addTech;
   const removeTech = useServices().removeTech;
   const data = usePromise(getTechs, [refreshState]);

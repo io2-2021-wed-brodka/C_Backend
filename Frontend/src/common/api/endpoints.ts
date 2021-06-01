@@ -7,6 +7,7 @@ import { ReservedBike } from './models/reservedBike';
 import { LoginResponse } from './models/login-response';
 import { User } from './models/user';
 import { Tech } from './models/tech';
+import { Malfunction } from './models/malfunction';
 const API = 'http://localhost:8080';
 
 export type StationsResponse = { stations: Station[] };
@@ -14,6 +15,7 @@ export type BikesResponse = { bikes: Bike[] };
 export type ReservedBikesResponse = { bikes: ReservedBike[] };
 export type UsersResponse = { users: User[] };
 export type TechsResponse = { techs: Tech[] };
+export type MalfunctionsResponse = { malfunctions: Malfunction[] };
 
 export const signIn = (login: string, password: string) =>
   apiConnection<LoginResponse>(`${API}/login`, {
@@ -158,4 +160,20 @@ export const addTech = (name: string, password: string) =>
   apiWithAuthConnection<Tech>(`${API}/techs`, {
     method: 'POST',
     data: { name, password },
+  });
+
+export const addMalfunction = (bikeId: string, description: string) =>
+  apiWithAuthConnection<Malfunction>(`${API}/malfunctions`, {
+    method: 'POST',
+    data: { id: bikeId, description },
+  });
+
+export const getMalfunctions = () =>
+  apiWithAuthConnection<MalfunctionsResponse>(`${API}/malfunctions`).then(
+    res => res.malfunctions,
+  );
+
+export const removeMalfunction = (id: string) =>
+  apiWithAuthConnection<void>(`${API}/malfunctions/${id}`, {
+    method: 'DELETE',
   });

@@ -26,6 +26,10 @@ namespace SeleniumTests2.Tests
 
             oldBikesCount.Should().Be(0);
             newBikesCount.Should().Be(1);
+            Driver.SwitchToUserTab();
+            var stationsPage = await LoginAsSomeUser();
+            stationsPage.OpenBikesList(stationName);
+            stationsPage.GetBikesCount().Should().Be(1);
         }
 
         [Fact]
@@ -49,6 +53,10 @@ namespace SeleniumTests2.Tests
             bikeBlockedBefore.Should().BeFalse();
             bikeExistsAfter.Should().BeTrue();
             bikeBlockedAfter.Should().BeTrue();
+            Driver.SwitchToUserTab();
+            var stationsPage = await LoginAsSomeUser();
+            stationsPage.OpenBikesList(stationName);
+            stationsPage.GetBikesCount().Should().Be(0);
         }
 
         [Fact]
@@ -73,6 +81,10 @@ namespace SeleniumTests2.Tests
             bikeBlockedBefore.Should().BeTrue();
             bikeExistsAfter.Should().BeTrue();
             bikeBlockedAfter.Should().BeFalse();
+            Driver.SwitchToUserTab();
+            var stationsPage = await LoginAsSomeUser();
+            stationsPage.OpenBikesList(stationName);
+            stationsPage.GetBikesCount().Should().Be(1);
         }
 
         [Fact]
@@ -93,6 +105,10 @@ namespace SeleniumTests2.Tests
 
             bikeExistsBefore.Should().BeTrue();
             bikeExistsAfter.Should().BeFalse();
+            Driver.SwitchToUserTab();
+            var stationsPage = await LoginAsSomeUser();
+            stationsPage.OpenBikesList(stationName);
+            stationsPage.GetBikesCount().Should().Be(0);
         }
 
         [Fact]
@@ -112,6 +128,7 @@ namespace SeleniumTests2.Tests
 
             bikeExistsBefore.Should().BeTrue();
             bikeExistsAfter.Should().BeTrue();
+            adminBikesPage.ContainsSnackbar().Should().BeTrue();
         }
     }
 }
