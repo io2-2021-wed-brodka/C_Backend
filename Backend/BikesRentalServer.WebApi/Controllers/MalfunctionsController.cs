@@ -24,11 +24,12 @@ namespace BikesRentalServer.WebApi.Controllers
         {
             _malfunctionsService = malfunctionsService;
         }
+
         [HttpPost]
         [TechAuthorization]
         [AdminAuthorization]
         [UserAuthorization]
-        public ActionResult <GetMalfunctionResponse> AddMalfunction(AddMalfunctionRequest request)
+        public ActionResult<GetMalfunctionResponse> AddMalfunction(AddMalfunctionRequest request)
         {
             var response = _malfunctionsService.AddMalfunction(request.Id, request.Description);
 
@@ -43,6 +44,7 @@ namespace BikesRentalServer.WebApi.Controllers
                 }),
                 Status.EntityNotFound => NotFound(response.Message),
                 Status.InvalidState => UnprocessableEntity(response.Message),
+                _ => throw new InvalidOperationException($"Unexpected result: {response.Status} - {response.Message}")
             };
         }
 
@@ -52,7 +54,7 @@ namespace BikesRentalServer.WebApi.Controllers
         [UserAuthorization]
         public ActionResult<GetMalfunctionResponse> GetMalfunction(string id)
         {
-            return null;
+            throw new NotImplementedException();
         }
     }
 }

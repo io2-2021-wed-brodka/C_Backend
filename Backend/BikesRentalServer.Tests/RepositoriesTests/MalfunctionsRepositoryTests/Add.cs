@@ -16,7 +16,6 @@ namespace BikesRentalServer.Tests.RepositoriesTests.MalfunctionsRepositoryTests
 {
     public class Add
     {
-
         private readonly DatabaseContext _dbContext;
         private readonly MalfunctionsRepository _malfunctionsRepository;
 

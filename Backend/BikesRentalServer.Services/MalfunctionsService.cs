@@ -12,6 +12,7 @@ namespace BikesRentalServer.Services
         private readonly IMalfunctionsRepository _malfunctionRepository;
         private readonly IBikesRepository _bikesRepository;
         private readonly IUsersRepository _usersRepository;
+
         public MalfunctionsService(UserContext userContext, IMalfunctionsRepository malfunctionRepository, IBikesRepository bikesRepository, IUsersRepository usersRepository)
         {
             _malfunctionRepository = malfunctionRepository;

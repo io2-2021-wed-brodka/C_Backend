@@ -17,6 +17,7 @@ namespace BikesRentalServer.DataAccess.Repositories
         {
             _dbContext = dbContext;
         }
+
         public Malfunction Add(Malfunction entity)
         {
             var malfunctions = _dbContext.Malfunctions.Add(entity).Entity;
