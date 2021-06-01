@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BikesRentalServer.WebApi.Dtos.Responses
+﻿namespace BikesRentalServer.WebApi.Dtos.Responses
 {
     public class GetMalfunctionResponse
     {
