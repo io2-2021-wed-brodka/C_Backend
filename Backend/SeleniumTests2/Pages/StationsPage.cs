@@ -58,6 +58,12 @@ namespace SeleniumTests2
             driver.Sleep();
         }
 
+        public void ReserveBike(string bikeId)
+        {
+            GetReserveButton(bikeId).Click();
+            driver.Sleep();
+        }
+
         public int GetBikesCount()
         {
             return GetBikeElements().Count;
