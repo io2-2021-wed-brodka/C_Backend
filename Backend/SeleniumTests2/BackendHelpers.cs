@@ -111,5 +111,16 @@ namespace SeleniumTests2
         {
             return client.GetRequest<GetAllMalfunctionsResponse>("malfunctions", adminToken);
         }
+
+        public static Task<GetMalfunctionResponse> ReportMalfunction(this RestClient client, string bikeId, string description, string adminToken)
+        {
+            var body = new AddMalfunctionRequest
+            {
+                Id = bikeId,
+                Description = description
+            };
+            
+            return client.PostRequest<GetMalfunctionResponse>("malfunction", body, adminToken);
+        }
     }
 }
