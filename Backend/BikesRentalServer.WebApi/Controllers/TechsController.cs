@@ -54,12 +54,12 @@ namespace BikesRentalServer.WebApi.Controllers
 
         [HttpGet]
         [AdminAuthorization]
-        public ActionResult<GetAllUsersResponse> GetAllTechs()
+        public ActionResult<GetAllTechsResponse> GetAllTechs()
         {
-            var response = new GetAllUsersResponse
+            var response = new GetAllTechsResponse
             {
-                Users = _usersService.GetAllTechs().Object
-                    .Select(tech => new GetUserResponse
+                Techs = _usersService.GetAllTechs().Object
+                    .Select(tech => new GetTechResponse
                     {
                         Id = tech.Id.ToString(),
                         Name = tech.Username,

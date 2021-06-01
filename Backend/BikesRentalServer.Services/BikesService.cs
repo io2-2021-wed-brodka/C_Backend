@@ -45,6 +45,7 @@ namespace BikesRentalServer.Services
                     Status = reservation is null ? bike.Status : BikeStatus.Reserved,
                     User = reservation is null ? bike.User : reservation.User,
                     StationId = bike.StationId,
+                    Malfunctions = bike.Malfunctions,
                 };
             }));
         }
@@ -63,6 +64,7 @@ namespace BikesRentalServer.Services
                 Status = reservation is null ? bike.Status : BikeStatus.Reserved,
                 User = reservation is null ? bike.User : reservation.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             });
         }
 
@@ -71,6 +73,8 @@ namespace BikesRentalServer.Services
             var station = _stationsRepository.Get(stationId);
             if (station is null)
                 return ServiceActionResult.EntityNotFound<Bike>("Station does not exist");
+            if (station.Bikes.Count >= station.BikeLimit)
+                return ServiceActionResult.InvalidState<Bike>("Bike limit exceeded");
 
             var bike = _bikesRepository.Add(new Bike
             {
@@ -85,6 +89,7 @@ namespace BikesRentalServer.Services
                 Status = _reservationsRepository.GetActiveReservation(bike.Id) is null ? bike.Status : BikeStatus.Reserved,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             });
         }
 
@@ -107,6 +112,7 @@ namespace BikesRentalServer.Services
                 Status = _reservationsRepository.GetActiveReservation(bike.Id) is null ? bike.Status : BikeStatus.Reserved,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             });
         }
         
@@ -125,6 +131,7 @@ namespace BikesRentalServer.Services
                 Status = bike.Status,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             }));
         }
 
@@ -143,7 +150,7 @@ namespace BikesRentalServer.Services
             var user = _usersRepository.GetByUsername(_userContext.Username);
             if (user.Status is UserStatus.Blocked)
                 return ServiceActionResult.UserBlocked<Bike>("User is blocked");
-            if (user.RentedBikes.Count >= 4)
+            if (user.RentedBikes.Count >= User.RentalLimit)
                 return ServiceActionResult.InvalidState<Bike>("Rental limit exceeded");
 
             var reservation = _reservationsRepository.GetActiveReservation(bike.Id);
@@ -165,6 +172,7 @@ namespace BikesRentalServer.Services
                 Status = bike.Status,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             });
         }
 
@@ -175,6 +183,8 @@ namespace BikesRentalServer.Services
                 return ServiceActionResult.EntityNotFound<Bike>("Station not found");
             if (station.Status is StationStatus.Blocked)
                 return ServiceActionResult.InvalidState<Bike>("Station is blocked");
+            if (station.Bikes.Count >= station.BikeLimit)
+                return ServiceActionResult.InvalidState<Bike>("Bike limit exceeded");
 
             var bike = _bikesRepository.Get(bikeId);
             if (bike is null)
@@ -192,6 +202,7 @@ namespace BikesRentalServer.Services
                 Status = bike.Status,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             });
         }
         
@@ -210,6 +221,7 @@ namespace BikesRentalServer.Services
                 Status = bike.Status,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             }));
         }
 
@@ -237,6 +249,7 @@ namespace BikesRentalServer.Services
                         Status = bike.Status,
                         User = bike.User,
                         StationId = bike.StationId,
+                        Malfunctions = bike.Malfunctions,
                     });
             }
         }
@@ -258,6 +271,7 @@ namespace BikesRentalServer.Services
                 Status = bike.Status,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             });
         }
         
@@ -278,6 +292,7 @@ namespace BikesRentalServer.Services
                 Status = BikeStatus.Reserved,
                 User = bike.User,
                 StationId = bike.StationId,
+                Malfunctions = bike.Malfunctions,
             }));
         }
 
@@ -300,6 +315,8 @@ namespace BikesRentalServer.Services
             var user = _usersRepository.GetByUsername(_userContext.Username);
             if (user.Status is UserStatus.Blocked)
                 return ServiceActionResult.UserBlocked<Reservation>("User is blocked");
+            if (user.Reservations.Count >= User.ReservationLimit)
+                return ServiceActionResult.InvalidState<Reservation>("Reservation limit exceeded");
 
             bike = _bikesRepository.SetStatus(bike.Id, BikeStatus.Reserved);
             var reservation = _reservationsRepository.Add(new Reservation
@@ -339,6 +356,7 @@ namespace BikesRentalServer.Services
                 Status = reservation.Bike.Status,
                 User = reservation.Bike.User,
                 StationId = reservation.Bike.StationId,
+                Malfunctions = bike.Malfunctions,
             });
         }
 

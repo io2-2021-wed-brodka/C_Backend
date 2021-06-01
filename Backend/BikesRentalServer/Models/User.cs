@@ -4,6 +4,9 @@ namespace BikesRentalServer.Models
 {
     public class User
     {
+        public const int RentalLimit = 4;
+        public const int ReservationLimit = 3;
+        
         public int Id { get; set; }
         public UserStatus Status { get; set; }
         public UserRole Role { get; set; }

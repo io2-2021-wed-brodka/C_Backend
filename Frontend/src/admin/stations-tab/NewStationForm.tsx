@@ -21,17 +21,22 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 type Props = {
-  onAdd: (name: string) => void;
+  onAdd: (name: string, bikesLimit?: number) => void;
 };
 
 const NewStationForm = ({ onAdd }: Props) => {
   const classes = useStyles();
   const [name, setName] = useState('');
+  const [bikesLimit, setBikesLimit] = useState<number | ''>('');
 
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (name) {
-      onAdd(name);
+      if (bikesLimit) {
+        onAdd(name, bikesLimit);
+      } else {
+        onAdd(name);
+      }
     }
     setName('');
   };
@@ -44,6 +49,14 @@ const NewStationForm = ({ onAdd }: Props) => {
         className={classes.input}
         value={name}
         onChange={e => setName(e.target.value)}
+      />
+      <TextField
+        id="new-station-bikes-limit-input"
+        label="New station's bikes limit"
+        placeholder="10"
+        className={classes.input}
+        value={bikesLimit}
+        onChange={e => setBikesLimit(parseInt(e.target.value) || '')}
       />
       <Button
         id="new-station-submit-button"
