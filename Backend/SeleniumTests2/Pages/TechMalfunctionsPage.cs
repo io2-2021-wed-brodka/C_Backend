@@ -33,17 +33,10 @@ namespace SeleniumTests2
             }
         }
 
-        public bool RemoveMalfunction(string malfunctionId)
+        public void RemoveMalfunction(string malfunctionId)
         {
-            try
-            {
-                GetRemoveMalfunctionButton(malfunctionId);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            GetRemoveMalfunctionButton(malfunctionId).Click();
+            driver.Sleep();
         }
 
         private IWebElement GetRemoveMalfunctionButton(string malfunctionId)

@@ -38,7 +38,7 @@ export const SnackBar = ({ isOpen, setOpen, message }: Props) => {
             color="inherit"
             onClick={handleClose}
           >
-            <CloseIcon fontSize="small" />
+            <CloseIcon fontSize="small" id="close-snackbar" />
           </IconButton>
         }
       />

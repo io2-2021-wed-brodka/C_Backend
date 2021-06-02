@@ -42,7 +42,9 @@ const UsersTab = () => {
 
   return (
     <>
-      <Typography variant="h4">Users</Typography>
+      <Typography variant="h4" id="users-header">
+        Users
+      </Typography>
 
       <Paper>
         <DataLoader data={data}>
@@ -68,6 +70,7 @@ const UsersTab = () => {
                           color={'default'}
                           onClick={() => onUnblockUser(user.id)}
                           key="Unblock"
+                          id={`unblock-${user.name}`}
                         >
                           Unblock
                         </Button>
@@ -77,6 +80,7 @@ const UsersTab = () => {
                           color={'secondary'}
                           onClick={() => onBlockUser(user.id)}
                           key="Block"
+                          id={`block-${user.name}`}
                         >
                           Block
                         </Button>

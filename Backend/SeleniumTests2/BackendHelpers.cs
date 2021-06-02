@@ -2,6 +2,7 @@ using RestSharp;
 using BikesRentalServer.WebApi.Dtos.Responses;
 using System.Threading.Tasks;
 using BikesRentalServer.WebApi.Dtos.Requests;
+using System.Linq;
 
 namespace SeleniumTests2
 {
@@ -115,6 +116,27 @@ namespace SeleniumTests2
             };
 
             return client.PostRequest<GetBikeResponse>("bikes/blocked", body, adminToken);
+        }
+
+        public static Task<GetUserResponse> BlockUser(this RestClient client, string UserId, string adminToken)
+        {
+            var body = new BlockUserRequest
+            {
+                Id = UserId
+            };
+
+            return client.PostRequest<GetUserResponse>("users/blocked", body, adminToken);
+        }
+
+        public static Task<GetAllUsersResponse> GetUsers(this RestClient client, string adminToken)
+        {
+            return client.GetRequest<GetAllUsersResponse>("users", adminToken);
+        }
+
+        public static async Task<string> GetUserId(this RestClient client, string userName, string adminToken)
+        {
+            var users = await client.GetUsers(adminToken);
+            return users.Users.FirstOrDefault(u => u.Name == userName)?.Id ?? "";
         }
 
         public static Task<GetTechResponse> AddTech(this RestClient client, string login, string password, string adminToken)

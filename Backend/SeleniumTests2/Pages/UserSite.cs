@@ -54,6 +54,16 @@ namespace SeleniumTests2
             return new RentalsPage(driver);
         }
 
+        public void CloseSnackbar()
+        {
+            try
+            {
+                driver.FindElement(By.Id("close-snackbar")).Click();
+                driver.Sleep();
+            }
+            catch {}
+        }
+
         public ReservationsPage GoToReservations()
         {
             driver.FindElement(By.Id("reservations")).Click();
