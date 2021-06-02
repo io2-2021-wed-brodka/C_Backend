@@ -46,6 +46,14 @@ namespace SeleniumTests2
             return new AdminTechsPage(driver);
         }
 
+        public AdminUsersPage GoToUsers()
+        {
+            driver.FindElement(By.Id("go-to-users")).Click();
+            driver.Sleep();
+
+            return new AdminUsersPage(driver);
+        }
+
         private IWebElement GetLogOutButton()
         {
             return driver.FindElement(By.Id("logout"));

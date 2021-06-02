@@ -39,6 +39,7 @@ namespace SeleniumTests2.Tests
 
             var stationsPage = await LoginAsSomeTech();
             var techBikesPage = stationsPage.GoToTechBikes();
+            Driver.Sleep();
             var bikeExistsBefore = techBikesPage.HasBike(bike.Id);
             var bikeBlockedBefore = techBikesPage.IsBikeBlocked(bike.Id);
             techBikesPage.BlockBike(bike.Id);
@@ -66,6 +67,7 @@ namespace SeleniumTests2.Tests
 
             var stationsPage = await LoginAsSomeTech();
             var techBikesPage = stationsPage.GoToTechBikes();
+            Driver.Sleep();
             var bikeExistsBefore = techBikesPage.HasBike(bike.Id);
             var bikeBlockedBefore = techBikesPage.IsBikeBlocked(bike.Id);
             techBikesPage.UnblockBike(bike.Id);

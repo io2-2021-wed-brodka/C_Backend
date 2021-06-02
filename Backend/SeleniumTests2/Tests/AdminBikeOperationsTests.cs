@@ -142,6 +142,7 @@ namespace SeleniumTests2.Tests
             Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
             var adminBikesPage = adminStationsPage.GoToBikes();
+            Driver.Sleep();
             var bikeExistsBefore = adminBikesPage.HasBike(bike.Id);
             adminBikesPage.RemoveBike(bike.Id);
             var bikeExistsAfter = adminBikesPage.HasBike(bike.Id);

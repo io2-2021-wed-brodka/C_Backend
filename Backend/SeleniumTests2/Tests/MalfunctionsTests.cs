@@ -37,6 +37,7 @@ namespace SeleniumTests2.Tests
 
             stationsPage = await LoginAsSomeTech();
             var malfunctionsPage = stationsPage.GoToTechMalfunctions();
+            Driver.Sleep();
             malfunctionsPage.HasMalfunction(malfunction.Id).Should().BeTrue();
         }
 
@@ -59,6 +60,7 @@ namespace SeleniumTests2.Tests
 
             var stationsPage = await LoginAsSomeTech();
             var malfunctionsPage = stationsPage.GoToTechMalfunctions();
+            Driver.Sleep();
             malfunctionsPage.RemoveMalfunction(malfunction.Id);
             malfunctionsPage.HasMalfunction(malfunction.Id).Should().BeFalse();
             malfunctionsResponse = await Api.GetMalfunctions(adminToken);

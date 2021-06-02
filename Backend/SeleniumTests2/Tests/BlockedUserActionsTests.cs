@@ -31,6 +31,7 @@ namespace SeleniumTests2.Tests
 
             stationsPage.ContainsSnackbar().Should().BeTrue();
             var rentalsPage = stationsPage.GoToRentals();
+            Driver.Sleep();
             rentalsPage.HasBike(bike.Id).Should().BeFalse();
         }
 
@@ -57,6 +58,7 @@ namespace SeleniumTests2.Tests
             rentalsPage.ContainsSnackbar().Should().BeTrue();
             rentalsPage.HasBike(bike.Id).Should().BeFalse();
             stationsPage = rentalsPage.GoToStations();
+            Driver.Sleep();
             stationsPage.OpenBikesList(station.Name);
             stationsPage.HasBike(bike.Id).Should().BeTrue();
         }
@@ -76,37 +78,14 @@ namespace SeleniumTests2.Tests
             var loginPage = new LoginPage(Driver);
             loginPage.LogIn(login, password);
             var stationsPage = new StationsPage(Driver);
+            Driver.Sleep();
             stationsPage.OpenBikesList(station.Name);
             stationsPage.ReserveBike(bike.Id);
 
             stationsPage.ContainsSnackbar().Should().BeTrue();
             var reservationsPage = stationsPage.GoToReservations();
+            Driver.Sleep();
             reservationsPage.HasBike(bike.Id).Should().BeFalse();
-        }
-
-        [Fact]
-        public async Task ReservationsShouldBeCancelled()
-        {
-            var login = GetUniqueString();
-            var password = "123";
-            var stationName = GetUniqueString();
-            var adminToken = await Api.LogInAsAdmin();
-            var station = await Api.AddStation(stationName, adminToken);
-            var bike = await Api.AddBike(station.Id, adminToken);
-            var signUpResponse = await Api.SignUp(login, password);
-            _ = await Api.ReserveBike(bike.Id, signUpResponse.Token);
-            var usrId = await Api.GetUserId(login, adminToken);
-            _ = await Api.BlockUser(usrId, adminToken);
-
-            var loginPage = new LoginPage(Driver);
-            loginPage.LogIn(login, password);
-            var stationsPage = new StationsPage(Driver);
-            var reservationsPage = stationsPage.GoToReservations();
-
-            reservationsPage.HasBike(bike.Id).Should().BeFalse();
-            stationsPage = reservationsPage.GoToStations();
-            stationsPage.OpenBikesList(stationName);
-            stationsPage.HasBike(bike.Id).Should().BeTrue();
         }
     }
 }

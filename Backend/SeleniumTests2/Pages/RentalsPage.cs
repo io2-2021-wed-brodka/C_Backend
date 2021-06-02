@@ -20,6 +20,7 @@ namespace SeleniumTests2
 
         public void ReturnBike(string bikeId, string stationId)
         {
+            CloseSnackbar();
             driver.FindElement(By.Id($"return-{bikeId}")).Click();
             driver.Sleep();
             driver.FindElement(By.Id($"return-on-station-{stationId}")).Click();

@@ -36,6 +36,7 @@ namespace SeleniumTests2.Tests
 
             Driver.SwitchToUserTab();
             var stationsPage = await LoginAsSomeUser();
+            Driver.Sleep();
             stationsPage.HasStation(stationName).Should().BeTrue();
         }
 
@@ -79,6 +80,7 @@ namespace SeleniumTests2.Tests
             new LoginPage(Driver).LogIn(login, password);
             var stationsPage = new StationsPage(Driver);
             var rentalsPage = stationsPage.GoToRentals();
+            Driver.Sleep();
 
             rentalsPage.ReturnBike(bike1.Id, station.Id);
             rentalsPage.HasBike(bike1.Id).Should().BeFalse();
@@ -100,6 +102,7 @@ namespace SeleniumTests2.Tests
 
             Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
+            Driver.Sleep();
 
             adminStationsPage.ClickOnStation(stationName);
             adminStationsPage.ClickRemoveStation(stationName);
@@ -117,6 +120,7 @@ namespace SeleniumTests2.Tests
 
             Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
+            Driver.Sleep();
 
             adminStationsPage.ClickOnStation(stationName);
             adminStationsPage.ClickRemoveStation(stationName);
@@ -125,6 +129,7 @@ namespace SeleniumTests2.Tests
             adminStationsPage.HasStation(stationName).Should().BeTrue();
             Driver.SwitchToUserTab();
             var stationsPage = await LoginAsSomeUser();
+            Driver.Sleep();
             stationsPage.HasStation(stationName).Should().BeTrue();
         }
 
@@ -138,6 +143,7 @@ namespace SeleniumTests2.Tests
 
             Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
+            Driver.Sleep();
 
             adminStationsPage.ClickOnStation(stationName);
             adminStationsPage.ClickRemoveStation(stationName);
@@ -145,6 +151,7 @@ namespace SeleniumTests2.Tests
             adminStationsPage.HasStation(stationName).Should().BeFalse();
             Driver.SwitchToUserTab();
             var stationsPage = await LoginAsSomeUser();
+            Driver.Sleep();
             stationsPage.HasStation(stationName).Should().BeFalse();
         }
 
@@ -157,6 +164,7 @@ namespace SeleniumTests2.Tests
             await Api.BlockStation(station.Id, adminToken);
 
             var stationsPage = await LoginAsSomeUser();
+            Driver.Sleep();
             stationsPage.HasStation(stationName).Should().BeFalse();
         }
 
@@ -169,6 +177,7 @@ namespace SeleniumTests2.Tests
 
             Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
+            Driver.Sleep();
 
             adminStationsPage.ClickOnStation(stationName);
             adminStationsPage.ClickBlockStation(stationName);
@@ -176,6 +185,7 @@ namespace SeleniumTests2.Tests
             adminStationsPage.HasStation(stationName).Should().BeTrue();
             Driver.SwitchToUserTab();
             var stationsPage = await LoginAsSomeUser();
+            Driver.Sleep();
             stationsPage.HasStation(stationName).Should().BeFalse();
         }
 
@@ -189,12 +199,14 @@ namespace SeleniumTests2.Tests
 
             Driver.OpenAdminTab();
             var adminStationsPage = LoginAsAdmin();
+            Driver.Sleep();
 
             adminStationsPage.ClickOnStation(stationName);
             adminStationsPage.ClickUnblockStation(stationName);
 
             Driver.SwitchToUserTab();
             var stationsPage = await LoginAsSomeUser();
+            Driver.Sleep();
             stationsPage.HasStation(stationName).Should().BeTrue();
         }
 
@@ -220,6 +232,7 @@ namespace SeleniumTests2.Tests
 
             Driver.OpenAdminTab();
             var stationsPage = LoginAsAdmin();
+            Driver.Sleep();
             stationsPage.GetActiveBikesCount(stationName).Should().Be(3);
             stationsPage.GetBrokenBikesCount(stationName).Should().Be(1);
             stationsPage.GetReservedBikesCount(stationName).Should().Be(1);
