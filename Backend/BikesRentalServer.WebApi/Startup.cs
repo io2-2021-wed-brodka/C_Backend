@@ -75,6 +75,7 @@ namespace BikesRentalServer.WebApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UsePathBase(_configuration["BasePath"] ?? string.Empty);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
