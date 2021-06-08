@@ -3,4 +3,5 @@ export interface Malfunction {
   bikeId: string;
   description: string;
   reportingUserId: string;
+  isBeingFixed?: boolean;
 }
