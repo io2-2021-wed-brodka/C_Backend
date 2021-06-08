@@ -25,7 +25,7 @@ namespace SeleniumTests2
                 GetNewStationLimitInput().SendKeys(limit.ToString());
             }
             GetNewStationSubmitButton().Click();
-            driver.Sleep();
+            driver.Sleep(2);
         }
 
         public bool HasStation(string stationName)
@@ -88,13 +88,13 @@ namespace SeleniumTests2
         public void BlockBike(string bikeId)
         {
             GetBlockBikeButton(bikeId).Click();
-            driver.Sleep();
+            driver.Sleep(2);
         }
 
         public void UnblockBike(string bikeId)
         {
             GetUnblockBikeButton(bikeId).Click();
-            driver.Sleep();
+            driver.Sleep(2);
         }
 
         public void ClickOnStation(string stationName)
@@ -107,7 +107,7 @@ namespace SeleniumTests2
         public void AddBikeToOpenedStation()
         {
             GetAddBikeButton().Click();
-            driver.Sleep();
+            driver.Sleep(2);
         }
 
         public void ClickRemoveBike(string bikeId)
@@ -119,19 +119,19 @@ namespace SeleniumTests2
         public void ClickRemoveStation(string stationName)
         {
             GetRemoveStationButton(stationName).Click();
-            driver.Sleep();
+            driver.Sleep(2);
         }
 
         public void ClickBlockStation(string stationName)
         {
             GetBlockStationButton(stationName).Click();
-            driver.Sleep();
+            driver.Sleep(2);
         }
 
         public void ClickUnblockStation(string stationName)
         {
             GetUnblockStationButton(stationName).Click();
-            driver.Sleep();
+            driver.Sleep(2);
         }
 
         public int GetActiveBikesCount(string stationName)

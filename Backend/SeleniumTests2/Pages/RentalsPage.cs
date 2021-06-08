@@ -40,12 +40,14 @@ namespace SeleniumTests2
             }
         }
 
-        public void ReportMalfunction(string bikeId, string malfunctionMessage)
+        public void ReportMalfunction(string bikeId, string malfunctionMessage, string stationId)
         {
             driver.FindElement(By.Id($"report-{bikeId}")).Click();
             driver.Sleep();
             driver.FindElement(By.Id("malfunction-description")).SendKeys(malfunctionMessage);
             driver.FindElement(By.Id("report-malfunction")).Click();
+            driver.Sleep();
+            driver.FindElement(By.Id($"return-on-station-{stationId}")).Click();
             driver.Sleep();
         }
     }
