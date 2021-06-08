@@ -23,38 +23,53 @@ const RentalsTab = () => {
   const [malfunctionDialogIsOpen, setMalfunctionDialogIsOpen] = useState(false);
   const [returnedBikeId, setReturnedBikeId] = useState('');
   const [reportedBikeId, setReportedBikeId] = useState('');
+  const [malfunctionDescription, setMalfunctionDescription] = useState('');
 
   const handleStationsDialogClose = () => {
     setStationsDialogIsOpen(false);
+    setMalfunctionDescription('');
   };
 
   const handleMalfunctionDialogClose = () => {
     setMalfunctionDialogIsOpen(false);
+    setMalfunctionDescription('');
   };
 
-  const selectStation = (station: Station) => {
+  const selectStation = async (station: Station) => {
     setStationsDialogIsOpen(false);
-    returnBike(station.id, returnedBikeId)
-      .then(() => {
-        refreshBikes();
+
+    try {
+      if (malfunctionDescription) {
+        await addMalfunction(reportedBikeId, malfunctionDescription);
+        snackbar.open(
+          `Returned bike #${returnedBikeId} on station ${station.name} and reported malfunction`,
+        );
+      } else {
         snackbar.open(
           `Returned bike #${returnedBikeId} on station ${station.name}`,
         );
-      })
-      .catch(err => {
-        snackbar.open(err.message);
-      });
+      }
+
+      await returnBike(station.id, returnedBikeId);
+
+      snackbar.open(
+        `Returned bike #${returnedBikeId} on station ${station.name}${
+          malfunctionDescription && ' and reported malfunction'
+        }`,
+      );
+
+      setMalfunctionDescription('');
+      refreshBikes();
+    } catch (err) {
+      snackbar.open(err.message);
+    }
   };
 
   const onReportMalfunction = (description: string) => {
-    addMalfunction(reportedBikeId, description)
-      .then(() => {
-        setMalfunctionDialogIsOpen(false);
-        snackbar.open('Reported malfunction');
-      })
-      .catch(err => {
-        snackbar.open(err.message);
-      });
+    setMalfunctionDialogIsOpen(false);
+    setMalfunctionDescription(description);
+    setReturnedBikeId(reportedBikeId);
+    setStationsDialogIsOpen(true);
   };
 
   const bikeActions: BikeActionsForBike = ({ id }) => [
