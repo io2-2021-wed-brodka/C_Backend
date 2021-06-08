@@ -21,6 +21,7 @@ import RegistrationPage from './registration/RegistrationPage';
 import ReservationsTab from './reservations-tab/ReservationsTab';
 import BikesTab from './bikes-tab/BikesTab';
 import MalfunctionsTab from './malfunctions-tab/MalfunctionsTab';
+import ContactTab from './contact-tab/ContactTab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -82,6 +83,7 @@ const UserApp = () => {
                       <Route path="/reservations" component={ReservationsTab} />
                       <Route path="/bikes" component={BikesTab} />
                       <Route path="/malfunctions" component={MalfunctionsTab} />
+                      <Route path="/contact" component={ContactTab} />
                     </Container>
                   </>
                 )}

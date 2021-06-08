@@ -47,6 +47,10 @@ const Navigation = ({ pathname }: Props) => {
       url: '/reservations',
     },
     {
+      name: 'Contact',
+      url: '/contact',
+    },
+    {
       name: 'Bikes',
       url: '/bikes',
       canDisplay: () => role.results == UserRole.Tech,
