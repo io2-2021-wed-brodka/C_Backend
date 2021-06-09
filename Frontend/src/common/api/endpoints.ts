@@ -8,7 +8,8 @@ import { LoginResponse } from './models/login-response';
 import { User } from './models/user';
 import { Tech } from './models/tech';
 import { Malfunction } from './models/malfunction';
-const API = 'http://localhost:8080';
+import { isDevelopment } from '../environment';
+const API = isDevelopment() ? 'http://localhost:8080' : '/io';
 
 export type StationsResponse = { stations: Station[] };
 export type BikesResponse = { bikes: Bike[] };
