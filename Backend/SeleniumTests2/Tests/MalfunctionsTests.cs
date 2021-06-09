@@ -28,7 +28,7 @@ namespace SeleniumTests2.Tests
             new LoginPage(Driver).LogIn(login, password);
             var stationsPage = new StationsPage(Driver);
             var rentalsPage = stationsPage.GoToRentals();
-            rentalsPage.ReportMalfunction(bike.Id, malfunctionMessage);
+            rentalsPage.ReportMalfunction(bike.Id, malfunctionMessage, station.Id);
             rentalsPage.ContainsSnackbar().Should().BeTrue();
             rentalsPage.LogOut();
 

@@ -106,6 +106,20 @@ const getAllStationsWithCounts = async () => {
   }));
 };
 
+const getMalfunctionsWithStatuses = async () => {
+  const [malfunctions, bikes] = await Promise.all([
+    getMalfunctions(),
+    getBikes(),
+  ]);
+
+  return malfunctions.map(malfunction => ({
+    ...malfunction,
+    isBeingFixed: bikes.some(
+      b => b.id == malfunction.bikeId && b.status == BikeStatus.Blocked,
+    ),
+  }));
+};
+
 export const services: AllServices = {
   signIn: signInAndSaveToken,
   signUp: signUpAndSaveToken,
@@ -136,7 +150,7 @@ export const services: AllServices = {
   getTechs: getTechs,
   removeTech: removeTech,
   addTech: addTech,
-  getMalfunctions: getMalfunctions,
+  getMalfunctions: getMalfunctionsWithStatuses,
   addMalfunction: addMalfunction,
   removeMalfunction: removeMalfunction,
 };
