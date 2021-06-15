@@ -1,9 +1,12 @@
 import { signIn, signUp } from './../api/endpoints';
 import { UserRole } from '../api/models/login-response';
+import { isUserApp } from '../environment';
 
-const localStorageTokenKey = 'token';
-const localStorageLoginKey = 'login';
-const localStorageRoleKey = 'role';
+const prefix = isUserApp() ? 'user_' : 'admin_';
+
+const localStorageTokenKey = prefix + 'token';
+const localStorageLoginKey = prefix + 'login';
+const localStorageRoleKey = prefix + 'role';
 
 export const saveUserDataInLocalStorage = (
   token: string,

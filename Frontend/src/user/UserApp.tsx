@@ -22,6 +22,7 @@ import ReservationsTab from './reservations-tab/ReservationsTab';
 import BikesTab from './bikes-tab/BikesTab';
 import MalfunctionsTab from './malfunctions-tab/MalfunctionsTab';
 import ContactTab from './contact-tab/ContactTab';
+import { isUserApp } from '../common/environment';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -50,19 +51,9 @@ const UserApp = () => {
   return (
     <ThemeProvider theme={pinkTheme}>
       <ServicesContext.Provider value={services}>
-        <BrowserRouter>
+        <BrowserRouter basename={isUserApp() ? '/io-user' : '/io-admin'}>
           <div className={classes.root}>
             <Switch>
-              <Route path="/easteregg">
-                <img
-                  src="./bluescreen.png"
-                  style={{ width: '100%', height: '100%' }}
-                  onLoad={() => document.documentElement.requestFullscreen()}
-                />
-                <audio autoPlay id="playAudio">
-                  <source src="https://www.myinstants.com/media/sounds/erro.mp3" />
-                </audio>
-              </Route>
               <Route path="/login" component={LoginPage} />
               <Route path="/signup" component={RegistrationPage} />
               <Route exact path="/">

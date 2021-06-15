@@ -66,7 +66,6 @@ const LoginPage = () => {
       })
       .catch(err => {
         snackbar.open(err.message);
-        isUserApp() && history.push('/easteregg');
       });
   };
 
