@@ -13,6 +13,7 @@ import pinkTheme from '../common/theme';
 import Layout from './Layout';
 import StationsTab from './stations-tab/StationsTab';
 import BikesTab from './bikes-tab/BikesTab';
+import { isUserApp } from '../common/environment';
 
 import './AdminApp.css';
 import UsersTab from './users-tab/UsersTab';
@@ -34,7 +35,7 @@ const AdminApp = () => {
   return (
     <ThemeProvider theme={pinkTheme}>
       <ServicesContext.Provider value={services}>
-        <BrowserRouter>
+        <BrowserRouter basename={isUserApp() ? '/io-user' : '/io-admin'}>
           <Switch>
             <Route path="/login">
               <div className={classes.rootMobile}>
