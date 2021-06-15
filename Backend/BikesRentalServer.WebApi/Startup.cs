@@ -75,6 +75,9 @@ namespace BikesRentalServer.WebApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var pathBase = _configuration["PathBase"];
+            app.UsePathBase(pathBase);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -90,7 +93,7 @@ namespace BikesRentalServer.WebApi
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "BikesRentalServer API");
+                options.SwaggerEndpoint($"{pathBase}/swagger/v1/swagger.json", "BikesRentalServer API");
             });
 
             app.UseRouting();
