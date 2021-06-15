@@ -66,6 +66,7 @@ namespace BikesRentalServer.DataAccess.Repositories
         {
             return _dbContext.Reservations
                 .Include(r => r.Bike)
+                    .ThenInclude(b => b.Station)
                 .Include(r => r.User)
                 .Where(r => r.User.Id == userId && r.ExpirationDate > DateTime.Now);
         }
