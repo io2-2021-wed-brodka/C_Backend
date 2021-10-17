@@ -183,5 +183,55 @@ namespace SeleniumTests
             Assert.AreEqual(bikesCount, newBikesCount + 1);
             webDriver.Close();
         }
+        [Test]
+        public void VerifyBlockStation()
+        {
+            IWebDriver webDriver = new FirefoxDriver(firefoxOptions);
+            Login(webDriver);
+            var buttons = webDriver.FindElements(By.CssSelector("button"));
+
+            foreach (var button in buttons)
+            {
+                if (button.Text == "BLOCKED")
+                {
+                    button.Click();
+                    break;
+                }
+            }
+            int blockedStations = webDriver.FindElements(By.CssSelector(".MuiPaper-root.MuiAccordion-root.MuiAccordion-rounded.MuiPaper-elevation1.MuiPaper-rounded")).Count;
+            foreach (var button in buttons)
+            {
+                if (button.Text == "ACTIVE")
+                {
+                    button.Click();
+                    break;
+                }
+            }
+
+            var stations = webDriver.FindElements(By.CssSelector(".MuiPaper-root.MuiAccordion-root.MuiAccordion-rounded.MuiPaper-elevation1.MuiPaper-rounded"));
+            var station = stations[stations.Count - 1];
+            station.Click();
+            buttons = webDriver.FindElements(By.CssSelector("button"));
+            foreach (var button in buttons)
+            {
+                if (button.Text == "BLOCK")
+                {
+                    button.Click();
+                    break;
+                }
+            }
+            foreach (var button in buttons)
+            {
+                if (button.Text == "BLOCKED")
+                {
+                    button.Click();
+                    break;
+                }
+            }
+            int newBlockedStations = webDriver.FindElements(By.CssSelector(".MuiPaper-root.MuiAccordion-root.MuiAccordion-rounded.MuiPaper-elevation1.MuiPaper-rounded")).Count;
+
+            Assert.AreEqual(blockedStations, newBlockedStations - 1);
+        }
+
     }
 }
